@@ -439,7 +439,7 @@ const Sidebar = ({
           {!isDesktopCollapsed && (
             <div className="w-12 h-12 transition-all duration-300">
               <img
-                src="/public/pacific_logo.png"
+                src="/pacific_logo.png"
                 alt="logo"
                 className="object-contain w-full h-full rounded"
               />
