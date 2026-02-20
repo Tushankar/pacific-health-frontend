@@ -468,7 +468,7 @@ const FreedomOfChoice = ({ onComplete, savedData, progressCurrent = 0, progressT
               <button
                 type="button"
                 className="px-8 py-3 btn-premium-red text-white font-sans font-bold tracking-wide transform transition-transform"
-                onClick={() => alert("Exiting application...")}
+                onClick={() => { window.location.href = "/my-application"; }}
               >
                 Exit Application
               </button>

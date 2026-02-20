@@ -233,7 +233,7 @@ const FileUploadForm = ({
                 className="px-8 py-3 btn-premium-red text-white font-sans font-bold tracking-wide transform transition-all hover:scale-[1.02] active:scale-[0.98]"
                 onClick={() => {
                   if (window.confirm("Are you sure you want to exit the application process? Any unsaved changes may be lost.")) {
-                    window.location.href = "/dashboard";
+                    window.location.href = "/my-application";
                   }
                 }}
               >

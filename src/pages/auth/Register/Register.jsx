@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { RightSection } from "../../../components/common/UI/AuthPage/RightSection";
 import { OtpVerifyModal } from "../../../components/common/UI/OtpVerifyModal/OtpVerifyModal";
 import { Link, useNavigate } from "react-router-dom";
@@ -6,6 +6,8 @@ import * as EmailValidator from "email-validator";
 import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
 import { useRegister, useVerifyOtp } from "../../../hooks/useAuth";
+
+const RECAPTCHA_SITE_KEY = "6LeMxG4sAAAAAAT_1N_PcBCvKi_ceHbhHFWpupzM";
 
 const formatPhone = (value) => {
   const withoutPrefix = value.replace(/^\+1\s*/, "");
@@ -30,7 +32,57 @@ export const Register = () => {
   const [otp, setOtp] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState(null);
+  const recaptchaRef = useRef(null);
+  const captchaContainerRef = useRef(null);
   const navigate = useNavigate();
+
+  // Load reCAPTCHA script and render widget
+  useEffect(() => {
+    // Load the script if not already loaded
+    if (!document.querySelector('script[src*="recaptcha/api.js"]')) {
+      const script = document.createElement("script");
+      script.src =
+        "https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit";
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+    }
+
+    const renderCaptcha = () => {
+      if (
+        captchaContainerRef.current &&
+        window.grecaptcha &&
+        window.grecaptcha.render &&
+        !recaptchaRef.current
+      ) {
+        try {
+          recaptchaRef.current = window.grecaptcha.render(
+            captchaContainerRef.current,
+            {
+              sitekey: RECAPTCHA_SITE_KEY,
+              callback: (token) => setCaptchaToken(token),
+              "expired-callback": () => setCaptchaToken(null),
+            },
+          );
+        } catch (e) {
+          // Widget already rendered
+        }
+      }
+    };
+
+    // If grecaptcha is already loaded, render immediately
+    if (window.grecaptcha && window.grecaptcha.render) {
+      renderCaptcha();
+    } else {
+      // Set up the global callback for when the script loads
+      window.onRecaptchaLoad = renderCaptcha;
+    }
+
+    return () => {
+      delete window.onRecaptchaLoad;
+    };
+  }, []);
 
   // React Query mutations
   const registerMutation = useRegister();
@@ -42,6 +94,13 @@ export const Register = () => {
     setRegisterInfo((prev) => ({ ...prev, [name]: formattedValue }));
   };
 
+  const resetCaptcha = useCallback(() => {
+    if (window.grecaptcha && recaptchaRef.current !== null) {
+      window.grecaptcha.reset(recaptchaRef.current);
+      setCaptchaToken(null);
+    }
+  }, []);
+
   const createNewAccount = async () => {
     if (!EmailValidator.validate(registerInfo.email)) {
       return toast.error("Please enter a valid email address");
@@ -52,6 +111,9 @@ export const Register = () => {
     if (registerInfo.password.length < 6) {
       return toast.error("Password must be at least 6 characters");
     }
+    if (!captchaToken) {
+      return toast.error("Please complete the reCAPTCHA verification");
+    }
 
     registerMutation.mutate(
       {
@@ -59,6 +121,7 @@ export const Register = () => {
         email: registerInfo.email,
         phoneNumber: registerInfo.phoneNumber,
         password: registerInfo.password,
+        recaptchaToken: captchaToken,
       },
       {
         onSuccess: (data) => {
@@ -67,10 +130,13 @@ export const Register = () => {
         },
         onError: (error) => {
           toast.error(
-            error.response?.data?.message || "Registration failed. Please try again."
+            error.response?.data?.message ||
+              "Registration failed. Please try again.",
           );
+          // Reset reCAPTCHA on error
+          resetCaptcha();
         },
-      }
+      },
     );
   };
 
@@ -212,7 +278,12 @@ export const Register = () => {
                 </div>
               </div>
 
-              <div className="pt-6">
+              {/* reCAPTCHA */}
+              <div className="flex justify-center">
+                <div ref={captchaContainerRef}></div>
+              </div>
+
+              <div className="pt-4">
                 <button
                   type="button"
                   onClick={createNewAccount}
@@ -222,7 +293,8 @@ export const Register = () => {
                     !registerInfo.email ||
                     !registerInfo.phoneNumber ||
                     !registerInfo.password ||
-                    !registerInfo.confirmPassword
+                    !registerInfo.confirmPassword ||
+                    !captchaToken
                   }
                   className="w-full bg-[#34495E] text-white py-3.5 rounded-full font-bold text-base hover:bg-white hover:text-[#34495E] border border-[#34495E] transition-all duration-300 shadow-lg shadow-gray-200 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
@@ -281,15 +353,17 @@ export const Register = () => {
             { email: registerInfo.email, otp },
             {
               onSuccess: (data) => {
-                toast.success(data.message || "Registration successful! Welcome aboard!");
+                toast.success(
+                  data.message || "Registration successful! Welcome aboard!",
+                );
                 navigate("/dashboard");
               },
               onError: (error) => {
                 toast.error(
-                  error.response?.data?.message || "OTP verification failed."
+                  error.response?.data?.message || "OTP verification failed.",
                 );
               },
-            }
+            },
           );
         }}
       />

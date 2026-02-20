@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Link,
   useLocation,
@@ -422,29 +423,37 @@ const Sidebar = ({
       )}
 
       {/* Sidebar */}
-      <div
-        className={`fixed md:static inset-y-0 left-0 ${
-          isDesktopCollapsed ? "md:w-20" : "md:w-72"
-        } w-[85vw] max-w-[300px] h-full flex flex-col bg-white z-[100] transform transition-all duration-300 ease-in-out ${
-          isMobileMenuOpen
-            ? "translate-x-0 shadow-2xl"
-            : "-translate-x-full md:translate-x-0"
-        }`}
+      <motion.div
+        initial={false}
+        animate={{
+          width: isDesktopCollapsed ? "80px" : "288px",
+          x: isMobileMenuOpen ? 0 : (window.innerWidth < 768 ? "-100%" : 0),
+        }}
+        transition={{ ease: "easeInOut", duration: 0.4 }}
+        className={`fixed md:static inset-y-0 left-0 h-full flex flex-col bg-white z-[100] transform shadow-2xl md:shadow-none`}
       >
         <div
           className={`flex ${
             isDesktopCollapsed ? "justify-center" : "justify-between"
           } items-center py-4 px-3 border-b border-[#BDC3C7] shadow-md relative h-[87px]`}
         >
-          {!isDesktopCollapsed && (
-            <div className="w-12 h-12 transition-all duration-300">
-              <img
-                src="/pacific_logo.png"
-                alt="logo"
-                className="object-contain w-full h-full rounded"
-              />
-            </div>
-          )}
+          <AnimatePresence mode="wait">
+            {!isDesktopCollapsed && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="w-12 h-12"
+              >
+                <img
+                  src="/pacific_logo.png"
+                  alt="logo"
+                  className="object-contain w-full h-full rounded"
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Desktop Toggle Button */}
           <button
@@ -515,30 +524,44 @@ const Sidebar = ({
                         >
                           <item.icon className="w-6 h-6" />
                         </span>
-                        <h4
+                        <motion.h4
+                          initial={false}
+                          animate={{ 
+                            opacity: isDesktopCollapsed ? 0 : 1,
+                            width: isDesktopCollapsed ? 0 : "auto",
+                          }}
+                          transition={{ duration: 0.3, ease: "easeInOut" }}
                           className={`text-sm md:text-base ${getTextColorClass(
                             item.path,
                             index,
                             isActiveAppActive,
-                          )} font-semibold block transition-all duration-200 ease-linear whitespace-nowrap tracking-wide ${
-                            isDesktopCollapsed ? "md:hidden" : ""
-                          }`}
+                          )} font-semibold whitespace-nowrap tracking-wide`}
                           style={{ fontFamily: "Inter, system-ui, sans-serif" }}
                         >
                           {item.name}
-                        </h4>
-                        {!isDesktopCollapsed && (
-                          <ChevronDown
-                            size={16}
-                            className={`${
-                              isActiveAppActive || isActiveRoute(item.path)
-                                ? "text-[#1F3A93]"
-                                : "text-white"
-                            } transition-transform duration-200 ml-auto ${
-                              isExpanded ? "rotate-180" : ""
-                            }`}
-                          />
-                        )}
+                        </motion.h4>
+                        <AnimatePresence>
+                          {!isDesktopCollapsed && (
+                            <motion.div
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{ opacity: 0 }}
+                              transition={{ duration: 0.3, ease: "easeInOut" }}
+                              className="ml-auto"
+                            >
+                              <ChevronDown
+                                size={16}
+                                className={`${
+                                  isActiveAppActive || isActiveRoute(item.path)
+                                    ? "text-[#1F3A93]"
+                                    : "text-white"
+                                } transition-transform duration-200 ${
+                                  isExpanded ? "rotate-180" : ""
+                                }`}
+                              />
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </button>
                     ) : (
                       <Link
@@ -551,17 +574,21 @@ const Sidebar = ({
                         <span className={getIconColorClass(item.path, index)}>
                           <item.icon className="w-6 h-6" />
                         </span>
-                        <h4
+                        <motion.h4
+                          initial={false}
+                          animate={{ 
+                            opacity: isDesktopCollapsed ? 0 : 1,
+                            width: isDesktopCollapsed ? 0 : "auto",
+                          }}
+                          transition={{ duration: 0.3, ease: "easeInOut" }}
                           className={`text-sm md:text-base ${getTextColorClass(
                             item.path,
                             index,
-                          )} font-semibold block transition-all duration-200 ease-linear whitespace-nowrap tracking-wide ${
-                            isDesktopCollapsed ? "md:hidden" : ""
-                          }`}
+                          )} font-semibold whitespace-nowrap tracking-wide`}
                           style={{ fontFamily: "Inter, system-ui, sans-serif" }}
                         >
                           {item.name}
-                        </h4>
+                        </motion.h4>
                       </Link>
                     )}
                     {(isActiveRoute(item.path) ||
@@ -571,128 +598,144 @@ const Sidebar = ({
                   </div>
 
                   {/* Active Application Dropdown */}
-                  {isActiveApp && isExpanded && !isDesktopCollapsed && (
-                    <div className="bg-transparent ml-4">
-                      {formsData.map((chapter, chapterIndex) => {
-                        const isChapterExpanded =
-                          expandedChapters[chapterIndex];
-                        const completedCount = chapter.forms.filter(
-                          (form) => ["completed", "approved", "rejected"].includes(form.status),
-                        ).length;
-                        const totalCount = chapter.forms.length;
+                  <AnimatePresence>
+                    {isActiveApp && isExpanded && !isDesktopCollapsed && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.4, ease: "easeInOut" }}
+                        className="bg-transparent ml-4 overflow-hidden"
+                      >
+                        {formsData.map((chapter, chapterIndex) => {
+                          const isChapterExpanded =
+                            expandedChapters[chapterIndex];
+                          const completedCount = chapter.forms.filter(
+                            (form) => ["completed", "approved", "rejected"].includes(form.status),
+                          ).length;
+                          const totalCount = chapter.forms.length;
 
-                        return (
-                          <div key={chapterIndex} className="mb-1">
-                            {/* Chapter Header */}
-                            <button
-                              onClick={() => {
-                                if (chapter.isLocked) {
-                                  toast.info(
-                                    "Locked: This section will unlock after you complete submitting all forms properly and receive admin approval.",
-                                  );
-                                  return;
-                                }
-                                setExpandedChapters((prev) => ({
-                                  ...prev,
-                                  [chapterIndex]: !prev[chapterIndex],
-                                }));
-                              }}
-                              className="w-full text-left px-4 py-2 text-white/80 hover:text-white hover:bg-white/10 transition-colors flex items-center gap-2 text-sm"
-                            >
-                              <ChevronRight
-                                size={14}
-                                className={`transition-transform duration-200 flex-shrink-0 ${
-                                  isChapterExpanded ? "rotate-90" : ""
-                                } ${chapter.isLocked ? "opacity-50" : ""}`}
-                              />
-                              <span
-                                className={`flex-1 truncate font-medium ${chapter.isLocked ? "text-white/40" : ""}`}
+                          return (
+                            <div key={chapterIndex} className="mb-1">
+                              {/* Chapter Header */}
+                              <button
+                                onClick={() => {
+                                  if (chapter.isLocked) {
+                                    toast.info(
+                                      "Locked: This section will unlock after you complete submitting all forms properly and receive admin approval.",
+                                    );
+                                    return;
+                                  }
+                                  setExpandedChapters((prev) => ({
+                                    ...prev,
+                                    [chapterIndex]: !prev[chapterIndex],
+                                  }));
+                                }}
+                                className="w-full text-left px-4 py-2 text-white/80 hover:text-white hover:bg-white/10 transition-colors flex items-center gap-2 text-sm"
                               >
-                                {chapter.chapter}
-                              </span>
-                              {chapter.isLocked ? (
-                                <div className="p-1 px-2 rounded-md bg-white/5 border border-white/10 flex items-center gap-1.5 overflow-hidden">
-                                  <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-                                  <span className="text-[10px] font-bold text-amber-500 uppercase tracking-tighter">
-                                    Locked
-                                  </span>
-                                </div>
-                              ) : (
-                                <div className="flex items-center gap-1 text-xs">
-                                  <span className="text-emerald-400 font-bold">
-                                    {completedCount}
-                                  </span>
-                                  <span className="text-white/60">/</span>
-                                  <span className="text-white/60">
-                                    {totalCount}
-                                  </span>
-                                </div>
-                              )}
-                            </button>
+                                <ChevronRight
+                                  size={14}
+                                  className={`transition-transform duration-200 flex-shrink-0 ${
+                                    isChapterExpanded ? "rotate-90" : ""
+                                  } ${chapter.isLocked ? "opacity-50" : ""}`}
+                                />
+                                <span
+                                  className={`flex-1 truncate font-medium ${chapter.isLocked ? "text-white/40" : ""}`}
+                                >
+                                  {chapter.chapter}
+                                </span>
+                                {chapter.isLocked ? (
+                                  <div className="p-1 px-2 rounded-md bg-white/5 border border-white/10 flex items-center gap-1.5 overflow-hidden">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                                    <span className="text-[10px] font-bold text-amber-500 uppercase tracking-tighter">
+                                      Locked
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <div className="flex items-center gap-1 text-xs">
+                                    <span className="text-emerald-400 font-bold">
+                                      {completedCount}
+                                    </span>
+                                    <span className="text-white/60">/</span>
+                                    <span className="text-white/60">
+                                      {totalCount}
+                                    </span>
+                                  </div>
+                                )}
+                              </button>
 
-                            {/* Forms under this chapter */}
-                            {isChapterExpanded && (
-                              <div className="ml-6 space-y-1 py-1">
-                                {chapter.forms.map((form) => {
-                                  const isActiveForm =
-                                    activeFormId === String(form.id) && location.pathname === "/my-application";
-                                  return (
-                                    <button
-                                      key={form.id}
-                                      onClick={() => {
-                                        if (chapter.isLocked) {
-                                          toast.info(
-                                            "Locked: This form will unlock after you complete submitting all forms properly and receive admin approval.",
-                                          );
-                                          return;
-                                        }
-                                        navigate(
-                                          `${item.path}?formId=${form.id}`,
-                                        );
-                                        closeMobileMenu();
-                                      }}
-                                      className={`w-full text-left p-2 rounded transition-colors flex items-start gap-2 text-xs relative ${
-                                        isActiveForm
-                                          ? "bg-white/20 text-white"
-                                          : chapter.isLocked
-                                            ? "text-white/30 cursor-not-allowed"
-                                            : "text-white/70 hover:text-white hover:bg-white/10"
-                                      }`}
-                                      disabled={chapter.isLocked}
-                                    >
-                                      {isActiveForm && (
-                                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-r" />
-                                      )}
-                                      <div
-                                        className={`flex items-center gap-2 flex-1 min-w-0 ${chapter.isLocked ? "opacity-40 grayscale" : ""}`}
-                                      >
-                                        {renderCompletionIndicator(form)}
-                                        <div
-                                          className={`p-1 rounded ${getFormTypeColor(form.type).split(" ")[1]} flex-shrink-0`}
+                              {/* Forms under this chapter */}
+                              <AnimatePresence>
+                                {isChapterExpanded && (
+                                  <motion.div
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: "auto", opacity: 1 }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    transition={{ duration: 0.2, ease: "easeInOut" }}
+                                    className="ml-6 space-y-1 py-1 overflow-hidden"
+                                  >
+                                    {chapter.forms.map((form) => {
+                                      const isActiveForm =
+                                        activeFormId === String(form.id) && location.pathname === "/my-application";
+                                      return (
+                                        <button
+                                          key={form.id}
+                                          onClick={() => {
+                                            if (chapter.isLocked) {
+                                              toast.info(
+                                                "Locked: This form will unlock after you complete submitting all forms properly and receive admin approval.",
+                                              );
+                                              return;
+                                            }
+                                            navigate(
+                                              `${item.path}?formId=${form.id}`,
+                                            );
+                                            closeMobileMenu();
+                                          }}
+                                          className={`w-full text-left p-2 rounded transition-colors flex items-start gap-2 text-xs relative ${
+                                            isActiveForm
+                                              ? "bg-white/20 text-white"
+                                              : chapter.isLocked
+                                                ? "text-white/30 cursor-not-allowed"
+                                                : "text-white/70 hover:text-white hover:bg-white/10"
+                                          }`}
+                                          disabled={chapter.isLocked}
                                         >
-                                          {getFormTypeIcon(form.type)}
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                          <p className="font-medium truncate">
-                                            {form.name}
-                                          </p>
-                                          <p
-                                            className={`truncate text-xs ${isActiveForm ? "text-white/70" : "text-white/50"}`}
+                                          {isActiveForm && (
+                                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-r" />
+                                          )}
+                                          <div
+                                            className={`flex items-center gap-2 flex-1 min-w-0 ${chapter.isLocked ? "opacity-40 grayscale" : ""}`}
                                           >
-                                            {form.desc}
-                                          </p>
-                                        </div>
-                                      </div>
-                                    </button>
-                                  );
-                                })}
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
+                                            {renderCompletionIndicator(form)}
+                                            <div
+                                              className={`p-1 rounded ${getFormTypeColor(form.type).split(" ")[1]} flex-shrink-0`}
+                                            >
+                                              {getFormTypeIcon(form.type)}
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                              <p className="font-medium truncate">
+                                                {form.name}
+                                              </p>
+                                              <p
+                                                className={`truncate text-xs ${isActiveForm ? "text-white/70" : "text-white/50"}`}
+                                              >
+                                                {form.desc}
+                                              </p>
+                                            </div>
+                                          </div>
+                                        </button>
+                                      );
+                                    })}
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                            </div>
+                          );
+                        })}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </li>
               );
             })}
@@ -710,19 +753,23 @@ const Sidebar = ({
             >
               <div className="flex justify-start items-center gap-5 px-3 py-2 rounded-lg w-full bg-[#DD3F3F] hover:bg-red-500">
                 <LogOut className="w-6 h-6 text-white" />
-                <h4
-                  className={`text-sm md:text-base text-white font-semibold block transition-all duration-200 ease-linear whitespace-nowrap tracking-wide ${
-                    isDesktopCollapsed ? "md:hidden" : ""
-                  }`}
+                <motion.h4
+                  initial={false}
+                  animate={{ 
+                    opacity: isDesktopCollapsed ? 0 : 1,
+                    width: isDesktopCollapsed ? 0 : "auto",
+                  }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                  className={`text-sm md:text-base text-white font-semibold whitespace-nowrap tracking-wide`}
                   style={{ fontFamily: "Inter, system-ui, sans-serif" }}
                 >
                   Log out
-                </h4>
+                </motion.h4>
               </div>
             </button>
           </div>
         </div>
-      </div>
+      </motion.div>
     </>
   );
 };

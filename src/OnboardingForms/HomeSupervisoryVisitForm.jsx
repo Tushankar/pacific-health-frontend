@@ -883,7 +883,7 @@ const HomeSupervisoryVisitForm = ({ onComplete, savedData, progressCurrent = 0, 
           <button
             type="button"
             className="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
-            onClick={() => alert("Exiting application...")}
+            onClick={() => { window.location.href = "/my-application"; }}
           >
             Exit Application
           </button>

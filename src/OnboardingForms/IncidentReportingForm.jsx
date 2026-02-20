@@ -689,7 +689,7 @@ const IncidentReportingForm = ({ onComplete, savedData, progressCurrent = 0, pro
               className="px-8 py-3 btn-premium-red text-white font-sans font-bold tracking-wide transform transition-transform"
               onClick={() => {
                 if (window.confirm("Are you sure you want to exit the application process? Any unsaved changes may be lost.")) {
-                  window.location.href = "/dashboard";
+                  window.location.href = "/my-application";
                 }
               }}
             >

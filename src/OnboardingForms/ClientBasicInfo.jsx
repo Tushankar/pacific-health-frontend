@@ -1,7 +1,15 @@
 import React, { useState, useEffect, useRef } from "react";
 import SaveNextButton from "../components/common/SaveNextButton";
 
-const ClientBasicInfo = ({ onComplete, savedData, progressCurrent = 0, progressTotal = 1, onFormChange, isReadOnly = false, onNext }) => {
+const ClientBasicInfo = ({
+  onComplete,
+  savedData,
+  progressCurrent = 0,
+  progressTotal = 1,
+  onFormChange,
+  isReadOnly = false,
+  onNext,
+}) => {
   const [formData, setFormData] = useState({
     clientInfo: {
       name: "",
@@ -43,7 +51,10 @@ const ClientBasicInfo = ({ onComplete, savedData, progressCurrent = 0, progressT
       { path: ["clientInfo", "name"], label: "Name" },
       { path: ["clientInfo", "dob"], label: "Date of Birth" },
       { path: ["clientInfo", "phone"], label: "Phone #" },
-      { path: ["clientInfo", "participantAddress"], label: "Participant's Address" },
+      {
+        path: ["clientInfo", "participantAddress"],
+        label: "Participant's Address",
+      },
     ];
 
     requiredFields.forEach((field) => {
@@ -92,7 +103,7 @@ const ClientBasicInfo = ({ onComplete, savedData, progressCurrent = 0, progressT
   // Pre-fill from saved data if available
   useEffect(() => {
     if (savedData) {
-      setFormData(prev => ({ ...prev, ...savedData }));
+      setFormData((prev) => ({ ...prev, ...savedData }));
     }
   }, [savedData]);
   // Draft save: notify parent when formData changes after user interaction
@@ -142,7 +153,10 @@ const ClientBasicInfo = ({ onComplete, savedData, progressCurrent = 0, progressT
   return (
     <div className="w-full bg-white min-h-screen text-black font-serif flex justify-center mt-4 mb-8">
       {/* Paper Container */}
-      <form onSubmit={handleSubmit} className="w-[98%] md:w-[85%] lg:w-[60%] p-2 md:p-8 bg-white text-[9px] md:text-sm leading-snug">
+      <form
+        onSubmit={handleSubmit}
+        className="w-[98%] md:w-[85%] lg:w-[60%] p-2 md:p-8 bg-white text-[9px] md:text-sm leading-snug"
+      >
         {/* Main Header */}
         <h1 className="font-bold text-center text-sm md:text-xl mb-6 uppercase">
           CLIENT BASIC INFORMATION SHEET
@@ -151,8 +165,8 @@ const ClientBasicInfo = ({ onComplete, savedData, progressCurrent = 0, progressT
         {/* Client Info Grid - 3 Columns */}
         <div className="border border-black mb-8">
           {/* Row 1 */}
-          <div className="grid grid-cols-3 border-b border-black">
-            <div className="p-1 border-r border-black h-24 flex flex-col">
+          <div className="grid grid-cols-1 md:grid-cols-3 border-b border-black">
+            <div className="p-1 md:border-r border-black h-24 flex flex-col border-b md:border-b-0">
               <span className="font-bold mb-1 break-words leading-tight">
                 Name
               </span>
@@ -166,7 +180,7 @@ const ClientBasicInfo = ({ onComplete, savedData, progressCurrent = 0, progressT
                 style={getStyle("clientInfo.name")}
               />
             </div>
-            <div className="p-1 border-r border-black h-24 flex flex-col">
+            <div className="p-1 md:border-r border-black h-24 flex flex-col border-b md:border-b-0">
               <span className="font-bold mb-1 break-words leading-tight">
                 Date of Birth
               </span>
@@ -195,8 +209,8 @@ const ClientBasicInfo = ({ onComplete, savedData, progressCurrent = 0, progressT
           </div>
 
           {/* Row 2 */}
-          <div className="grid grid-cols-3 border-b border-black">
-            <div className="p-1 border-r border-black h-24 flex flex-col">
+          <div className="grid grid-cols-1 md:grid-cols-3 border-b border-black">
+            <div className="p-1 md:border-r border-black h-24 flex flex-col border-b md:border-b-0">
               <span className="font-bold mb-1 break-words leading-tight">
                 Last 4 Digits
               </span>
@@ -208,7 +222,7 @@ const ClientBasicInfo = ({ onComplete, savedData, progressCurrent = 0, progressT
                 className="w-full bg-transparent outline-none flex-grow min-w-0"
               />
             </div>
-            <div className="p-1 border-r border-black h-24 flex flex-col">
+            <div className="p-1 md:border-r border-black h-24 flex flex-col border-b md:border-b-0">
               <span className="font-bold mb-1 break-words leading-tight">
                 Veteran’s Status
               </span>
@@ -233,8 +247,8 @@ const ClientBasicInfo = ({ onComplete, savedData, progressCurrent = 0, progressT
           </div>
 
           {/* Row 3 */}
-          <div className="grid grid-cols-3 border-b border-black">
-            <div className="p-1 border-r border-black h-24 flex flex-col">
+          <div className="grid grid-cols-1 md:grid-cols-3 border-b border-black">
+            <div className="p-1 md:border-r border-black h-24 flex flex-col border-b md:border-b-0">
               <span className="font-bold mb-1 break-words leading-tight">
                 Admitted From (place & address)
               </span>
@@ -245,7 +259,7 @@ const ClientBasicInfo = ({ onComplete, savedData, progressCurrent = 0, progressT
                 className="w-full bg-transparent outline-none flex-grow min-w-0 resize-none"
               ></textarea>
             </div>
-            <div className="p-1 border-r border-black h-24 flex flex-col">
+            <div className="p-1 md:border-r border-black h-24 flex flex-col border-b md:border-b-0">
               <span className="font-bold mb-1 break-words leading-tight">
                 Phone #
               </span>
@@ -274,8 +288,8 @@ const ClientBasicInfo = ({ onComplete, savedData, progressCurrent = 0, progressT
           </div>
 
           {/* Row 4 */}
-          <div className="grid grid-cols-3 border-b border-black">
-            <div className="p-1 border-r border-black h-24 flex flex-col">
+          <div className="grid grid-cols-1 md:grid-cols-3 border-b border-black">
+            <div className="p-1 md:border-r border-black h-24 flex flex-col border-b md:border-b-0">
               <span className="font-bold mb-1 break-words leading-tight">
                 Referral Source Agency
               </span>
@@ -286,7 +300,7 @@ const ClientBasicInfo = ({ onComplete, savedData, progressCurrent = 0, progressT
                 className="w-full bg-transparent outline-none flex-grow min-w-0 resize-none"
               ></textarea>
             </div>
-            <div className="p-1 border-r border-black h-24 flex flex-col">
+            <div className="p-1 md:border-r border-black h-24 flex flex-col border-b md:border-b-0">
               <span className="font-bold mb-1 break-words leading-tight">
                 Participant’s Address
               </span>
@@ -314,8 +328,8 @@ const ClientBasicInfo = ({ onComplete, savedData, progressCurrent = 0, progressT
           </div>
 
           {/* Row 5 */}
-          <div className="grid grid-cols-3">
-            <div className="p-1 border-r border-black h-28 flex flex-col">
+          <div className="grid grid-cols-1 md:grid-cols-3">
+            <div className="p-1 md:border-r border-black h-28 flex flex-col border-b md:border-b-0">
               <span className="font-bold mb-1 break-words leading-tight">
                 Person’s/Agency Providing Service
               </span>
@@ -326,7 +340,7 @@ const ClientBasicInfo = ({ onComplete, savedData, progressCurrent = 0, progressT
                 className="w-full bg-transparent outline-none flex-grow min-w-0 resize-none"
               ></textarea>
             </div>
-            <div className="p-1 border-r border-black h-28 flex flex-col">
+            <div className="p-1 md:border-r border-black h-28 flex flex-col border-b md:border-b-0">
               <span className="font-bold mb-1 break-words leading-tight">
                 Address/Phone #
               </span>
@@ -357,14 +371,18 @@ const ClientBasicInfo = ({ onComplete, savedData, progressCurrent = 0, progressT
         </h2>
         <div className="border border-black mb-8">
           {/* Header */}
-          <div className="grid grid-cols-3 border-b border-black uppercase font-bold bg-white">
-            <div className="p-1 border-r border-black">NEXT OF KIN</div>
-            <div className="p-1 border-r border-black">ADDRESS</div>
+          <div className="grid grid-cols-1 md:grid-cols-3 border-b border-black uppercase font-bold bg-white">
+            <div className="p-1 md:border-r border-black border-b md:border-b-0">
+              NEXT OF KIN
+            </div>
+            <div className="p-1 md:border-r border-black border-b md:border-b-0">
+              ADDRESS
+            </div>
             <div className="p-1">PHONE #</div>
           </div>
           {/* Row 1 */}
-          <div className="grid grid-cols-3 border-b border-black h-24">
-            <div className="p-1 border-r border-black">
+          <div className="grid grid-cols-1 md:grid-cols-3 border-b border-black h-24">
+            <div className="p-1 md:border-r border-black border-b md:border-b-0">
               <textarea
                 value={formData.familyInfo.nextOfKin.name}
                 onChange={handleInput(["familyInfo", "nextOfKin", "name"])}
@@ -372,7 +390,7 @@ const ClientBasicInfo = ({ onComplete, savedData, progressCurrent = 0, progressT
                 className="w-full h-full bg-transparent outline-none resize-none min-w-0"
               ></textarea>
             </div>
-            <div className="p-1 border-r border-black">
+            <div className="p-1 md:border-r border-black border-b md:border-b-0">
               <textarea
                 value={formData.familyInfo.nextOfKin.address}
                 onChange={handleInput(["familyInfo", "nextOfKin", "address"])}
@@ -391,16 +409,18 @@ const ClientBasicInfo = ({ onComplete, savedData, progressCurrent = 0, progressT
           </div>
 
           {/* Header 2 */}
-          <div className="grid grid-cols-3 border-b border-black uppercase font-bold bg-white">
-            <div className="p-1 border-r border-black">
+          <div className="grid grid-cols-1 md:grid-cols-3 border-b border-black uppercase font-bold bg-white">
+            <div className="p-1 md:border-r border-black border-b md:border-b-0">
               LEGAL GUARDIAN, SURROGATE, RESPONSIBLE PERSON
             </div>
-            <div className="p-1 border-r border-black">ADDRESS</div>
+            <div className="p-1 md:border-r border-black border-b md:border-b-0">
+              ADDRESS
+            </div>
             <div className="p-1">PHONE #</div>
           </div>
           {/* Row 2 */}
-          <div className="grid grid-cols-3 border-b border-black h-24">
-            <div className="p-1 border-r border-black">
+          <div className="grid grid-cols-1 md:grid-cols-3 border-b border-black h-24">
+            <div className="p-1 md:border-r border-black border-b md:border-b-0">
               <textarea
                 value={formData.familyInfo.legalGuardian.name}
                 onChange={handleInput(["familyInfo", "legalGuardian", "name"])}
@@ -408,7 +428,7 @@ const ClientBasicInfo = ({ onComplete, savedData, progressCurrent = 0, progressT
                 className="w-full h-full bg-transparent outline-none resize-none min-w-0"
               ></textarea>
             </div>
-            <div className="p-1 border-r border-black">
+            <div className="p-1 md:border-r border-black border-b md:border-b-0">
               <textarea
                 value={formData.familyInfo.legalGuardian.address}
                 onChange={handleInput([
@@ -431,16 +451,18 @@ const ClientBasicInfo = ({ onComplete, savedData, progressCurrent = 0, progressT
           </div>
 
           {/* Header 3 */}
-          <div className="grid grid-cols-3 border-b border-black uppercase font-bold bg-white text-[8px] md:text-sm">
-            <div className="p-1 border-r border-black">
+          <div className="grid grid-cols-1 md:grid-cols-3 border-b border-black uppercase font-bold bg-white text-[8px] md:text-sm">
+            <div className="p-1 md:border-r border-black border-b md:border-b-0">
               REPRESENTATIVE PAYEE (if applicable)
             </div>
-            <div className="p-1 border-r border-black">ADDRESS</div>
+            <div className="p-1 md:border-r border-black border-b md:border-b-0">
+              ADDRESS
+            </div>
             <div className="p-1">PHONE #</div>
           </div>
           {/* Row 3 */}
-          <div className="grid grid-cols-3 h-24">
-            <div className="p-1 border-r border-black">
+          <div className="grid grid-cols-1 md:grid-cols-3 h-24">
+            <div className="p-1 md:border-r border-black border-b md:border-b-0">
               <textarea
                 value={formData.familyInfo.repPayee.name}
                 onChange={handleInput(["familyInfo", "repPayee", "name"])}
@@ -448,7 +470,7 @@ const ClientBasicInfo = ({ onComplete, savedData, progressCurrent = 0, progressT
                 className="w-full h-full bg-transparent outline-none resize-none min-w-0"
               ></textarea>
             </div>
-            <div className="p-1 border-r border-black">
+            <div className="p-1 md:border-r border-black border-b md:border-b-0">
               <textarea
                 value={formData.familyInfo.repPayee.address}
                 onChange={handleInput(["familyInfo", "repPayee", "address"])}
@@ -474,8 +496,8 @@ const ClientBasicInfo = ({ onComplete, savedData, progressCurrent = 0, progressT
           </div>
 
           {/* Row 1 */}
-          <div className="grid grid-cols-3 border-b border-black min-h-[80px]">
-            <div className="p-1 border-r border-black flex flex-col">
+          <div className="grid grid-cols-1 md:grid-cols-3 border-b border-black min-h-[80px]">
+            <div className="p-1 md:border-r border-black flex flex-col border-b md:border-b-0">
               <span className="font-bold break-words leading-tight">
                 Client Physician
               </span>
@@ -487,7 +509,7 @@ const ClientBasicInfo = ({ onComplete, savedData, progressCurrent = 0, progressT
                 className="w-full bg-transparent outline-none flex-grow min-w-0"
               />
             </div>
-            <div className="p-1 border-r border-black flex flex-col">
+            <div className="p-1 md:border-r border-black flex flex-col border-b md:border-b-0">
               <span className="font-bold break-words leading-tight">
                 Physician Address
               </span>
@@ -513,8 +535,8 @@ const ClientBasicInfo = ({ onComplete, savedData, progressCurrent = 0, progressT
           </div>
 
           {/* Row 2 */}
-          <div className="grid grid-cols-3 min-h-[80px]">
-            <div className="p-1 border-r border-black flex flex-col">
+          <div className="grid grid-cols-1 md:grid-cols-3 min-h-[80px]">
+            <div className="p-1 md:border-r border-black flex flex-col border-b md:border-b-0">
               <span className="font-bold ">Client Physician</span>
               <input
                 type="text"
@@ -524,7 +546,7 @@ const ClientBasicInfo = ({ onComplete, savedData, progressCurrent = 0, progressT
                 className="w-full bg-transparent outline-none flex-grow min-w-0"
               />
             </div>
-            <div className="p-1 border-r border-black flex flex-col">
+            <div className="p-1 md:border-r border-black flex flex-col border-b md:border-b-0">
               <span className="font-bold ">Physician Address</span>
               <textarea
                 value={formData.physicianInfo.secondary.address}
@@ -551,9 +573,9 @@ const ClientBasicInfo = ({ onComplete, savedData, progressCurrent = 0, progressT
         </div>
 
         <div className="flex justify-center p-4">
-          <SaveNextButton 
-            isSubmitting={isSubmitting} 
-            type="submit" 
+          <SaveNextButton
+            isSubmitting={isSubmitting}
+            type="submit"
             isReadOnly={isReadOnly}
             onNext={onNext}
           />
