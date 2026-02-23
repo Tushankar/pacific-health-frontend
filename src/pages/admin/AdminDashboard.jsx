@@ -1,34 +1,52 @@
-import React, { useState, useMemo } from "react";
-import { 
-  Users, 
-  FileText, 
-  CheckCircle, 
-  XCircle, 
-  Clock, 
-  ChevronRight, 
-  Search, 
+import React, { useState, useMemo, useEffect } from "react";
+import {
+  Users,
+  FileText,
+  CheckCircle,
+  XCircle,
+  Clock,
+  ChevronRight,
+  Search,
   Filter,
   BarChart3,
   ArrowUpRight,
   ClipboardCheck,
   Calendar
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ShineBorder } from "../../components/ui/ShineBorder";
 
-  import { useQuery } from "@tanstack/react-query";
-  import { getAllEnrollments } from "../../api/enrollment.api";
+import { useQuery } from "@tanstack/react-query";
+import { getAllEnrollments } from "../../api/enrollment.api";
 
-  const AdminDashboard = () => {
+const AdminDashboard = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Auto-scroll to the applicant row when returning from a detail view
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const scrollTo = params.get("scrollTo");
+    if (scrollTo) {
+      const timer = setTimeout(() => {
+        const el = document.getElementById(scrollTo);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+          el.classList.add("ring-2", "ring-indigo-400", "ring-offset-2");
+          setTimeout(() => el.classList.remove("ring-2", "ring-indigo-400", "ring-offset-2"), 2500);
+        }
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [location.search]);
 
   const { data: enrollmentData, isLoading } = useQuery({
     queryKey: ["adminEnrollments"],
     queryFn: () => getAllEnrollments({}),
   });
 
-  const applicants = (enrollmentData?.enrollments || []).filter(app => 
+  const applicants = (enrollmentData?.enrollments || []).filter(app =>
     ["submitted", "approved", "rejected"].includes(app.status)
   );
 
@@ -47,32 +65,32 @@ import { ShineBorder } from "../../components/ui/ShineBorder";
   // Calculate submission numbers for each user
   const submissionCounts = useMemo(() => {
     if (!enrollmentData?.enrollments) return {};
-    
+
     // Group by user and then by program
     const userProgramEnrollments = {};
     enrollmentData.enrollments.forEach(app => {
-        if (!app.user?._id) return;
-        const userId = app.user._id;
-        const program = app.program;
+      if (!app.user?._id) return;
+      const userId = app.user._id;
+      const program = app.program;
 
-        if (!userProgramEnrollments[userId]) {
-            userProgramEnrollments[userId] = {};
-        }
-        if (!userProgramEnrollments[userId][program]) {
-            userProgramEnrollments[userId][program] = [];
-        }
-        userProgramEnrollments[userId][program].push(app);
+      if (!userProgramEnrollments[userId]) {
+        userProgramEnrollments[userId] = {};
+      }
+      if (!userProgramEnrollments[userId][program]) {
+        userProgramEnrollments[userId][program] = [];
+      }
+      userProgramEnrollments[userId][program].push(app);
     });
 
     // Sort by Date ASC and assign numbers
     const lookup = {};
     Object.values(userProgramEnrollments).forEach(programs => {
-        Object.keys(programs).forEach(program => {
-            programs[program].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-            programs[program].forEach((app, index) => {
-                lookup[app._id] = index + 1;
-            });
+      Object.keys(programs).forEach(program => {
+        programs[program].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        programs[program].forEach((app, index) => {
+          lookup[app._id] = index + 1;
         });
+      });
     });
 
     return lookup;
@@ -87,8 +105,8 @@ import { ShineBorder } from "../../components/ui/ShineBorder";
 
   const queueApplicants = applicants.filter(app => !["approved", "rejected"].includes(app.status));
 
-  const filteredApplicants = queueApplicants.filter(a => 
-    a.user.fullName.toLowerCase().includes(searchQuery.toLowerCase()) || 
+  const filteredApplicants = queueApplicants.filter(a =>
+    a.user.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
     a._id.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -104,9 +122,9 @@ import { ShineBorder } from "../../components/ui/ShineBorder";
           <div className="flex items-center gap-3">
             <div className="relative group">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={16} />
-              <input 
-                type="text" 
-                placeholder="Search applicants..." 
+              <input
+                type="text"
+                placeholder="Search applicants..."
                 className="pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 placeholder:text-slate-400 transition-all w-64"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -157,67 +175,71 @@ import { ShineBorder } from "../../components/ui/ShineBorder";
                   if (app.status === 'approved') {
                     progress = 100;
                   } else {
-                     const phase1Forms = app.forms ? app.forms.filter(f => f.formId <= maxPhase1Id) : [];
-                     const completed = phase1Forms.filter(f => f.status === 'completed').length;
-                     progress = phase1Forms.length > 0 ? Math.round((completed / phase1Forms.length) * 100) : 0;
+                    const phase1Forms = app.forms ? app.forms.filter(f => f.formId <= maxPhase1Id) : [];
+                    const completed = phase1Forms.filter(f => f.status === 'completed').length;
+                    progress = phase1Forms.length > 0 ? Math.round((completed / phase1Forms.length) * 100) : 0;
                   }
 
                   return (
-                  <tr key={app._id} className="hover:bg-slate-50/50 transition-colors group">
-                    <td className="p-4 pl-8">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-700 font-bold text-sm">
-                          {app.user?.fullName?.charAt(0) || "U"}
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <p className="font-bold text-slate-900 leading-tight">{app.user?.fullName || "Unknown User"}</p>
-                            {submissionCounts[app._id] > 1 && (
-                              <span className="px-1.5 py-0.5 rounded-md bg-blue-50 text-blue-900 text-[10px] font-bold uppercase tracking-wider border border-blue-100">
-                                {getOrdinal(submissionCounts[app._id])} Submission
-                              </span>
-                            )}
+                    <tr
+                      key={app._id}
+                      id={`applicant-row-${app._id}`}
+                      className="hover:bg-slate-50/50 transition-colors group"
+                    >
+                      <td className="p-4 pl-8">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-700 font-bold text-sm">
+                            {app.user?.fullName?.charAt(0) || "U"}
                           </div>
-                          <p className="text-[10px] font-black uppercase tracking-wider bg-gradient-to-r from-rose-500 to-blue-600 bg-clip-text text-transparent">
-                            {getOrdinal(submissionCounts[app._id])} {app.program === "NOW-COMP" ? "NOW-COMP Program" : "Other Program"} Submission
-                          </p>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <p className="font-bold text-slate-900 leading-tight">{app.user?.fullName || "Unknown User"}</p>
+                              {submissionCounts[app._id] > 1 && (
+                                <span className="px-1.5 py-0.5 rounded-md bg-blue-50 text-blue-900 text-[10px] font-bold uppercase tracking-wider border border-blue-100">
+                                  {getOrdinal(submissionCounts[app._id])} Submission
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-[10px] font-black uppercase tracking-wider bg-gradient-to-r from-rose-500 to-blue-600 bg-clip-text text-transparent">
+                              {getOrdinal(submissionCounts[app._id])} {app.program === "NOW-COMP" ? "NOW-COMP Program" : "Other Program"} Submission
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                    <td className="p-4">
-                      <span className="text-xs font-bold text-slate-600">{app.program}</span>
-                    </td>
-                    <td className="p-4">
-                      <div className="w-32">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-tighter">{progress}% Verified</span>
+                      </td>
+                      <td className="p-4">
+                        <span className="text-xs font-bold text-slate-600">{app.program}</span>
+                      </td>
+                      <td className="p-4">
+                        <div className="w-32">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-tighter">{progress}% Verified</span>
+                          </div>
+                          <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-gradient-to-r from-emerald-600 to-emerald-500 rounded-full show-shine"
+                              style={{ width: `${progress}%` }}
+                            />
+                          </div>
                         </div>
-                        <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-gradient-to-r from-emerald-600 to-emerald-500 rounded-full show-shine" 
-                            style={{ width: `${progress}%` }}
-                          />
+                      </td>
+                      <td className="p-4">
+                        <StatusBadge status={app.status || "Unknown"} />
+                      </td>
+                      <td className="p-4">
+                        <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
+                          <Calendar size={12} className="text-slate-400" />
+                          {new Date(app.updatedAt).toLocaleDateString()}
                         </div>
-                      </div>
-                    </td>
-                    <td className="p-4">
-                      <StatusBadge status={app.status || "Unknown"} />
-                    </td>
-                    <td className="p-4">
-                      <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
-                        <Calendar size={12} className="text-slate-400" />
-                        {new Date(app.updatedAt).toLocaleDateString()}
-                      </div>
-                    </td>
-                    <td className="p-4 pr-8">
-                        <button 
-                          onClick={() => navigate(`/admin/application/${app._id}`)}
+                      </td>
+                      <td className="p-4 pr-8">
+                        <button
+                          onClick={() => navigate(`/admin/application/${app._id}?from=admin-dashboard&scrollTo=applicant-row-${app._id}`)}
                           className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:border-indigo-500 hover:text-indigo-600 transition-all shadow-sm group-hover:shadow-md"
                         >
                           Review Entry <ChevronRight size={14} />
                         </button>
-                    </td>
-                  </tr>
+                      </td>
+                    </tr>
                   );
                 })}
               </tbody>
@@ -226,59 +248,63 @@ import { ShineBorder } from "../../components/ui/ShineBorder";
             {/* Mobile Card View */}
             <div className="md:hidden flex flex-col gap-4 p-4">
               {filteredApplicants.map((app) => {
-                 const maxPhase1Id = app.program === "NOW-COMP" ? 20 : 8;
-                 let progress = 0;
-                 if (app.status === 'approved') {
-                   progress = 100;
-                 } else {
-                    const phase1Forms = app.forms ? app.forms.filter(f => f.formId <= maxPhase1Id) : [];
-                    const completed = phase1Forms.filter(f => f.status === 'completed').length;
-                    progress = phase1Forms.length > 0 ? Math.round((completed / phase1Forms.length) * 100) : 0;
-                 }
+                const maxPhase1Id = app.program === "NOW-COMP" ? 20 : 8;
+                let progress = 0;
+                if (app.status === 'approved') {
+                  progress = 100;
+                } else {
+                  const phase1Forms = app.forms ? app.forms.filter(f => f.formId <= maxPhase1Id) : [];
+                  const completed = phase1Forms.filter(f => f.status === 'completed').length;
+                  progress = phase1Forms.length > 0 ? Math.round((completed / phase1Forms.length) * 100) : 0;
+                }
 
-                 return (
-                  <div key={app._id} className="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm">
+                return (
+                  <div
+                    key={app._id}
+                    id={`applicant-mob-row-${app._id}`}
+                    className="bg-white border border-slate-100 rounded-2xl p-4 shadow-sm"
+                  >
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex items-center gap-3">
-                         <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-700 font-bold text-sm">
-                            {app.user?.fullName?.charAt(0) || "U"}
-                          </div>
-                          <div>
-                            <p className="font-bold text-slate-900 leading-tight">{app.user?.fullName || "Unknown User"}</p>
-                            <p className="text-[10px] font-black uppercase tracking-wider bg-gradient-to-r from-rose-500 to-blue-600 bg-clip-text text-transparent">
-                              {app.program}
-                            </p>
-                          </div>
+                        <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-700 font-bold text-sm">
+                          {app.user?.fullName?.charAt(0) || "U"}
+                        </div>
+                        <div>
+                          <p className="font-bold text-slate-900 leading-tight">{app.user?.fullName || "Unknown User"}</p>
+                          <p className="text-[10px] font-black uppercase tracking-wider bg-gradient-to-r from-rose-500 to-blue-600 bg-clip-text text-transparent">
+                            {app.program}
+                          </p>
+                        </div>
                       </div>
                       <StatusBadge status={app.status || "Unknown"} />
                     </div>
-                    
+
                     <div className="mb-4">
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-tighter">{progress}% Verified</span>
                       </div>
                       <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                        <div 
-                          className="h-full bg-gradient-to-r from-emerald-600 to-emerald-500 rounded-full show-shine" 
+                        <div
+                          className="h-full bg-gradient-to-r from-emerald-600 to-emerald-500 rounded-full show-shine"
                           style={{ width: `${progress}%` }}
                         />
                       </div>
                     </div>
 
                     <div className="flex justify-between items-center pt-2 border-t border-slate-50">
-                       <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
-                          <Calendar size={12} className="text-slate-400" />
-                          {new Date(app.updatedAt).toLocaleDateString()}
-                        </div>
-                        <button 
-                          onClick={() => navigate(`/admin/application/${app._id}`)}
-                          className="flex items-center gap-1 px-3 py-1.5 bg-slate-50 text-indigo-600 rounded-lg text-xs font-bold hover:bg-indigo-50"
-                        >
-                          Review <ChevronRight size={12} />
-                        </button>
+                      <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
+                        <Calendar size={12} className="text-slate-400" />
+                        {new Date(app.updatedAt).toLocaleDateString()}
+                      </div>
+                      <button
+                        onClick={() => navigate(`/admin/application/${app._id}?from=admin-dashboard&scrollTo=applicant-mob-row-${app._id}`)}
+                        className="flex items-center gap-1 px-3 py-1.5 bg-slate-50 text-indigo-600 rounded-lg text-xs font-bold hover:bg-indigo-50"
+                      >
+                        Review <ChevronRight size={12} />
+                      </button>
                     </div>
                   </div>
-                 )
+                )
               })}
             </div>
           </div>
@@ -298,9 +324,9 @@ const StatCard = ({ title, value, icon: Icon, color, percentage }) => {
 
   return (
     <div className="bg-white p-6 rounded-[2rem] border border-slate-200 shadow-sm relative overflow-hidden group flex items-center gap-4 transition-all hover:shadow-md">
-        <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform rotate-12">
-            <Icon size={80} />
-        </div>
+      <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform rotate-12">
+        <Icon size={80} />
+      </div>
       <div className={`p-3 rounded-2xl flex items-center justify-center ${colors[color]}`}>
         <Icon size={32} strokeWidth={1.5} />
       </div>
@@ -310,7 +336,7 @@ const StatCard = ({ title, value, icon: Icon, color, percentage }) => {
           <h4 className="text-3xl font-bold text-blue-950">{value}</h4>
           {percentage !== undefined && (
             <span className="flex items-center gap-0.5 text-xs font-bold text-emerald-500 bg-emerald-50 px-1.5 py-0.5 rounded-md">
-               <ArrowUpRight size={12} /> {percentage}%
+              <ArrowUpRight size={12} /> {percentage}%
             </span>
           )}
         </div>
@@ -329,7 +355,7 @@ const StatusBadge = ({ status }) => {
   };
 
   const normalizedStatus = status.toLowerCase();
-  
+
   return (
     <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg border shadow-sm ${styles[normalizedStatus] || "bg-slate-50 text-slate-600 border-slate-200"}`}>
       {status}

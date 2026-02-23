@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import {
   ArrowLeft,
   FileText,
@@ -27,7 +27,38 @@ import {
 const AdminApplicationDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const queryClient = useQueryClient();
+
+  // Auto-scroll logic for returning from form view
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const scrollTo = params.get("scrollTo");
+    if (scrollTo) {
+      const timer = setTimeout(() => {
+        const el = document.getElementById(scrollTo);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+          el.classList.add("ring-2", "ring-blue-400", "ring-offset-2");
+          setTimeout(() => el.classList.remove("ring-2", "ring-blue-400", "ring-offset-2"), 2500);
+        }
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [location.search]);
+
+  // Handle smart back navigation
+  const handleBack = () => {
+    const params = new URLSearchParams(location.search);
+    const from = params.get("from");
+    const scrollTo = params.get("scrollTo");
+
+    if (from === "admin-dashboard" && scrollTo) {
+      navigate(`/admin/dashboard?scrollTo=${scrollTo}`);
+    } else {
+      navigate("/admin/dashboard");
+    }
+  };
 
   const { data: enrollmentData, isLoading } = useQuery({
     queryKey: ["adminEnrollmentDetail", id],
@@ -47,12 +78,12 @@ const AdminApplicationDetail = () => {
   const submissionLabel = useMemo(() => {
     if (!enrollment || !userEnrollmentsData?.enrollments) return enrollment?._id;
 
-    const userApps = userEnrollmentsData.enrollments.filter(app => 
-        app.user?._id === enrollment.user._id && app.program === enrollment.program
+    const userApps = userEnrollmentsData.enrollments.filter(app =>
+      app.user?._id === enrollment.user._id && app.program === enrollment.program
     );
 
     userApps.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-    
+
     const index = userApps.findIndex(app => app._id === enrollment._id);
     if (index === -1) return enrollment._id;
 
@@ -329,7 +360,7 @@ const AdminApplicationDetail = () => {
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         {/* Back Button */}
         <button
-          onClick={() => navigate("/admin/dashboard")}
+          onClick={handleBack}
           className="mb-8 flex items-center gap-2 text-blue-900 hover:text-indigo-600 font-bold transition-all group"
         >
           <ArrowLeft
@@ -401,17 +432,16 @@ const AdminApplicationDetail = () => {
                     });
                   }
                   }
-                  className={`p-4 rounded-2xl transition-all duration-300 flex items-center justify-center gap-2 group ${
-                    allFormsApproved && enrollment.status !== "approved" && enrollment.status !== "rejected"
-                      ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-200"
-                      : "bg-slate-100 text-slate-400 border border-slate-200 cursor-pointer hover:bg-slate-200"
-                  }`}
+                  className={`p-4 rounded-2xl transition-all duration-300 flex items-center justify-center gap-2 group ${allFormsApproved && enrollment.status !== "approved" && enrollment.status !== "rejected"
+                    ? "bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-200"
+                    : "bg-slate-100 text-slate-400 border border-slate-200 cursor-pointer hover:bg-slate-200"
+                    }`}
                   title={
                     enrollment.status === "approved" || enrollment.status === "rejected"
                       ? `Application already ${enrollment.status}`
                       : allFormsApproved
-                      ? "Approve Full Packet"
-                      : "Review Required: Approve all forms first"
+                        ? "Approve Full Packet"
+                        : "Review Required: Approve all forms first"
                   }
                 >
                   <CheckCircle size={22} className={allFormsApproved && enrollment.status !== "approved" && enrollment.status !== "rejected" ? "animate-pulse" : ""} />
@@ -434,17 +464,16 @@ const AdminApplicationDetail = () => {
                     });
                   }
                   }
-                  className={`p-4 rounded-2xl transition-all duration-300 flex items-center justify-center gap-2 group ${
-                    allFormsReviewed && enrollment.status !== "approved" && enrollment.status !== "rejected"
-                      ? "bg-rose-600 hover:bg-rose-700 text-white shadow-lg shadow-rose-200"
-                      : "bg-slate-100 text-slate-400 border border-slate-200 cursor-pointer hover:bg-slate-200"
-                  }`}
+                  className={`p-4 rounded-2xl transition-all duration-300 flex items-center justify-center gap-2 group ${allFormsReviewed && enrollment.status !== "approved" && enrollment.status !== "rejected"
+                    ? "bg-rose-600 hover:bg-rose-700 text-white shadow-lg shadow-rose-200"
+                    : "bg-slate-100 text-slate-400 border border-slate-200 cursor-pointer hover:bg-slate-200"
+                    }`}
                   title={
                     enrollment.status === "approved" || enrollment.status === "rejected"
                       ? `Application already ${enrollment.status}`
                       : allFormsReviewed
-                      ? "Reject Full Packet"
-                      : "Review Required: Grade all forms first"
+                        ? "Reject Full Packet"
+                        : "Review Required: Grade all forms first"
                   }
                 >
                   <XCircle size={22} />
@@ -475,6 +504,7 @@ const AdminApplicationDetail = () => {
                   return (
                     <div
                       key={formDef.id}
+                      id={`form-row-${formDef.id}`}
                       className="bg-white rounded-3xl p-4 md:p-6 border border-slate-200 hover:border-blue-400 transition-all group flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 shadow-sm"
                     >
                       <div className="flex items-start gap-5">
@@ -509,14 +539,14 @@ const AdminApplicationDetail = () => {
                           </div>
                         )}
 
-                          <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-4">
                           <StatusBadge status={status} />
                           <div className="h-8 w-px bg-slate-100 hidden md:block" />
                           <div className="flex gap-2">
-                             <button
+                            <button
                               onClick={() =>
                                 navigate(
-                                  `/admin/application/${enrollment._id}/form/${form.formId}`,
+                                  `/admin/application/${enrollment._id}/form/${form.formId}?from=admin-application-detail&scrollTo=form-row-${formDef.id}`,
                                 )
                               }
                               className="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-bold hover:border-blue-500 hover:text-blue-600 transition-all flex items-center gap-2 hover:shadow-md"
@@ -580,7 +610,7 @@ const AdminApplicationDetail = () => {
               <label className="text-xs font-black text-blue-900 uppercase tracking-widest mb-3 block">
                 Internal Review Notes
               </label>
-                <textarea
+              <textarea
                 className="w-full h-32 p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:border-blue-500 transition-all text-sm mb-8 text-slate-900"
                 placeholder="Enter feedback for the applicant..."
                 value={reviewModal.note}

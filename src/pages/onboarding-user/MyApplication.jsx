@@ -36,6 +36,18 @@ const MyApplication = () => {
   const location = useLocation();
   const enrollmentId = searchParams.get("enrollmentId");
   const formId = searchParams.get("formId");
+  const fromPage = searchParams.get("from");
+  const scrollTo = searchParams.get("scrollTo");
+  const appId = searchParams.get("appId");
+
+  // Smart back navigation — returns to origin page and restores scroll position
+  const handleBack = () => {
+    if (fromPage === "my-applications" && scrollTo && appId) {
+      navigate(`/my-applications?appId=${appId}&scrollTo=${scrollTo}`);
+    } else {
+      window.history.back();
+    }
+  };
 
   const [selectedProgram, setSelectedProgram] = useState(() => {
     return localStorage.getItem("selectedProgram") || "NOW-COMP";
@@ -393,12 +405,11 @@ const MyApplication = () => {
                   activeEnrollment?.status === "submitted" ||
                   !activeEnrollment
                 }
-                className={`px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1.5 sm:gap-2 ${
-                  progressStats.percent === 100 &&
+                className={`px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1.5 sm:gap-2 ${progressStats.percent === 100 &&
                   activeEnrollment?.status === "pending"
-                    ? "bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-200 shadow-lg"
-                    : "bg-slate-100 text-slate-400 cursor-not-allowed"
-                }`}
+                  ? "bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-200 shadow-lg"
+                  : "bg-slate-100 text-slate-400 cursor-not-allowed"
+                  }`}
               >
                 {submitMutation.isPending ? (
                   <Loader2 className="animate-spin" size={14} />
@@ -548,15 +559,14 @@ const MyApplication = () => {
                           </td>
                           <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-5 hidden sm:table-cell">
                             <div
-                              className={`text-[10px] sm:text-xs p-2 sm:p-3 rounded-lg sm:rounded-xl border italic max-w-sm ${
-                                status === "Approved"
-                                  ? "bg-emerald-50/30 border-emerald-100 text-emerald-700 font-medium"
-                                  : status === "Rejected"
-                                    ? "bg-rose-50/30 border-rose-100 text-rose-700 font-medium"
-                                    : status === "Pending"
-                                      ? "bg-amber-50/30 border-amber-100 text-amber-900 overflow-hidden"
-                                      : "bg-slate-50/30 border-slate-100 text-slate-500"
-                              }`}
+                              className={`text-[10px] sm:text-xs p-2 sm:p-3 rounded-lg sm:rounded-xl border italic max-w-sm ${status === "Approved"
+                                ? "bg-emerald-50/30 border-emerald-100 text-emerald-700 font-medium"
+                                : status === "Rejected"
+                                  ? "bg-rose-50/30 border-rose-100 text-rose-700 font-medium"
+                                  : status === "Pending"
+                                    ? "bg-amber-50/30 border-amber-100 text-amber-900 overflow-hidden"
+                                    : "bg-slate-50/30 border-slate-100 text-slate-500"
+                                }`}
                             >
                               "{note}"
                             </div>
@@ -569,15 +579,14 @@ const MyApplication = () => {
                           <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-5 text-right">
                             <button
                               onClick={() => navigate(`?formId=${form.id}`)}
-                              className={`px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-2.5 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold transition-all shadow-sm whitespace-nowrap ${
-                                isCompleted
-                                  ? "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
-                                  : isDraft
-                                    ? "bg-yellow-500 text-white hover:bg-yellow-600 shadow-lg shadow-yellow-100"
-                                    : isInProgress
-                                      ? "bg-amber-500 text-white hover:bg-amber-600 shadow-lg shadow-amber-100"
-                                      : "bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-100"
-                              }`}
+                              className={`px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-2.5 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold transition-all shadow-sm whitespace-nowrap ${isCompleted
+                                ? "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
+                                : isDraft
+                                  ? "bg-yellow-500 text-white hover:bg-yellow-600 shadow-lg shadow-yellow-100"
+                                  : isInProgress
+                                    ? "bg-amber-500 text-white hover:bg-amber-600 shadow-lg shadow-amber-100"
+                                    : "bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-100"
+                                }`}
                             >
                               <span className="hidden sm:inline">
                                 {status === "Completed" || status === "Approved"
@@ -596,7 +605,7 @@ const MyApplication = () => {
                                   : status === "Rejected"
                                     ? "Fix"
                                     : status === "Draft Saved" ||
-                                        status === "In Progress"
+                                      status === "In Progress"
                                       ? "Continue"
                                       : "Open"}
                               </span>
@@ -876,7 +885,7 @@ const MyApplication = () => {
 
       const isReadOnly =
         backendForm?.status !== "rejected" &&
-        (["completed", "approved"].includes(backendForm?.status) ||
+        (["approved"].includes(backendForm?.status) ||
           ["submitted", "approved"].includes(activeEnrollment?.status));
 
       // Calculate next form ID
@@ -954,7 +963,7 @@ const MyApplication = () => {
           <div className="bg-gradient-to-r from-slate-50 to-white border-b border-slate-200 p-3 sm:p-4 md:p-6 rounded-t-3xl">
             <div className="flex items-center gap-2 sm:gap-3 md:gap-4 mb-3 md:mb-4">
               <button
-                onClick={() => window.history.back()}
+                onClick={handleBack}
                 className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
               >
                 <ArrowLeft size={20} className="text-slate-600" />

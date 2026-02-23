@@ -1,5 +1,5 @@
 import React, { useMemo, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   FileText,
@@ -16,7 +16,22 @@ import { getEnrollmentDetail, reviewForm } from "../../api/enrollment.api";
 
 const AdminFormView = () => {
   const { id, formId } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
   const queryClient = useQueryClient();
+
+  // Handle smart back navigation
+  const handleBack = () => {
+    const params = new URLSearchParams(location.search);
+    const from = params.get("from");
+    const scrollTo = params.get("scrollTo");
+
+    if (from === "admin-application-detail" && scrollTo) {
+      navigate(`/admin/application/${id}?scrollTo=${scrollTo}`);
+    } else {
+      window.history.back();
+    }
+  };
   const [reviewModal, setReviewModal] = useState({
     isOpen: false,
     note: "",
@@ -109,7 +124,7 @@ const AdminFormView = () => {
       <div className="bg-gradient-to-r from-blue-950 via-blue-900 to-blue-800 border-b border-blue-700 p-4 md:p-6 text-white">
         <div className="flex items-center gap-4 mb-4">
           <button
-            onClick={() => window.history.back()}
+            onClick={handleBack}
             className="p-2 hover:bg-white/10 rounded-lg transition-colors"
           >
             <ArrowLeft size={20} className="text-white" />
@@ -446,8 +461,8 @@ function FormRenderer({ formId, formName, data, program, isAdminView }) {
     <Component
       savedData={data}
       selectedProgram={program}
-      onComplete={() => {}}
-      onFormChange={() => {}}
+      onComplete={() => { }}
+      onFormChange={() => { }}
       progressCurrent={1}
       progressTotal={1}
       isAdminView={isAdminView}

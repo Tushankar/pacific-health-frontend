@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useMemo, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   FileText,
   CheckCircle,
@@ -33,7 +33,30 @@ import { motion } from "framer-motion";
 
 const MyApplicationsList = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [selectedAppId, setSelectedAppId] = useState(null);
+
+  // Auto-scroll to the form row when returning from a form view
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const scrollTo = params.get("scrollTo");
+    const appId = params.get("appId");
+    if (appId) {
+      setSelectedAppId(appId);
+    }
+    if (scrollTo) {
+      // Small delay to let the DOM render the selected application detail view
+      const timer = setTimeout(() => {
+        const el = document.getElementById(scrollTo);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+          el.classList.add("ring-2", "ring-indigo-400", "ring-offset-2");
+          setTimeout(() => el.classList.remove("ring-2", "ring-indigo-400", "ring-offset-2"), 2500);
+        }
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [location.search]);
 
   // Fetch enrollment history
   const { data: enrollmentsData, isLoading } = useQuery({
@@ -44,24 +67,24 @@ const MyApplicationsList = () => {
   // Calculate submission counts
   const submissionCounts = useMemo(() => {
     if (!enrollmentsData?.enrollments) return {};
-    
+
     // Group by program
     const programEnrollments = {};
     enrollmentsData.enrollments.forEach(app => {
-        const program = app.program;
-        if (!programEnrollments[program]) {
-            programEnrollments[program] = [];
-        }
-        programEnrollments[program].push(app);
+      const program = app.program;
+      if (!programEnrollments[program]) {
+        programEnrollments[program] = [];
+      }
+      programEnrollments[program].push(app);
     });
 
     // Sort by Date ASC and assign numbers
     const lookup = {};
     Object.keys(programEnrollments).forEach(program => {
-        programEnrollments[program].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-        programEnrollments[program].forEach((app, index) => {
-            lookup[app._id] = index + 1;
-        });
+      programEnrollments[program].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      programEnrollments[program].forEach((app, index) => {
+        lookup[app._id] = index + 1;
+      });
     });
 
     return lookup;
@@ -75,7 +98,7 @@ const MyApplicationsList = () => {
 
   const applications = useMemo(() => {
     if (!enrollmentsData?.enrollments) return [];
-    
+
     return enrollmentsData.enrollments.map(app => {
       // Determine styles based on status
       let styles = {
@@ -124,7 +147,7 @@ const MyApplicationsList = () => {
           cardGradient: "bg-gradient-to-br from-white via-white to-indigo-50",
         };
       }
-      
+
       const count = submissionCounts[app._id] || 1;
       const ordinal = getOrdinal(count);
       const label = `${ordinal} ${app.program === "NOW-COMP" ? "NOW-COMP Program" : "Other Program"} Submission`;
@@ -297,17 +320,17 @@ const MyApplicationsList = () => {
                 color={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
                 className="group relative cursor-pointer !bg-white !p-0 !min-h-0 !w-auto !min-w-0 shadow-lg hover:shadow-xl transition-all"
               >
-                  <div
-                    onClick={() => setSelectedAppId(app.id)}
-                    className="p-8 w-full h-full relative"
-                  >
+                <div
+                  onClick={() => setSelectedAppId(app.id)}
+                  className="p-8 w-full h-full relative"
+                >
                   {/* GRID LINES REMOVED */}
 
                   <div className="relative z-10">
                     {/* Card Header */}
                     <div className="flex justify-between items-start mb-6">
                       <div className="p-2 bg-indigo-50 rounded-xl">
-                         <img
+                        <img
                           src="https://www.pacifichealthsystems.net/wp-content/themes/pacifichealth/images/logo.png"
                           alt="Pacific Health Systems"
                           className="h-8 w-auto object-contain"
@@ -447,6 +470,7 @@ const MyApplicationsList = () => {
                     {chapter.forms.map((form) => (
                       <div
                         key={form.id}
+                        id={`form-row-${form.id}`}
                         className="bg-white rounded-2xl p-4 border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 group"
                       >
                         <div className="flex-1 flex items-start gap-4">
@@ -484,8 +508,8 @@ const MyApplicationsList = () => {
                             <div className="hidden sm:block">
                               <StatusBadge status={form.status} />
                             </div>
-                            <button 
-                              onClick={() => navigate(`/my-application-view?enrollmentId=${selectedAppId}&formId=${form.id}`)}
+                            <button
+                              onClick={() => navigate(`/my-application-view?enrollmentId=${selectedAppId}&formId=${form.id}&from=my-applications&scrollTo=form-row-${form.id}&appId=${selectedAppId}`)}
                               className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 text-indigo-600 font-bold text-xs hover:bg-indigo-600 hover:text-white transition-all"
                             >
                               Open <ChevronRight size={14} />
@@ -524,9 +548,8 @@ const TypeBadge = ({ type }) => {
 
   return (
     <div
-      className={`flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold border uppercase tracking-wider ${
-        styles[type] || styles["Track"]
-      }`}
+      className={`flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold border uppercase tracking-wider ${styles[type] || styles["Track"]
+        }`}
     >
       {icons[type]} {type}
     </div>
@@ -547,9 +570,8 @@ const StatusBadge = ({ status }) => {
 
   return (
     <span
-      className={`text-[11px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg border shadow-sm ${
-        styles[status] || "bg-slate-50 border-slate-200"
-      }`}
+      className={`text-[11px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg border shadow-sm ${styles[status] || "bg-slate-50 border-slate-200"
+        }`}
     >
       {status}
     </span>
