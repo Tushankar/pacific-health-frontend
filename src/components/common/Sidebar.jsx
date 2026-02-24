@@ -23,11 +23,6 @@ import {
   Briefcase,
   Loader2,
   X,
-  CheckCircle2,
-  XCircle,
-  CircleDot,
-  Circle,
-  Lock
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getMyEnrollment } from "../../api/enrollment.api";
@@ -124,17 +119,20 @@ const Sidebar = ({
     const isHovered = hoveredItem === index;
 
     if (isActive) {
-      return `group bg-white w-full flex justify-start items-center p-4 md:p-4.5 cursor-pointer transition-all duration-300 relative shadow-[0_4px_24px_rgba(255,255,255,0.1)] z-10 ${isDesktopCollapsed ? "md:justify-center md:px-3" : ""
-        }`;
+      return `group bg-white w-full flex justify-start items-center p-4 md:p-4.5 cursor-pointer transition-all duration-200 relative ${
+        isDesktopCollapsed ? "md:justify-center md:px-3" : ""
+      }`;
     }
 
     if (isHovered) {
-      return `group w-full flex justify-start items-center p-4 md:p-4.5 cursor-pointer transition-all duration-300 relative bg-white/5 backdrop-blur-sm ${isDesktopCollapsed ? "md:justify-center md:px-3" : ""
-        }`;
+      return `group bg-white/10 w-full flex justify-start items-center p-4 md:p-4.5 cursor-pointer transition-all duration-200 relative ${
+        isDesktopCollapsed ? "md:justify-center md:px-3" : ""
+      }`;
     }
 
-    return `group w-full flex justify-start items-center p-4 md:p-4.5 cursor-pointer transition-all duration-300 bg-transparent ${isDesktopCollapsed ? "md:justify-center md:px-3" : ""
-      }`;
+    return `group w-full flex justify-start items-center p-4 md:p-4.5 cursor-pointer transition-all duration-200 ${
+      isDesktopCollapsed ? "md:justify-center md:px-3" : ""
+    }`;
   };
 
   const getIconColorClass = (path, index, isExternallyActive = false) => {
@@ -162,32 +160,32 @@ const Sidebar = ({
 
   const menuItems = isAdmin
     ? [
-      {
-        name: "Submission Queue",
-        path: "/admin/dashboard",
-        icon: ClipboardList,
-      },
-      {
-        name: "Program Overview",
-        path: "/admin/programs",
-        icon: LayoutDashboard,
-      },
-      { name: "After Hire", path: "/admin/after-hire", icon: Briefcase },
-      { name: "Communication", path: "/communication", icon: MessageSquare },
-      { name: "Profile", path: "/profile", icon: User },
-    ]
+        {
+          name: "Submission Queue",
+          path: "/admin/dashboard",
+          icon: ClipboardList,
+        },
+        {
+          name: "Program Overview",
+          path: "/admin/programs",
+          icon: LayoutDashboard,
+        },
+        { name: "After Hire", path: "/admin/after-hire", icon: Briefcase },
+        { name: "Communication", path: "/communication", icon: MessageSquare },
+        { name: "Profile", path: "/profile", icon: User },
+      ]
     : [
-      { name: "History", path: "/my-applications", icon: ClipboardList },
-      { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
-      {
-        name: "Active Application",
-        path: "/my-application",
-        icon: FileStack,
-        hasDropdown: true,
-      },
-      { name: "Communication", path: "/communication", icon: MessageSquare },
-      { name: "Profile", path: "/profile", icon: User },
-    ];
+        { name: "History", path: "/my-applications", icon: ClipboardList },
+        { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
+        {
+          name: "Active Application",
+          path: "/my-application",
+          icon: FileStack,
+          hasDropdown: true,
+        },
+        { name: "Communication", path: "/communication", icon: MessageSquare },
+        { name: "Profile", path: "/profile", icon: User },
+      ];
 
   // Forms data for My Workflows dropdown
   const formsData = useMemo(() => {
@@ -320,36 +318,61 @@ const Sidebar = ({
 
   const renderCompletionIndicator = (form) => {
     const status = form.status;
-    const baseClasses = "w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-500 shadow-sm border border-transparent";
 
     if (status === "completed" || status === "approved") {
       return (
-        <div className={`${baseClasses} bg-emerald-500/20 border-emerald-500/40 shadow-[0_0_12px_rgba(16,185,129,0.3)]`}>
-          <CheckCircle2 size={12} strokeWidth={3} className="text-emerald-400" />
+        <div className="w-4 h-4 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0">
+          <svg
+            className="w-2.5 h-2.5 text-white"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fillRule="evenodd"
+              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+              clipRule="evenodd"
+            />
+          </svg>
         </div>
       );
     } else if (status === "rejected") {
       return (
-        <div className={`${baseClasses} bg-rose-500/20 border-rose-500/40 shadow-[0_0_12px_rgba(244,63,94,0.3)]`}>
-          <XCircle size={12} strokeWidth={3} className="text-rose-400" />
+        <div className="w-4 h-4 rounded-full bg-rose-500 flex items-center justify-center flex-shrink-0">
+          <svg
+            className="w-2.5 h-2.5 text-white"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fillRule="evenodd"
+              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+              clipRule="evenodd"
+            />
+          </svg>
         </div>
       );
     } else if (status === "draft") {
       return (
-        <div className={`${baseClasses} bg-amber-400/20 border-amber-400/40 shadow-[0_0_12px_rgba(251,191,36,0.3)]`}>
-          <CircleDot size={12} strokeWidth={2.5} className="text-amber-400" />
+        <div className="w-4 h-4 rounded-full bg-yellow-400 flex items-center justify-center flex-shrink-0 shadow-sm shadow-yellow-400/50">
+          <svg
+            className="w-2 h-2 text-white"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+          </svg>
         </div>
       );
     } else if (status === "in-progress") {
       return (
-        <div className={`${baseClasses} bg-blue-400/20 border-blue-400/40 shadow-[0_0_12px_rgba(96,165,250,0.3)]`}>
-          <CircleDot size={12} strokeWidth={2.5} className="text-blue-400 opacity-80" />
+        <div className="w-4 h-4 rounded-full bg-amber-500 flex items-center justify-center flex-shrink-0">
+          <div className="w-2 h-2 rounded-full bg-white opacity-40"></div>
         </div>
       );
     } else {
       return (
-        <div className={`${baseClasses} bg-white/5 border border-white/10`}>
-          <Circle size={12} strokeWidth={2} className="text-white/30" />
+        <div className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
+          <div className="w-1.5 h-1.5 rounded-full bg-white/30"></div>
         </div>
       );
     }
@@ -358,34 +381,34 @@ const Sidebar = ({
   const getFormTypeIcon = (type) => {
     switch (type) {
       case "Data Entry":
-        return <UserPlus size={14} strokeWidth={2.5} className="opacity-90 leading-none" />;
+        return <UserPlus size={16} className="text-blue-600" />;
       case "Fillable":
-        return <PenTool size={14} strokeWidth={2.5} className="opacity-90 leading-none" />;
+        return <PenTool size={16} className="text-emerald-600" />;
       case "Signable":
-        return <FileText size={14} strokeWidth={2.5} className="opacity-90 leading-none" />;
+        return <FileText size={16} className="text-purple-600" />;
       case "Upload":
-        return <Upload size={14} strokeWidth={2.5} className="opacity-90 leading-none" />;
+        return <Upload size={16} className="text-orange-600" />;
       case "Track":
-        return <ClipboardList size={14} strokeWidth={2.5} className="opacity-90 leading-none" />;
+        return <ClipboardList size={16} className="text-indigo-600" />;
       default:
-        return <FileText size={14} strokeWidth={2.5} className="opacity-80 leading-none" />;
+        return <FileText size={16} className="text-slate-600" />;
     }
   };
 
   const getFormTypeColor = (type) => {
     switch (type) {
       case "Data Entry":
-        return "text-blue-300 bg-blue-500/20 border border-blue-400/30 shadow-[0_0_8px_rgba(59,130,246,0.15)]";
+        return "text-blue-600 bg-blue-100";
       case "Fillable":
-        return "text-emerald-300 bg-emerald-500/20 border border-emerald-400/30 shadow-[0_0_8px_rgba(16,185,129,0.15)]";
+        return "text-emerald-600 bg-emerald-100";
       case "Signable":
-        return "text-purple-300 bg-purple-500/20 border border-purple-400/30 shadow-[0_0_8px_rgba(168,85,247,0.15)]";
+        return "text-purple-600 bg-purple-100";
       case "Upload":
-        return "text-orange-300 bg-orange-500/20 border border-orange-400/30 shadow-[0_0_8px_rgba(249,115,22,0.15)]";
+        return "text-orange-600 bg-orange-100";
       case "Track":
-        return "text-indigo-300 bg-indigo-500/20 border border-indigo-400/30 shadow-[0_0_8px_rgba(99,102,241,0.15)]";
+        return "text-indigo-600 bg-indigo-100";
       default:
-        return "text-white/80 bg-white/10 border border-white/20";
+        return "text-slate-600 bg-slate-100";
     }
   };
 
@@ -404,14 +427,15 @@ const Sidebar = ({
         initial={false}
         animate={{
           width: isDesktopCollapsed ? "80px" : "288px",
-          x: isMobileMenuOpen ? 0 : (window.innerWidth < 768 ? "-100%" : 0),
+          x: isMobileMenuOpen ? 0 : window.innerWidth < 768 ? "-100%" : 0,
         }}
         transition={{ ease: "easeInOut", duration: 0.4 }}
         className={`fixed md:static inset-y-0 left-0 h-full flex flex-col bg-white z-[100] transform shadow-2xl md:shadow-none`}
       >
         <div
-          className={`flex ${isDesktopCollapsed ? "justify-center" : "justify-between"
-            } items-center py-4 px-3 border-b border-[#BDC3C7] shadow-md relative h-[87px]`}
+          className={`flex ${
+            isDesktopCollapsed ? "justify-center" : "justify-between"
+          } items-center py-4 px-3 border-b border-[#BDC3C7] shadow-md relative h-[87px]`}
         >
           <AnimatePresence mode="wait">
             {!isDesktopCollapsed && (
@@ -457,9 +481,12 @@ const Sidebar = ({
               const isActiveApp = item.name === "Active Application";
 
               // Only consider formId if we are actually on the /my-application route
-              const isCurrentPathActiveApp = location.pathname === "/my-application";
+              const isCurrentPathActiveApp =
+                location.pathname === "/my-application";
               const isActiveAppActive =
-                isActiveApp && (isActiveRoute(item.path) || (activeFormId && isCurrentPathActiveApp));
+                isActiveApp &&
+                (isActiveRoute(item.path) ||
+                  (activeFormId && isCurrentPathActiveApp));
 
               const isExpanded = isActiveApp && isMyWorkflowsExpanded;
 
@@ -469,11 +496,7 @@ const Sidebar = ({
                   <div
                     className={
                       isActiveApp
-                        ? getMenuItemClass(
-                          item.path,
-                          index,
-                          isActiveAppActive,
-                        )
+                        ? getMenuItemClass(item.path, index, isActiveAppActive)
                         : getMenuItemClass(item.path, index)
                     }
                     onMouseEnter={() => setHoveredItem(index)}
@@ -487,8 +510,9 @@ const Sidebar = ({
                             navigate(item.path);
                           }
                         }}
-                        className={`flex justify-start items-center gap-5 w-full ${isDesktopCollapsed ? "md:justify-center" : ""
-                          }`}
+                        className={`flex justify-start items-center gap-5 w-full ${
+                          isDesktopCollapsed ? "md:justify-center" : ""
+                        }`}
                       >
                         <span
                           className={getIconColorClass(
@@ -526,11 +550,13 @@ const Sidebar = ({
                             >
                               <ChevronDown
                                 size={16}
-                                className={`${isActiveAppActive || isActiveRoute(item.path)
-                                  ? "text-[#1F3A93]"
-                                  : "text-white"
-                                  } transition-transform duration-200 ${isExpanded ? "rotate-180" : ""
-                                  }`}
+                                className={`${
+                                  isActiveAppActive || isActiveRoute(item.path)
+                                    ? "text-[#1F3A93]"
+                                    : "text-white"
+                                } transition-transform duration-200 ${
+                                  isExpanded ? "rotate-180" : ""
+                                }`}
                               />
                             </motion.div>
                           )}
@@ -539,8 +565,9 @@ const Sidebar = ({
                     ) : (
                       <Link
                         to={item.path}
-                        className={`flex justify-start items-center gap-5 w-full ${isDesktopCollapsed ? "md:justify-center" : ""
-                          }`}
+                        className={`flex justify-start items-center gap-5 w-full ${
+                          isDesktopCollapsed ? "md:justify-center" : ""
+                        }`}
                         onClick={closeMobileMenu}
                       >
                         <span className={getIconColorClass(item.path, index)}>
@@ -565,8 +592,8 @@ const Sidebar = ({
                     )}
                     {(isActiveRoute(item.path) ||
                       (isActiveApp && isActiveAppActive)) && (
-                        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-[#1F3A93] rounded-r-full" />
-                      )}
+                      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-[#1F3A93] rounded-r-full" />
+                    )}
                   </div>
 
                   {/* Active Application Dropdown */}
@@ -582,8 +609,10 @@ const Sidebar = ({
                         {formsData.map((chapter, chapterIndex) => {
                           const isChapterExpanded =
                             expandedChapters[chapterIndex];
-                          const completedCount = chapter.forms.filter(
-                            (form) => ["completed", "approved", "rejected"].includes(form.status),
+                          const completedCount = chapter.forms.filter((form) =>
+                            ["completed", "approved", "rejected"].includes(
+                              form.status,
+                            ),
                           ).length;
                           const totalCount = chapter.forms.length;
 
@@ -603,31 +632,32 @@ const Sidebar = ({
                                     [chapterIndex]: !prev[chapterIndex],
                                   }));
                                 }}
-                                className="w-full text-left px-4 py-2.5 text-white/80 hover:text-white hover:bg-white/5 transition-all duration-300 rounded-xl flex items-center gap-3 text-sm group hover:shadow-[0_2px_10px_rgba(0,0,0,0.1)]"
+                                className="w-full text-left px-4 py-2 text-white/80 hover:text-white hover:bg-white/10 transition-colors flex items-center gap-2 text-sm"
                               >
                                 <ChevronRight
-                                  size={16}
-                                  className={`transition-transform duration-300 flex-shrink-0 text-white/50 group-hover:text-white/90 ${isChapterExpanded ? "rotate-90 text-white/90" : ""
-                                    } ${chapter.isLocked ? "opacity-30" : ""}`}
+                                  size={14}
+                                  className={`transition-transform duration-200 flex-shrink-0 ${
+                                    isChapterExpanded ? "rotate-90" : ""
+                                  } ${chapter.isLocked ? "opacity-50" : ""}`}
                                 />
                                 <span
-                                  className={`flex-1 truncate font-medium tracking-wide transition-all duration-300 ${chapter.isLocked ? "text-white/40" : "group-hover:translate-x-0.5"}`}
+                                  className={`flex-1 truncate font-medium ${chapter.isLocked ? "text-white/40" : ""}`}
                                 >
                                   {chapter.chapter}
                                 </span>
                                 {chapter.isLocked ? (
-                                  <div className="px-2 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/20 flex items-center gap-1 shadow-[0_0_8px_rgba(245,158,11,0.15)] flex-shrink-0 overflow-hidden">
-                                    <Lock size={10} className="text-amber-500/80" />
-                                    <span className="text-[9px] font-black text-amber-500/90 uppercase tracking-widest pl-[1px]">
+                                  <div className="p-1 px-2 rounded-md bg-white/5 border border-white/10 flex items-center gap-1.5 overflow-hidden">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                                    <span className="text-[10px] font-bold text-amber-500 uppercase tracking-tighter">
                                       Locked
                                     </span>
                                   </div>
                                 ) : (
-                                  <div className="flex items-center gap-1 text-[11px] font-bold">
-                                    <span className="text-emerald-400 drop-shadow-[0_0_6px_rgba(52,211,153,0.4)]">
+                                  <div className="flex items-center gap-1 text-xs">
+                                    <span className="text-emerald-400 font-bold">
                                       {completedCount}
                                     </span>
-                                    <span className="text-white/40">/</span>
+                                    <span className="text-white/60">/</span>
                                     <span className="text-white/60">
                                       {totalCount}
                                     </span>
@@ -642,12 +672,16 @@ const Sidebar = ({
                                     initial={{ height: 0, opacity: 0 }}
                                     animate={{ height: "auto", opacity: 1 }}
                                     exit={{ height: 0, opacity: 0 }}
-                                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                                    className="ml-[22px] border-l border-white/10 pl-3 space-y-1.5 py-1.5 overflow-hidden"
+                                    transition={{
+                                      duration: 0.2,
+                                      ease: "easeInOut",
+                                    }}
+                                    className="ml-6 space-y-1 py-1 overflow-hidden"
                                   >
                                     {chapter.forms.map((form) => {
                                       const isActiveForm =
-                                        activeFormId === String(form.id) && location.pathname === "/my-application";
+                                        activeFormId === String(form.id) &&
+                                        location.pathname === "/my-application";
                                       return (
                                         <button
                                           key={form.id}
@@ -663,32 +697,33 @@ const Sidebar = ({
                                             );
                                             closeMobileMenu();
                                           }}
-                                          className={`w-full text-left p-2.5 rounded-xl transition-all duration-300 flex items-start gap-3 relative group ${isActiveForm
-                                            ? "bg-white/15 text-white shadow-[0_4px_12px_rgba(0,0,0,0.1)] border border-white/10"
-                                            : chapter.isLocked
-                                              ? "text-white/30 cursor-not-allowed border border-transparent"
-                                              : "text-white/60 hover:text-white hover:bg-white/10 hover:translate-x-1 border border-transparent hover:border-white/5"
-                                            }`}
+                                          className={`w-full text-left p-2 rounded transition-colors flex items-start gap-2 text-xs relative ${
+                                            isActiveForm
+                                              ? "bg-white/20 text-white"
+                                              : chapter.isLocked
+                                                ? "text-white/30 cursor-not-allowed"
+                                                : "text-white/70 hover:text-white hover:bg-white/10"
+                                          }`}
                                           disabled={chapter.isLocked}
                                         >
                                           {isActiveForm && (
-                                            <div className="absolute -left-[14px] top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-r-full shadow-[0_0_8px_rgba(255,255,255,0.6)]" />
+                                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-r" />
                                           )}
                                           <div
-                                            className={`flex items-center gap-3 flex-1 min-w-0 ${chapter.isLocked ? "opacity-40 grayscale" : ""}`}
+                                            className={`flex items-center gap-2 flex-1 min-w-0 ${chapter.isLocked ? "opacity-40 grayscale" : ""}`}
                                           >
                                             {renderCompletionIndicator(form)}
                                             <div
-                                              className={`p-[5px] rounded-lg ${getFormTypeColor(form.type)} flex-shrink-0 flex items-center justify-center`}
+                                              className={`p-1 rounded ${getFormTypeColor(form.type).split(" ")[1]} flex-shrink-0`}
                                             >
                                               {getFormTypeIcon(form.type)}
                                             </div>
-                                            <div className="flex-1 min-w-0 mt-0.5">
-                                              <p className={`text-[13px] font-semibold tracking-wide truncate ${isActiveForm ? "text-white" : "group-hover:text-white transition-colors"}`}>
+                                            <div className="flex-1 min-w-0">
+                                              <p className="font-medium truncate">
                                                 {form.name}
                                               </p>
                                               <p
-                                                className={`truncate text-[9.5px] uppercase font-bold tracking-widest mt-0.5 ${isActiveForm ? "text-white/60" : "text-white/40 group-hover:text-white/60 transition-colors"}`}
+                                                className={`truncate text-xs ${isActiveForm ? "text-white/70" : "text-white/50"}`}
                                               >
                                                 {form.desc}
                                               </p>
@@ -715,13 +750,14 @@ const Sidebar = ({
           <div className="flex flex-col gap-2 py-4">
             <button
               onClick={handleLogout}
-              className={`group flex justify-start items-center gap-5 px-3 py-2.5 md:px-4 md:py-3 w-full transition-colors duration-200 ${isDesktopCollapsed ? "md:justify-center md:px-3" : ""
-                }`}
+              className={`group flex justify-start items-center gap-5 px-3 py-2.5 md:px-4 md:py-3 w-full transition-colors duration-200 ${
+                isDesktopCollapsed ? "md:justify-center md:px-3" : ""
+              }`}
               onMouseEnter={() => setHoveredItem("logout")}
               onMouseLeave={() => setHoveredItem(null)}
             >
-              <div className="flex justify-start items-center gap-5 px-4 py-2.5 rounded-xl w-full bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 hover:border-rose-500/40 transition-all duration-300 shadow-[0_0_15px_rgba(225,29,72,0.05)] hover:shadow-[0_0_20px_rgba(225,29,72,0.15)] overflow-hidden">
-                <LogOut className="w-5 h-5 text-rose-400 group-hover:text-rose-300 transition-colors flex-shrink-0" />
+              <div className="flex justify-start items-center gap-5 px-3 py-2 rounded-lg w-full bg-[#DD3F3F] hover:bg-red-500">
+                <LogOut className="w-6 h-6 text-white" />
                 <motion.h4
                   initial={false}
                   animate={{
@@ -729,7 +765,7 @@ const Sidebar = ({
                     width: isDesktopCollapsed ? 0 : "auto",
                   }}
                   transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className={`text-sm md:text-base text-rose-400 group-hover:text-rose-300 transition-colors font-semibold whitespace-nowrap tracking-wide min-w-0`}
+                  className={`text-sm md:text-base text-white font-semibold whitespace-nowrap tracking-wide`}
                   style={{ fontFamily: "Inter, system-ui, sans-serif" }}
                 >
                   Log out
