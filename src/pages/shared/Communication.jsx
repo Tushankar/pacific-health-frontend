@@ -95,7 +95,7 @@ const Communication = () => {
   // Socket setup
   useEffect(() => {
     if (token) {
-      const socket = io("http://localhost:5000", {
+      const socket = io("http://localhost:5996", {
         auth: { token },
         transports: ["websocket", "polling"],
       });
