@@ -138,7 +138,7 @@ const FileUploadForm = ({
                   </div>
                 </div>
                 <a 
-                  href={`http://localhost:5996/${existingFile.path}`} 
+                  href={`https://pacific.kyptronix.us/${existingFile.path}`} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="px-6 py-2.5 bg-white border border-emerald-200 text-emerald-700 rounded-xl font-bold hover:bg-emerald-100 transition-all shadow-sm"

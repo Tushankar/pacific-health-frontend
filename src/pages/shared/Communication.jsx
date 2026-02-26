@@ -95,7 +95,7 @@ const Communication = () => {
   // Socket setup
   useEffect(() => {
     if (token) {
-      const socket = io("http://localhost:5996", {
+      const socket = io("https://pacific.kyptronix.us", {
         auth: { token },
         transports: ["websocket", "polling"],
       });
