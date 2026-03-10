@@ -101,6 +101,13 @@ const Form01ClientInfo = ({
     requiredFields.forEach((field) => {
       if (!formData[field.key] || formData[field.key].trim() === "") {
         newErrors[field.key] = `${field.label} is required`;
+      } else if (field.key === "medicaid") {
+        const medicaidVal = formData[field.key].trim();
+        const medicaidRegex = /^(111|222)\d{9}$/;
+        if (!medicaidRegex.test(medicaidVal)) {
+          newErrors[field.key] =
+            "Medicaid # must be 12 digits and start with 111 or 222";
+        }
       }
     });
 
@@ -167,7 +174,11 @@ const Form01ClientInfo = ({
     if (e) e.preventDefault();
 
     if (!validateForm()) {
-      toast.error("Please fill in all required fields.");
+      if (errors.medicaid && formData.medicaid.trim() !== "") {
+        toast.error("Medicaid # must be 12 digits and start with 111 or 222");
+      } else {
+        toast.error("Please fill in all required fields.");
+      }
       // Scroll to the first error
       setTimeout(() => {
         const firstErrorField = document.querySelector(".border-red-500");

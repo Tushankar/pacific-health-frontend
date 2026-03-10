@@ -403,6 +403,10 @@ export const Login = () => {
           );
         }}
         onVerifyOtp={() => {
+          const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+          if (!passwordRegex.test(newPassword)) {
+            return toast.error("New password must be at least 8 characters long and include an uppercase letter, a number, and a special character.");
+          }
           resetPasswordMutation.mutate(
             { email: loginInfo.email, otp: forgotOtp, newPassword },
             {

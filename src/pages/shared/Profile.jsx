@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getProfile, updateProfile, changePassword, toggle2FA } from "../../api/user.api";
+import { getProfile, updateProfile, uploadProfilePicture, changePassword, toggle2FA } from "../../api/user.api";
 import { toast } from "sonner";
 import {
   User,
@@ -36,7 +36,10 @@ const Profile = () => {
     phone: "",
     address: "",
     bio: "",
+    profilePicture: "",
   });
+
+  const fileInputRef = useRef(null);
 
   // Settings State (local only for now)
   const [settings, setSettings] = useState({
@@ -60,6 +63,7 @@ const Profile = () => {
         phone: u.phoneNumber || "",
         address: u.address || "",
         bio: u.bio || "",
+        profilePicture: u.profilePicture || "",
       });
     }
   }, [profileResponse]);
@@ -78,6 +82,21 @@ const Profile = () => {
     },
     onError: (error) => {
       toast.error(error.response?.data?.message || "Failed to update profile.");
+    },
+  });
+
+  // Upload profile picture mutation
+  const uploadMutation = useMutation({
+    mutationFn: uploadProfilePicture,
+    onSuccess: (data) => {
+      toast.success(data.message || "Profile picture updated!");
+      queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+      // Update local storage user data
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      localStorage.setItem("user", JSON.stringify({ ...user, profilePicture: data.profilePicture }));
+    },
+    onError: (error) => {
+      toast.error(error.response?.data?.message || "Failed to upload image.");
     },
   });
 
@@ -122,8 +141,9 @@ const Profile = () => {
     if (passwordData.newPassword !== passwordData.confirmNewPassword) {
       return toast.error("New passwords do not match.");
     }
-    if (passwordData.newPassword.length < 6) {
-      return toast.error("New password must be at least 6 characters.");
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+    if (!passwordRegex.test(passwordData.newPassword)) {
+      return toast.error("New password must be at least 8 characters long and include an uppercase letter, a number, and a special character.");
     }
     changePasswordMutation.mutate({
       currentPassword: passwordData.currentPassword,
@@ -142,7 +162,20 @@ const Profile = () => {
         phone: u.phoneNumber || "",
         address: u.address || "",
         bio: u.bio || "",
+        profilePicture: u.profilePicture || "",
       });
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        return toast.error("File size must be less than 5MB.");
+      }
+      const formData = new FormData();
+      formData.append("profilePicture", file);
+      uploadMutation.mutate(formData);
     }
   };
 
@@ -489,14 +522,37 @@ const Profile = () => {
               <div className="relative flex flex-col items-center pt-16">
                 <div className="relative group">
                   <div className="w-[104px] h-[104px] bg-white rounded-full p-1 shadow-lg flex items-center justify-center mb-4 overflow-hidden ring-4 ring-white">
-                    <img
-                      src={`https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.name || "User")}&background=2563eb&color=fff&bold=true&size=128`}
-                      alt="Avatar"
-                      className="w-full h-full object-cover rounded-full"
-                    />
+                    {profileData.profilePicture ? (
+                      <img
+                        src={`https://pacific.kyptronix.us${profileData.profilePicture}`}
+                        alt="Avatar"
+                        className="w-full h-full object-cover rounded-full"
+                      />
+                    ) : (
+                      <img
+                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.name || "User")}&background=2563eb&color=fff&bold=true&size=128`}
+                        alt="Avatar"
+                        className="w-full h-full object-cover rounded-full"
+                      />
+                    )}
                   </div>
-                  <button className="absolute bottom-4 right-0 p-2 bg-white rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.1)] border border-slate-100 text-blue-600 hover:text-blue-700 hover:scale-105 transition-all z-10">
-                    <Edit2 size={14} strokeWidth={2.5} />
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    className="hidden"
+                    accept="image/*"
+                  />
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploadMutation.isPending}
+                    className="absolute bottom-4 right-0 p-2 bg-white rounded-full shadow-[0_2px_10px_rgba(0,0,0,0.1)] border border-slate-100 text-blue-600 hover:text-blue-700 hover:scale-105 transition-all z-10"
+                  >
+                    {uploadMutation.isPending ? (
+                      <Loader2 size={14} className="animate-spin" />
+                    ) : (
+                      <Edit2 size={14} strokeWidth={2.5} />
+                    )}
                   </button>
                 </div>
                 <h2 className="text-[22px] font-black text-slate-800 mt-1 tracking-tight">{profileData.name}</h2>

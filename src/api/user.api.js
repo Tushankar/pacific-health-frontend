@@ -31,3 +31,14 @@ export const toggle2FA = async () => {
   const response = await axiosInstance.put("/user/toggle-2fa");
   return response.data;
 };
+/**
+ * Upload profile picture
+ */
+export const uploadProfilePicture = async (formData) => {
+  const response = await axiosInstance.post("/user/profile-picture", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
+};

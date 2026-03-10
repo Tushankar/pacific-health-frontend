@@ -108,8 +108,9 @@ export const Register = () => {
     if (registerInfo.password !== registerInfo.confirmPassword) {
       return toast.error("Passwords do not match");
     }
-    if (registerInfo.password.length < 6) {
-      return toast.error("Password must be at least 6 characters");
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+    if (!passwordRegex.test(registerInfo.password)) {
+      return toast.error("Password must be at least 8 characters long and include an uppercase letter, a number, and a special character.");
     }
     if (!captchaToken) {
       return toast.error("Please complete the reCAPTCHA verification");

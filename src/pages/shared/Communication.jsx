@@ -393,11 +393,19 @@ const Communication = () => {
                       <div
                         className={`w-[46px] h-[46px] rounded-full overflow-hidden transition-all duration-300 shadow-sm ${isSelected ? "ring-2 ring-blue-500 ring-offset-2" : "group-hover:ring-2 group-hover:ring-slate-200 group-hover:ring-offset-1"}`}
                       >
-                        <img
-                          src={avatarUrl}
-                          alt={contact.fullName}
-                          className="w-full h-full object-cover"
-                        />
+                        {contact.profilePicture ? (
+                          <img
+                            src={`https://pacific.kyptronix.us${contact.profilePicture}`}
+                            alt={contact.fullName}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <img
+                            src={avatarUrl}
+                            alt={contact.fullName}
+                            className="w-full h-full object-cover"
+                          />
+                        )}
                       </div>
                       <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full shadow-sm"></div>
                     </div>
@@ -468,11 +476,19 @@ const Communication = () => {
                   <div className="flex items-center gap-3.5">
                     <div className="relative">
                       <div className="w-[42px] h-[42px] rounded-full overflow-hidden shadow-sm border border-slate-100">
-                        <img
-                          src={`https://ui-avatars.com/api/?name=${encodeURIComponent(selectedContact.fullName || "User")}&background=2563eb&color=fff&bold=true&size=128`}
-                          alt={selectedContact.fullName}
-                          className="w-full h-full object-cover"
-                        />
+                        {selectedContact.profilePicture ? (
+                          <img
+                            src={`https://pacific.kyptronix.us${selectedContact.profilePicture}`}
+                            alt={selectedContact.fullName}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <img
+                            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(selectedContact.fullName || "User")}&background=2563eb&color=fff&bold=true&size=128`}
+                            alt={selectedContact.fullName}
+                            className="w-full h-full object-cover"
+                          />
+                        )}
                       </div>
                       <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white rounded-full shadow-sm"></div>
                     </div>

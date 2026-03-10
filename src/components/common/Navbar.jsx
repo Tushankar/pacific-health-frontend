@@ -23,32 +23,44 @@ const Navbar = ({ toggleMobileMenu, toggleNotifications }) => {
     }
   };
 
-  // Get user name from localStorage (simplified)
-  const getUserName = () => {
+  const getUserData = () => {
     try {
       const user = localStorage.getItem("user");
       if (user) {
-        const userData = JSON.parse(user);
-        return userData.fullName || userData.name || userData.email || "User";
+        return JSON.parse(user);
       }
-      return "User";
+      return { fullName: "User" };
     } catch (error) {
-      console.error("Error getting user name:", error);
-      return "User";
+      console.error("Error getting user data:", error);
+      return { fullName: "User" };
     }
   };
 
+  const [userData, setUserData] = useState(getUserData());
+
   useEffect(() => {
-    // Set initial greeting and user name
+    // Set initial greeting and user data
     setGreeting(getTimeBasedGreeting());
-    setUserName(getUserName());
+    
+    // Function to handle storage changes (to sync across tabs/components)
+    const handleStorageChange = () => {
+      setUserData(getUserData());
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    // Initial sync
+    setUserData(getUserData());
 
     // Update greeting every minute
     const interval = setInterval(() => {
       setGreeting(getTimeBasedGreeting());
     }, 60000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("storage", handleStorageChange);
+    };
   }, []);
 
   const { data: notifications = [] } = useQuery({
@@ -63,7 +75,7 @@ const Navbar = ({ toggleMobileMenu, toggleNotifications }) => {
     <div className="py-2 md:py-3 lg:py-[15.4px] sticky top-0 z-20 px-3 md:px-4 lg:px-6 flex justify-between items-center border-b border-[#BDC3C7] bg-white">
       <div className="flex-1 md:flex-none min-w-0">
         <h3 className="text-sm md:text-xl lg:text-[1.5vw] font-[600] font-poppins text-[#000000] truncate">
-          {greeting}, {userName}
+          {greeting}, {userData.fullName || userData.name || "User"}
         </h3>
         <p className="text-[10px] md:text-sm lg:text-[1vw] font-[400] font-poppins text-[#4D4D4D] hidden sm:block">
           Here is your daily preview
