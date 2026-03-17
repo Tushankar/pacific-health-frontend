@@ -169,13 +169,11 @@ const RiskMitigationPlan = ({
   };
 
   return (
-    <div className="flex w-full items-start bg-white text-black font-serif">
-      <div className="sticky top-0 self-start hidden md:flex flex-col items-center py-8 shrink-0 bg-white/50 backdrop-blur-sm z-10 h-screen">
-        <ProgressBar
+    <div className="flex flex-col-reverse lg:flex-row w-full items-start bg-white text-black font-serif">
+      <ProgressBar
           currentStep={progressCurrent}
           totalSteps={progressTotal || 1}
         />
-      </div>
 
       <form
         onSubmit={handleSubmit}
@@ -671,24 +669,28 @@ const RiskMitigationPlan = ({
         </div>
 
         {/* Action Buttons */}
-        <div className="w-[98%] md:w-[85%] lg:w-[75%] px-2 md:px-8 pb-8 bg-white rounded-b-lg shadow-lg flex justify-between items-center">
-          <button
-            type="button"
-            className="px-8 py-3 btn-premium text-white font-sans font-bold tracking-wide transform transition-transform"
-            onClick={() => window.history.back()}
-          >
-            Back
-          </button>
-          <button
-            type="button"
-            className="px-8 py-3 btn-premium-red text-white font-sans font-bold tracking-wide transform transition-transform"
-            onClick={() => { window.location.href = "/my-application"; }}
-          >
-            Exit Application
-          </button>
-          <SaveNextButton 
-            isSubmitting={isSubmitting} 
-            type="submit" 
+        <div className="w-[98%] md:w-[85%] lg:w-[75%] px-2 md:px-8 pb-8 bg-white rounded-b-lg shadow-lg flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+            <button
+              type="button"
+              className="w-full sm:w-auto px-6 py-3 btn-premium text-white font-sans font-bold tracking-wide transform transition-transform"
+              onClick={() => window.history.back()}
+            >
+              Back
+            </button>
+            <button
+              type="button"
+              className="w-full sm:w-auto px-6 py-3 btn-premium-red text-white font-sans font-bold tracking-wide transform transition-transform"
+              onClick={() => {
+                window.location.href = "/my-application";
+              }}
+            >
+              Exit Application
+            </button>
+          </div>
+          <SaveNextButton
+            isSubmitting={isSubmitting}
+            type="submit"
             isReadOnly={isReadOnly}
             onNext={onNext}
           />
@@ -699,3 +701,4 @@ const RiskMitigationPlan = ({
 };
 
 export default RiskMitigationPlan;
+

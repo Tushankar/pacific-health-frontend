@@ -4,18 +4,37 @@ import React from "react";
  * Premium Save & Next button with professional loading animation.
  * Used across all onboarding forms for a consistent experience.
  */
-const SaveNextButton = ({ onClick, isSubmitting = false, type = "button", label = "Save & Next", isReadOnly = false, onNext }) => {
+const SaveNextButton = ({
+  onClick,
+  isSubmitting = false,
+  type = "button",
+  label = "Save & Next",
+  isReadOnly = false,
+  onNext,
+}) => {
   if (isReadOnly) {
     return (
       <button
         type="button"
-        className="relative px-8 py-3 btn-premium text-white font-sans font-bold tracking-wide transform transition-all duration-300 overflow-hidden hover:scale-[1.02] active:scale-[0.98]"
+        className="relative w-full sm:w-auto px-8 py-3 btn-premium text-white font-sans font-bold tracking-wide transform transition-all duration-300 overflow-hidden hover:scale-[1.02] active:scale-[0.98]"
         onClick={onNext}
       >
         <span className="flex items-center justify-center gap-2.5">
-          <span className="relative text-xs uppercase tracking-wider">Next Document</span>
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          <span className="relative text-xs uppercase tracking-wider">
+            Next Document
+          </span>
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2.5}
+              d="M13 7l5 5m0 0l-5 5m5-5H6"
+            />
           </svg>
         </span>
       </button>
@@ -27,7 +46,7 @@ const SaveNextButton = ({ onClick, isSubmitting = false, type = "button", label 
       type={type}
       disabled={isSubmitting}
       className={`
-        relative px-8 py-3 btn-premium text-white font-sans font-bold tracking-wide 
+        relative w-full sm:w-auto px-8 py-3 btn-premium text-white font-sans font-bold tracking-wide
         transform transition-all duration-300 overflow-hidden
         ${isSubmitting ? "opacity-90 cursor-not-allowed scale-[0.98]" : "hover:scale-[1.02] active:scale-[0.98]"}
       `}
@@ -36,7 +55,7 @@ const SaveNextButton = ({ onClick, isSubmitting = false, type = "button", label 
       {/* Shimmer sweep effect while loading */}
       {isSubmitting && (
         <div className="absolute inset-0 overflow-hidden">
-          <div 
+          <div
             className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
             style={{
               animation: "shimmerSweep 1.5s ease-in-out infinite",
@@ -44,8 +63,10 @@ const SaveNextButton = ({ onClick, isSubmitting = false, type = "button", label 
           />
         </div>
       )}
-      
-      <span className={`flex items-center justify-center gap-2.5 transition-all duration-300 ${isSubmitting ? "opacity-100" : ""}`}>
+
+      <span
+        className={`flex items-center justify-center gap-2.5 transition-all duration-300 ${isSubmitting ? "opacity-100" : ""}`}
+      >
         {isSubmitting && (
           <>
             {/* Spinning ring */}
@@ -71,14 +92,22 @@ const SaveNextButton = ({ onClick, isSubmitting = false, type = "button", label 
             </svg>
           </>
         )}
-        
-        <span className="relative">
-          {isSubmitting ? "Saving..." : label}
-        </span>
+
+        <span className="relative">{isSubmitting ? "Saving..." : label}</span>
 
         {!isSubmitting && (
-          <svg className="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+          <svg
+            className="w-4 h-4 transition-transform group-hover:translate-x-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2.5}
+              d="M13 7l5 5m0 0l-5 5m5-5H6"
+            />
           </svg>
         )}
       </span>

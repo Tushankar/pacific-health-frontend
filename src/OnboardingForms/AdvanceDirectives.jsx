@@ -4,7 +4,15 @@ import SaveNextButton from "../components/common/SaveNextButton";
 import logo from "../assets/logo.png";
 import { toast } from "sonner";
 
-const AdvanceDirectives = ({ onComplete, savedData, progressCurrent = 0, progressTotal = 1, onFormChange, isReadOnly = false, onNext }) => {
+const AdvanceDirectives = ({
+  onComplete,
+  savedData,
+  progressCurrent = 0,
+  progressTotal = 1,
+  onFormChange,
+  isReadOnly = false,
+  onNext,
+}) => {
   const [formData, setFormData] = useState({
     individualName: "",
     dob: "",
@@ -36,7 +44,7 @@ const AdvanceDirectives = ({ onComplete, savedData, progressCurrent = 0, progres
   // Pre-fill from saved data if available
   useEffect(() => {
     if (savedData) {
-      setFormData(prev => ({ ...prev, ...savedData }));
+      setFormData((prev) => ({ ...prev, ...savedData }));
     }
   }, [savedData]);
   // Draft save: notify parent when formData changes after user interaction
@@ -56,7 +64,8 @@ const AdvanceDirectives = ({ onComplete, savedData, progressCurrent = 0, progres
     if (!formData.individualName?.trim()) newErrors.individualName = true;
     if (!formData.dob?.trim()) newErrors.dob = true;
     if (!formData.checkChoice) newErrors.checkChoice = true;
-    if (!formData.signatureIndividual?.trim()) newErrors.signatureIndividual = true;
+    if (!formData.signatureIndividual?.trim())
+      newErrors.signatureIndividual = true;
     if (!formData.dateIndividual?.trim()) newErrors.dateIndividual = true;
 
     setErrors(newErrors);
@@ -69,16 +78,27 @@ const AdvanceDirectives = ({ onComplete, savedData, progressCurrent = 0, progres
     if (isReadOnly) return;
 
     if (!validateForm()) {
-      toast.error("Please fill in all required fields and select one directive statement.");
+      toast.error(
+        "Please fill in all required fields and select one directive statement.",
+      );
       setTimeout(() => {
         const firstErrorField = document.querySelector(".border-red-500");
         if (firstErrorField) {
-          firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          firstErrorField.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
           if (firstErrorField.tagName === "INPUT") firstErrorField.focus();
         } else {
-            // Scroll to selection if that's the error
-            const selectionHeader = document.querySelector(".text-red-600.underline");
-            if (selectionHeader) selectionHeader.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          // Scroll to selection if that's the error
+          const selectionHeader = document.querySelector(
+            ".text-red-600.underline",
+          );
+          if (selectionHeader)
+            selectionHeader.scrollIntoView({
+              behavior: "smooth",
+              block: "center",
+            });
         }
       }, 100);
       return;
@@ -102,16 +122,19 @@ const AdvanceDirectives = ({ onComplete, savedData, progressCurrent = 0, progres
     outline: "none",
     background: errors[field] ? "#fee2e2" : "transparent",
     borderBottom: errors[field] ? "2px solid #ef4444" : "1px solid black",
-    transition: "all 0.2s"
+    transition: "all 0.2s",
   });
 
-  const RequiredStar = () => <span className="text-red-500 ml-1 font-bold">*</span>;
+  const RequiredStar = () => (
+    <span className="text-red-500 ml-1 font-bold">*</span>
+  );
 
   return (
-    <div className="flex w-full items-start bg-white text-black font-serif">
-      <div className="sticky top-0 self-start hidden md:flex flex-col items-center py-8 shrink-0 bg-white/50 backdrop-blur-sm z-10 h-screen">
-        <ProgressBar currentStep={progressCurrent} totalSteps={progressTotal || 1} />
-      </div>
+    <div className="flex flex-col-reverse lg:flex-row w-full items-start bg-white text-black font-serif">
+      <ProgressBar
+          currentStep={progressCurrent}
+          totalSteps={progressTotal || 1}
+        />
 
       <div className="flex-1 flex flex-col items-center mt-4 mb-8">
         {/* Paper Container */}
@@ -146,12 +169,12 @@ const AdvanceDirectives = ({ onComplete, savedData, progressCurrent = 0, progres
 
               <p>
                 The Durable Power of Attorney for Healthcare is a document that
-                enables you to appoint another person, called your Agent, to make
-                Healthcare decisions for you if you are unable, incapacitated or
-                incompetent to do so. You do not have to be in a terminal
-                condition to have an appointed Agent. Your Agent's authority
-                begins when your doctor certifies that you lack the capacity to
-                make Healthcare decisions.
+                enables you to appoint another person, called your Agent, to
+                make Healthcare decisions for you if you are unable,
+                incapacitated or incompetent to do so. You do not have to be in
+                a terminal condition to have an appointed Agent. Your Agent's
+                authority begins when your doctor certifies that you lack the
+                capacity to make Healthcare decisions.
               </p>
 
               <p>
@@ -162,17 +185,17 @@ const AdvanceDirectives = ({ onComplete, savedData, progressCurrent = 0, progres
               <p>
                 Healthcare means any treatment, service, or procedure to
                 maintain, diagnose or treat your physical or mental condition.
-                Your agent may consent, refuse to consent, or withdraw consent to
-                medical treatment and may make decisions about withdrawing
+                Your agent may consent, refuse to consent, or withdraw consent
+                to medical treatment and may make decisions about withdrawing
                 life-sustaining treatment. A physician must comply with your
                 Agent's instructions or allow you to be transferred to another
-                physician. Inform the person you appoint that you want him/her to
-                be your Agent.
+                physician. Inform the person you appoint that you want him/her
+                to be your Agent.
               </p>
 
               <p>
-                A Living Will is a type of Advance Directive. It provides a means
-                for you to instruct your physician to withhold or withdraw
+                A Living Will is a type of Advance Directive. It provides a
+                means for you to instruct your physician to withhold or withdraw
                 life-sustaining procedures in the event of a coma; persistent
                 vegetative state or a terminal condition.
               </p>
@@ -191,12 +214,13 @@ const AdvanceDirectives = ({ onComplete, savedData, progressCurrent = 0, progres
                 <span className="whitespace-nowrap font-medium shrink-0 text-sm">
                   Individual's Name: <RequiredStar />
                 </span>
-                 <input
+                <input
                   name="individualName"
                   value={formData.individualName}
                   onChange={(e) => {
                     handleChange(e);
-                    if(errors.individualName) setErrors(prev => ({...prev, individualName: null}));
+                    if (errors.individualName)
+                      setErrors((prev) => ({ ...prev, individualName: null }));
                   }}
                   style={getStyle("individualName")}
                   className={`flex-grow border-b border-black border-dashed outline-none min-w-0 bg-transparent ${errors.individualName ? "border-red-500" : ""}`}
@@ -210,7 +234,8 @@ const AdvanceDirectives = ({ onComplete, savedData, progressCurrent = 0, progres
                   type="date"
                   onChange={(e) => {
                     handleChange(e);
-                    if(errors.dob) setErrors(prev => ({...prev, dob: null}));
+                    if (errors.dob)
+                      setErrors((prev) => ({ ...prev, dob: null }));
                   }}
                   style={getStyle("dob")}
                   className={`w-1/3 border-b border-black border-dashed outline-none bg-transparent ${errors.dob ? "border-red-500" : ""}`}
@@ -286,7 +311,9 @@ const AdvanceDirectives = ({ onComplete, savedData, progressCurrent = 0, progres
             </div>
 
             <div className="mt-8 mb-8">
-              <h3 className={`font-bold underline uppercase mb-4 ${errors.checkChoice ? "text-red-600" : ""}`}>
+              <h3
+                className={`font-bold underline uppercase mb-4 ${errors.checkChoice ? "text-red-600" : ""}`}
+              >
                 PLEASE CHECK ONE OF THE FOLLOWING STATEMENTS <RequiredStar />
               </h3>
 
@@ -294,8 +321,9 @@ const AdvanceDirectives = ({ onComplete, savedData, progressCurrent = 0, progres
                 <div
                   className={`flex gap-2 cursor-pointer ${errors.checkChoice ? "bg-red-50 p-1 rounded" : ""}`}
                   onClick={() => {
-                      handleCheck("executed");
-                      if(errors.checkChoice) setErrors(prev => ({...prev, checkChoice: null}));
+                    handleCheck("executed");
+                    if (errors.checkChoice)
+                      setErrors((prev) => ({ ...prev, checkChoice: null }));
                   }}
                 >
                   <div
@@ -306,8 +334,8 @@ const AdvanceDirectives = ({ onComplete, savedData, progressCurrent = 0, progres
                   <p>
                     I have executed an Advance Directive and will provide a copy
                     to Pacific Health Systems. I understand that the staff and
-                    physicians associated with Pacific Health Systems will not be
-                    able to follow the terms of my Advance Directive until I
+                    physicians associated with Pacific Health Systems will not
+                    be able to follow the terms of my Advance Directive until I
                     provide a copy to the staff.
                   </p>
                 </div>
@@ -351,7 +379,11 @@ const AdvanceDirectives = ({ onComplete, savedData, progressCurrent = 0, progres
                     value={formData.signatureIndividual}
                     onChange={(e) => {
                       handleChange(e);
-                      if(errors.signatureIndividual) setErrors(prev => ({...prev, signatureIndividual: null}));
+                      if (errors.signatureIndividual)
+                        setErrors((prev) => ({
+                          ...prev,
+                          signatureIndividual: null,
+                        }));
                     }}
                     style={getStyle("signatureIndividual")}
                     className={`w-full border-b border-black outline-none mb-1 ${errors.signatureIndividual ? "border-red-500" : ""}`}
@@ -378,13 +410,19 @@ const AdvanceDirectives = ({ onComplete, savedData, progressCurrent = 0, progres
                     type="date"
                     onChange={(e) => {
                       handleChange(e);
-                      if(errors.dateIndividual) setErrors(prev => ({...prev, dateIndividual: null}));
+                      if (errors.dateIndividual)
+                        setErrors((prev) => ({
+                          ...prev,
+                          dateIndividual: null,
+                        }));
                     }}
                     style={getStyle("dateIndividual")}
                     className={`w-full border-b border-black outline-none mb-1 text-center ${errors.dateIndividual ? "border-red-500" : ""}`}
                     placeholder="MM/DD/YYYY"
                   />
-                  <div className="text-[8px] md:text-[10px] font-bold text-center">Date <RequiredStar /></div>
+                  <div className="text-[8px] md:text-[10px] font-bold text-center">
+                    Date <RequiredStar />
+                  </div>
                 </div>
                 <div className="flex-1">
                   <input
@@ -394,7 +432,9 @@ const AdvanceDirectives = ({ onComplete, savedData, progressCurrent = 0, progres
                     className="w-full border-b border-black outline-none mb-1 text-center"
                     placeholder="MM/DD/YYYY"
                   />
-                  <div className="text-[8px] md:text-[10px] font-bold text-center">Date</div>
+                  <div className="text-[8px] md:text-[10px] font-bold text-center">
+                    Date
+                  </div>
                 </div>
               </div>
             </div>
@@ -405,24 +445,28 @@ const AdvanceDirectives = ({ onComplete, savedData, progressCurrent = 0, progres
             </div>
 
             {/* Action Buttons */}
-            <div className="w-full flex justify-between items-center mt-12">
-              <button
-                type="button"
-                className="px-8 py-3 btn-premium text-white font-sans font-bold tracking-wide transform transition-transform"
-                onClick={() => window.history.back()}
-              >
-                Back
-              </button>
-              <button
-                type="button"
-                className="px-8 py-3 btn-premium-red text-white font-sans font-bold tracking-wide transform transition-transform"
-                onClick={() => { window.location.href = "/my-application"; }}
-              >
-                Exit Application
-              </button>
-              <SaveNextButton 
-                isSubmitting={isSubmitting} 
-                type="submit" 
+            <div className="w-full flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 mt-12 pb-8">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                <button
+                  type="button"
+                  className="w-full sm:w-auto px-6 py-3 btn-premium text-white font-sans font-bold tracking-wide transform transition-transform"
+                  onClick={() => window.history.back()}
+                >
+                  Back
+                </button>
+                <button
+                  type="button"
+                  className="w-full sm:w-auto px-6 py-3 btn-premium-red text-white font-sans font-bold tracking-wide transform transition-transform"
+                  onClick={() => {
+                    window.location.href = "/my-application";
+                  }}
+                >
+                  Exit Application
+                </button>
+              </div>
+              <SaveNextButton
+                isSubmitting={isSubmitting}
+                type="submit"
                 isReadOnly={isReadOnly}
                 onNext={onNext}
               />
@@ -435,3 +479,4 @@ const AdvanceDirectives = ({ onComplete, savedData, progressCurrent = 0, progres
 };
 
 export default AdvanceDirectives;
+

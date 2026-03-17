@@ -29,7 +29,7 @@ export const Layout = ({ children }) => {
       <div className="h-screen w-full flex justify-center items-center overflow-hidden relative">
         {/* Desktop Sidebar - Dynamic width based on collapsed state */}
         <div
-          className={`hidden md:block ${isDesktopCollapsed ? "w-20" : "w-72"} h-full flex-shrink-0 transition-all duration-300 ease-in-out relative`}
+          className={`hidden lg:block ${isDesktopCollapsed ? "w-20" : "w-72"} h-full flex-shrink-0 transition-all duration-300 ease-in-out relative`}
         >
           <Sidebar
             isMobileMenuOpen={isMobileMenuOpen}
@@ -40,7 +40,7 @@ export const Layout = ({ children }) => {
         </div>
 
         {/* Mobile Sidebar */}
-        <div className="md:hidden">
+        <div className="lg:hidden">
           <Sidebar
             isMobileMenuOpen={isMobileMenuOpen}
             setIsMobileMenuOpen={setIsMobileMenuOpen}
@@ -52,9 +52,11 @@ export const Layout = ({ children }) => {
         {/* Main Content Area */}
         <div className="flex-1 h-full flex flex-col overflow-hidden">
           {/* Navbar */}
-          <Navbar 
-            toggleMobileMenu={toggleMobileMenu} 
-            toggleNotifications={() => setIsNotificationsOpen(!isNotificationsOpen)} 
+          <Navbar
+            toggleMobileMenu={toggleMobileMenu}
+            toggleNotifications={() =>
+              setIsNotificationsOpen(!isNotificationsOpen)
+            }
           />
 
           {/* Page Content */}
@@ -64,9 +66,9 @@ export const Layout = ({ children }) => {
         </div>
 
         {/* Notification Sidebar */}
-        <NotificationSidebar 
-          isOpen={isNotificationsOpen} 
-          onClose={() => setIsNotificationsOpen(false)} 
+        <NotificationSidebar
+          isOpen={isNotificationsOpen}
+          onClose={() => setIsNotificationsOpen(false)}
         />
       </div>
     </MobileMenuContext.Provider>

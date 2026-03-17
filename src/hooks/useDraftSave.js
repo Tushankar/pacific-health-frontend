@@ -5,7 +5,7 @@ import { toast } from "sonner";
 
 /**
  * useDraftSave — Auto-saves form drafts on navigation/unmount
- * 
+ *
  * @param {Object} options
  * @param {string} options.enrollmentId - Active enrollment _id
  * @param {number} options.formId - Current form ID
@@ -85,15 +85,22 @@ const useDraftSave = ({
   // Auto-save on unmount (navigation away)
   useEffect(() => {
     return () => {
-      if (isDirtyRef.current && !isSubmittedRef.current && enrollmentId && formId) {
+      if (
+        isDirtyRef.current &&
+        !isSubmittedRef.current &&
+        enrollmentId &&
+        formId
+      ) {
         const currentData = getFormDataRef.current?.();
         if (currentData) {
           // Fire-and-forget since component is unmounting
-          saveDraftData(enrollmentId, formId, currentData).then(() => {
-            queryClient.invalidateQueries({ queryKey: ["myEnrollment"] });
-          }).catch((err) => {
-            console.error("Draft auto-save failed:", err);
-          });
+          saveDraftData(enrollmentId, formId, currentData)
+            .then(() => {
+              queryClient.invalidateQueries({ queryKey: ["myEnrollment"] });
+            })
+            .catch((err) => {
+              console.error("Draft auto-save failed:", err);
+            });
           toast.success("💾 Draft saved", {
             description: `Your progress on "${formName}" has been saved.`,
             duration: 3000,
@@ -106,21 +113,28 @@ const useDraftSave = ({
   // Handle browser close/refresh
   useEffect(() => {
     const handleBeforeUnload = (e) => {
-      if (isDirtyRef.current && !isSubmittedRef.current && enrollmentId && formId) {
+      if (
+        isDirtyRef.current &&
+        !isSubmittedRef.current &&
+        enrollmentId &&
+        formId
+      ) {
         const currentData = getFormDataRef.current?.();
         if (currentData) {
           // Use sendBeacon for reliable save on page close
           const url = `${import.meta.env.VITE_API_URL || "https://pacific.kyptronix.us/api"}/enrollment/${enrollmentId}/form/${formId}/draft`;
           const token = localStorage.getItem("token");
-          const blob = new Blob([JSON.stringify({ draftData: currentData })], { type: "application/json" });
-          
+          const blob = new Blob([JSON.stringify({ draftData: currentData })], {
+            type: "application/json",
+          });
+
           if (navigator.sendBeacon) {
             // sendBeacon doesn't support custom headers, use fetch with keepalive
             fetch(url, {
               method: "PUT",
               headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
+                Authorization: `Bearer ${token}`,
               },
               body: JSON.stringify({ draftData: currentData }),
               keepalive: true,

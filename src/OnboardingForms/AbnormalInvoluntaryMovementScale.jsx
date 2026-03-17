@@ -2,7 +2,15 @@ import React, { useState, useEffect, useRef } from "react";
 import ProgressBar from "../components/ProgressBar";
 import SaveNextButton from "../components/common/SaveNextButton";
 
-const AbnormalInvoluntaryMovementScale = ({ onComplete, savedData, progressCurrent = 0, progressTotal = 1, onFormChange, isReadOnly = false, onNext }) => {
+const AbnormalInvoluntaryMovementScale = ({
+  onComplete,
+  savedData,
+  progressCurrent = 0,
+  progressTotal = 1,
+  onFormChange,
+  isReadOnly = false,
+  onNext,
+}) => {
   const [formData, setFormData] = useState({
     patientName: "",
     patientID: "",
@@ -96,7 +104,7 @@ const AbnormalInvoluntaryMovementScale = ({ onComplete, savedData, progressCurre
   // Pre-fill from saved data if available
   useEffect(() => {
     if (savedData) {
-      setFormData(prev => ({ ...prev, ...savedData }));
+      setFormData((prev) => ({ ...prev, ...savedData }));
     }
   }, [savedData]);
   // Draft save: notify parent when formData changes after user interaction
@@ -156,11 +164,11 @@ const AbnormalInvoluntaryMovementScale = ({ onComplete, savedData, progressCurre
   );
 
   return (
-
-    <div className="flex w-full items-start bg-white text-black font-serif">
-      <div className="sticky top-0 self-start hidden md:flex flex-col items-center py-8 shrink-0 bg-white/50 backdrop-blur-sm z-10 h-screen">
-        <ProgressBar currentStep={progressCurrent} totalSteps={progressTotal || 1} />
-      </div>
+    <div className="flex flex-col-reverse lg:flex-row w-full items-start bg-white text-black font-serif">
+      <ProgressBar
+          currentStep={progressCurrent}
+          totalSteps={progressTotal || 1}
+        />
 
       <div className="flex-1 flex flex-col items-center mt-4 mb-8">
         {/* Paper Container */}
@@ -177,30 +185,30 @@ const AbnormalInvoluntaryMovementScale = ({ onComplete, savedData, progressCurre
             {/* Patient info */}
             <div className="flex flex-col md:flex-row md:items-center mb-3 gap-2">
               <div className="flex items-center flex-1">
-                  <span className="font-semibold mr-2 shrink-0">
-                    Patient&apos;s Name (Please Print):
-                  </span>
-                  <input
-                    name="patientName"
-                    value={formData.patientName}
-                    onChange={handleChange}
-                    onKeyDown={handleEnter}
-                    className="flex-1 border-b-2 border-black outline-none mr-0 md:mr-6"
-                    style={getStyle("patientName")}
-                  />
+                <span className="font-semibold mr-2 shrink-0">
+                  Patient&apos;s Name (Please Print):
+                </span>
+                <input
+                  name="patientName"
+                  value={formData.patientName}
+                  onChange={handleChange}
+                  onKeyDown={handleEnter}
+                  className="flex-1 border-b-2 border-black outline-none mr-0 md:mr-6"
+                  style={getStyle("patientName")}
+                />
               </div>
 
               <div className="flex items-center flex-1 mt-2 md:mt-0">
-                  <span className="font-semibold mr-2 shrink-0">
-                    Patient&apos;s ID Information:
-                  </span>
-                  <input
-                    name="patientID"
-                    value={formData.patientID}
-                    onChange={handleChange}
-                    onKeyDown={handleEnter}
-                    className="flex-1 border-b-2 border-black outline-none"
-                  />
+                <span className="font-semibold mr-2 shrink-0">
+                  Patient&apos;s ID Information:
+                </span>
+                <input
+                  name="patientID"
+                  value={formData.patientID}
+                  onChange={handleChange}
+                  onKeyDown={handleEnter}
+                  className="flex-1 border-b-2 border-black outline-none"
+                />
               </div>
             </div>
 
@@ -235,14 +243,14 @@ const AbnormalInvoluntaryMovementScale = ({ onComplete, savedData, progressCurre
               />
 
               <div className="flex items-center mt-2 md:mt-0">
-                  <span className="font-semibold mr-2">Total mg/Day:</span>
-                  <input
-                    name="totalMgDay1"
-                    value={formData.totalMgDay1}
-                    onChange={handleChange}
-                    onKeyDown={handleEnter}
-                    className="w-[80px] md:w-[120px] border-b-2 border-black outline-none"
-                  />
+                <span className="font-semibold mr-2">Total mg/Day:</span>
+                <input
+                  name="totalMgDay1"
+                  value={formData.totalMgDay1}
+                  onChange={handleChange}
+                  onKeyDown={handleEnter}
+                  className="w-[80px] md:w-[120px] border-b-2 border-black outline-none"
+                />
               </div>
             </div>
 
@@ -341,20 +349,22 @@ const AbnormalInvoluntaryMovementScale = ({ onComplete, savedData, progressCurre
                 <strong>SCORING:</strong>
                 <ul className="list-disc pl-5 mt-1">
                   <li>
-                    Score the highest amplitude or frequency in a movement on the
-                    0–4 scale, not the average;
+                    Score the highest amplitude or frequency in a movement on
+                    the 0–4 scale, not the average;
                   </li>
                   <li>
-                    Score Activated Movements the same way; do not lower those numbers
-                    as was proposed at one time;
+                    Score Activated Movements the same way; do not lower those
+                    numbers as was proposed at one time;
                   </li>
                   <li>
-                    <strong>A POSITIVE AIMS EXAMINATION</strong> IS A SCORE OF 2 IN
-                    TWO OR MORE MOVEMENTS OR A SCORE OF 3 OR 4 IN A SINGLE MOVEMENT.
+                    <strong>A POSITIVE AIMS EXAMINATION</strong> IS A SCORE OF 2
+                    IN TWO OR MORE MOVEMENTS OR A SCORE OF 3 OR 4 IN A SINGLE
+                    MOVEMENT.
                   </li>
                 </ul>
                 <p className="mt-1">
-                  Do not sum the scores: e.g. a patient who has scores 1 in four movements DOES NOT have a positive AIMS score of 4.
+                  Do not sum the scores: e.g. a patient who has scores 1 in four
+                  movements DOES NOT have a positive AIMS score of 4.
                 </p>
               </div>
 
@@ -370,71 +380,80 @@ const AbnormalInvoluntaryMovementScale = ({ onComplete, savedData, progressCurre
 
               {/* Awareness scale note */}
               <div className="border-b border-black p-2 text-[8px] md:text-[13px] bg-gray-50 italic">
-                0 = No awareness, 1 = Aware, no distress, 2 = Aware, mild distress,
-                3 = Aware, moderate distress, 4 = Aware, severe distress
+                0 = No awareness, 1 = Aware, no distress, 2 = Aware, mild
+                distress, 3 = Aware, moderate distress, 4 = Aware, severe
+                distress
               </div>
 
               {/* Dental Status */}
               <div className="border-b border-black p-2 font-bold bg-gray-200">
                 Dental Status
               </div>
-              
+
               {/* Q11 */}
               <div className="flex flex-col md:flex-row border-b border-black">
-                  <div className="p-2 w-full md:w-[60%] border-r-0 md:border-r border-black font-semibold">
-                      11. Current problems with teeth and/or dentures?
+                <div className="p-2 w-full md:w-[60%] border-r-0 md:border-r border-black font-semibold">
+                  11. Current problems with teeth and/or dentures?
+                </div>
+                <div className="flex w-full md:w-[40%]">
+                  <div className="flex-1 flex items-center justify-center border-r border-black p-2">
+                    <label className="flex items-center gap-1 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={formData.dentalProblems === "yes"}
+                        onChange={() =>
+                          handleDentalChange("dentalProblems", "yes")
+                        }
+                      />{" "}
+                      Yes
+                    </label>
                   </div>
-                  <div className="flex w-full md:w-[40%]">
-                      <div className="flex-1 flex items-center justify-center border-r border-black p-2">
-                        <label className="flex items-center gap-1 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={formData.dentalProblems === "yes"}
-                            onChange={() => handleDentalChange("dentalProblems", "yes")}
-                          />{" "}
-                          Yes
-                        </label>
-                      </div>
-                      <div className="flex-1 flex items-center justify-center p-2">
-                        <label className="flex items-center gap-1 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={formData.dentalProblems === "no"}
-                            onChange={() => handleDentalChange("dentalProblems", "no")}
-                          />{" "}
-                          No
-                        </label>
-                      </div>
+                  <div className="flex-1 flex items-center justify-center p-2">
+                    <label className="flex items-center gap-1 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={formData.dentalProblems === "no"}
+                        onChange={() =>
+                          handleDentalChange("dentalProblems", "no")
+                        }
+                      />{" "}
+                      No
+                    </label>
                   </div>
+                </div>
               </div>
 
               {/* Q12 */}
               <div className="flex flex-col md:flex-row border-b border-black">
-                  <div className="p-2 w-full md:w-[60%] border-r-0 md:border-r border-black font-semibold">
-                      12. Does patient usually wear dentures?
+                <div className="p-2 w-full md:w-[60%] border-r-0 md:border-r border-black font-semibold">
+                  12. Does patient usually wear dentures?
+                </div>
+                <div className="flex w-full md:w-[40%]">
+                  <div className="flex-1 flex items-center justify-center border-r border-black p-2">
+                    <label className="flex items-center gap-1 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={formData.wearDentures === "yes"}
+                        onChange={() =>
+                          handleDentalChange("wearDentures", "yes")
+                        }
+                      />{" "}
+                      Yes
+                    </label>
                   </div>
-                  <div className="flex w-full md:w-[40%]">
-                      <div className="flex-1 flex items-center justify-center border-r border-black p-2">
-                        <label className="flex items-center gap-1 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={formData.wearDentures === "yes"}
-                            onChange={() => handleDentalChange("wearDentures", "yes")}
-                          />{" "}
-                          Yes
-                        </label>
-                      </div>
-                      <div className="flex-1 flex items-center justify-center p-2">
-                        <label className="flex items-center gap-1 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={formData.wearDentures === "no"}
-                            onChange={() => handleDentalChange("wearDentures", "no")}
-                          />{" "}
-                          No
-                        </label>
-                      </div>
+                  <div className="flex-1 flex items-center justify-center p-2">
+                    <label className="flex items-center gap-1 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={formData.wearDentures === "no"}
+                        onChange={() =>
+                          handleDentalChange("wearDentures", "no")
+                        }
+                      />{" "}
+                      No
+                    </label>
                   </div>
+                </div>
               </div>
 
               {/* Footer / Comments */}
@@ -464,27 +483,27 @@ const AbnormalInvoluntaryMovementScale = ({ onComplete, savedData, progressCurre
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                        Date:
-                        <input
-                          type="date"
-                          name="date"
-                          value={formData.date}
-                          onChange={handleChange}
-                          onKeyDown={handleEnter}
-                          className="w-full border-b border-black outline-none mt-2 bg-transparent"
-                          style={getStyle("date")}
-                        />
+                      Date:
+                      <input
+                        type="date"
+                        name="date"
+                        value={formData.date}
+                        onChange={handleChange}
+                        onKeyDown={handleEnter}
+                        className="w-full border-b border-black outline-none mt-2 bg-transparent"
+                        style={getStyle("date")}
+                      />
                     </div>
                     <div>
-                        Next Exam Date:
-                        <input
-                          type="date"
-                          name="nextExamDate"
-                          value={formData.nextExamDate}
-                          onChange={handleChange}
-                          onKeyDown={handleEnter}
-                          className="w-full border-b border-black outline-none mt-2 bg-transparent"
-                        />
+                      Next Exam Date:
+                      <input
+                        type="date"
+                        name="nextExamDate"
+                        value={formData.nextExamDate}
+                        onChange={handleChange}
+                        onKeyDown={handleEnter}
+                        className="w-full border-b border-black outline-none mt-2 bg-transparent"
+                      />
                     </div>
                   </div>
                 </div>
@@ -492,24 +511,28 @@ const AbnormalInvoluntaryMovementScale = ({ onComplete, savedData, progressCurre
             </div>
 
             {/* Action Buttons */}
-            <div className="w-full px-2 md:px-8 pb-8 bg-white flex justify-between items-center mt-8">
-              <button
-                type="button"
-                className="px-8 py-3 btn-premium text-white font-sans font-bold tracking-wide transform transition-transform"
-                onClick={() => window.history.back()}
-              >
-                Back
-              </button>
-              <button
-                type="button"
-                className="px-8 py-3 btn-premium-red text-white font-sans font-bold tracking-wide transform transition-transform"
-                onClick={() => { window.location.href = "/my-application"; }}
-              >
-                Exit Application
-              </button>
-              <SaveNextButton 
-                isSubmitting={isSubmitting} 
-                type="submit" 
+            <div className="w-full px-2 md:px-8 pb-8 bg-white flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 mt-8">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                <button
+                  type="button"
+                  className="w-full sm:w-auto px-6 py-3 btn-premium text-white font-sans font-bold tracking-wide transform transition-transform"
+                  onClick={() => window.history.back()}
+                >
+                  Back
+                </button>
+                <button
+                  type="button"
+                  className="w-full sm:w-auto px-6 py-3 btn-premium-red text-white font-sans font-bold tracking-wide transform transition-transform"
+                  onClick={() => {
+                    window.location.href = "/my-application";
+                  }}
+                >
+                  Exit Application
+                </button>
+              </div>
+              <SaveNextButton
+                isSubmitting={isSubmitting}
+                type="submit"
                 isReadOnly={isReadOnly}
                 onNext={onNext}
               />
@@ -522,3 +545,4 @@ const AbnormalInvoluntaryMovementScale = ({ onComplete, savedData, progressCurre
 };
 
 export default AbnormalInvoluntaryMovementScale;
+

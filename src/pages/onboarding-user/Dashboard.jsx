@@ -45,6 +45,7 @@ const ClientManagementHub = () => {
   });
 
   const activeEnrollment = enrollmentData?.enrollment;
+  const isWorkflowActionComplete = Boolean(activeEnrollment || selectedAction);
 
   // Mutations
   const createMutation = useMutation({
@@ -917,35 +918,63 @@ const ClientManagementHub = () => {
             ))}
           </div>
 
-          <label className="text-xs font-bold text-blue-900 uppercase tracking-widest mb-4 block">
+          <label
+            className={`text-xs font-bold uppercase tracking-widest mb-4 block ${
+              isWorkflowActionComplete ? "text-blue-900" : "text-slate-400"
+            }`}
+          >
             2. Clinical Program
           </label>
           <div className="space-y-3 mb-8">
             {programOptions.map((p) => (
               <button
                 key={p.value}
+                type="button"
+                disabled={!isWorkflowActionComplete || !!activeEnrollment}
                 onClick={() => {
-                  if (!activeEnrollment) {
+                  if (isWorkflowActionComplete && !activeEnrollment) {
                     setSelectedProgram(p.value);
                     localStorage.setItem("selectedProgram", p.value);
                   }
                 }}
-                className={`w-full p-4 rounded-xl border-2 text-left transition-all flex items-center justify-between group ${selectedProgram === p.value ? "border-indigo-600 bg-indigo-50" : "border-slate-100 hover:border-slate-200"} ${activeEnrollment ? "cursor-not-allowed opacity-80" : ""}`}
+                className={`w-full p-4 rounded-xl border-2 text-left transition-all flex items-center justify-between group ${
+                  !isWorkflowActionComplete
+                    ? "border-slate-100 bg-slate-50 cursor-not-allowed opacity-80"
+                    : selectedProgram === p.value
+                      ? "border-indigo-600 bg-indigo-50"
+                      : "border-slate-100 hover:border-slate-200"
+                } ${activeEnrollment ? "cursor-not-allowed opacity-80" : ""}`}
               >
                 <div>
                   <p
-                    className={`font-bold ${selectedProgram === p.value ? "text-indigo-900" : "text-slate-700"}`}
+                    className={`font-bold ${
+                      !isWorkflowActionComplete
+                        ? "text-slate-400"
+                        : selectedProgram === p.value
+                          ? "text-indigo-900"
+                          : "text-slate-700"
+                    }`}
                   >
                     {p.label}
                   </p>
-                  <p className="text-xs text-slate-500 mt-1">{p.description}</p>
+                  <p
+                    className={`text-xs mt-1 ${
+                      !isWorkflowActionComplete
+                        ? "text-slate-400"
+                        : "text-slate-500"
+                    }`}
+                  >
+                    {p.description}
+                  </p>
                 </div>
                 <ChevronRight
                   size={18}
                   className={
-                    selectedProgram === p.value
-                      ? "text-indigo-600"
-                      : "text-slate-300"
+                    !isWorkflowActionComplete
+                      ? "text-slate-300"
+                      : selectedProgram === p.value
+                        ? "text-indigo-600"
+                        : "text-slate-300"
                   }
                 />
               </button>

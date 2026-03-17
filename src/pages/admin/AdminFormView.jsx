@@ -461,8 +461,8 @@ function FormRenderer({ formId, formName, data, program, isAdminView }) {
     <Component
       savedData={data}
       selectedProgram={program}
-      onComplete={() => { }}
-      onFormChange={() => { }}
+      onComplete={() => {}}
+      onFormChange={() => {}}
       progressCurrent={1}
       progressTotal={1}
       isAdminView={isAdminView}

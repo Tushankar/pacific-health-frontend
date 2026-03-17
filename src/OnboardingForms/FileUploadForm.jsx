@@ -1,9 +1,9 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { 
-  Upload, 
-  FileText, 
-  X, 
-  CheckCircle, 
+import {
+  Upload,
+  FileText,
+  X,
+  CheckCircle,
   AlertCircle,
   Loader2,
 } from "lucide-react";
@@ -26,7 +26,7 @@ const FileUploadForm = ({
   const [file, setFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState(null);
-  
+
   // savedData contains the file info from the backend if already uploaded
   const existingFile = savedData && savedData.path ? savedData : null;
 
@@ -40,7 +40,7 @@ const FileUploadForm = ({
       "image/jpeg",
       "image/png",
       "application/msword",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     ];
 
     if (!allowedTypes.includes(selectedFile.type)) {
@@ -83,7 +83,10 @@ const FileUploadForm = ({
       }
     } catch (err) {
       console.error("Upload error:", err);
-      setError(err.response?.data?.message || "Failed to upload file. Please try again.");
+      setError(
+        err.response?.data?.message ||
+          "Failed to upload file. Please try again.",
+      );
       toast.error("Upload failed.");
     } finally {
       setIsUploading(false);
@@ -96,50 +99,65 @@ const FileUploadForm = ({
   };
 
   return (
-    <div className="flex w-full items-start bg-slate-50 min-h-screen font-serif">
+    <div className="flex flex-col-reverse lg:flex-row w-full items-start bg-slate-50 min-h-screen font-serif overflow-x-hidden">
       {/* Sidebar Progress */}
-      <div className="sticky top-0 self-start hidden md:flex flex-col items-center py-8 shrink-0 bg-white/50 backdrop-blur-sm z-10 h-screen border-r border-slate-200">
-        <ProgressBar currentStep={progressCurrent} totalSteps={progressTotal || 1} />
-      </div>
+      <ProgressBar
+        currentStep={progressCurrent}
+        totalSteps={progressTotal || 1}
+      />
 
-      <div className="flex-1 flex flex-col items-center py-8 px-4">
+      <div className="flex-1 flex flex-col items-center py-8 px-2 sm:px-4 min-w-0 overflow-x-hidden">
         {/* Paper Container */}
         <div className="w-full max-w-4xl bg-white shadow-xl rounded-2xl overflow-hidden border border-slate-200">
           {/* Header */}
           <div className="p-8 border-b border-slate-100 flex flex-col items-center text-center">
-            <img src={logo} alt="Pacific Health Systems" className="h-16 mb-4 object-contain" />
-            <h1 className="text-2xl font-bold text-slate-800">Document Submission</h1>
-            <p className="text-slate-500 mt-1 italic">Pacific Health Systems Onboarding</p>
+            <img
+              src={logo}
+              alt="Pacific Health Systems"
+              className="h-16 mb-4 object-contain"
+            />
+            <h1 className="text-2xl font-bold text-slate-800">
+              Document Submission
+            </h1>
+            <p className="text-slate-500 mt-1 italic">
+              Pacific Health Systems Onboarding
+            </p>
           </div>
 
-          <div className="p-8 lg:p-12">
+          <div className="p-4 sm:p-6 lg:p-12">
             <div className="flex items-center gap-4 mb-8">
               <div className="p-3 bg-blue-50 rounded-xl text-blue-600">
                 <Upload size={24} />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-slate-800 uppercase tracking-wide">Upload Document</h2>
-                <p className="text-slate-500 text-sm">Please provide the required file for this section</p>
+                <h2 className="text-xl font-bold text-slate-800 uppercase tracking-wide">
+                  Upload Document
+                </h2>
+                <p className="text-slate-500 text-sm">
+                  Please provide the required file for this section
+                </p>
               </div>
             </div>
 
             {/* Existing File View */}
             {existingFile && !file && (
-              <div className="mb-8 p-6 rounded-2xl border border-emerald-100 bg-emerald-50/50 flex items-center justify-between shadow-sm">
+              <div className="mb-8 p-4 sm:p-6 rounded-2xl border border-emerald-100 bg-emerald-50/50 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:justify-between shadow-sm">
                 <div className="flex items-center gap-4">
                   <div className="p-3 bg-emerald-100 rounded-xl text-emerald-600">
                     <CheckCircle size={24} />
                   </div>
                   <div>
-                    <p className="text-lg font-bold text-emerald-800">Document Uploaded</p>
-                    <p className="text-sm text-emerald-600 truncate max-w-[300px]">
+                    <p className="text-lg font-bold text-emerald-800">
+                      Document Uploaded
+                    </p>
+                    <p className="text-sm text-emerald-600 truncate max-w-[120px] sm:max-w-[300px]">
                       {existingFile.originalName}
                     </p>
                   </div>
                 </div>
-                <a 
-                  href={`https://pacific.kyptronix.us/${existingFile.path}`} 
-                  target="_blank" 
+                <a
+                  href={`https://pacific.kyptronix.us/${existingFile.path}`}
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="px-6 py-2.5 bg-white border border-emerald-200 text-emerald-700 rounded-xl font-bold hover:bg-emerald-100 transition-all shadow-sm"
                 >
@@ -150,39 +168,48 @@ const FileUploadForm = ({
 
             {/* Upload Area */}
             {!file ? (
-              <div 
-                className="border-2 border-dashed border-slate-200 rounded-3xl p-16 text-center hover:border-blue-400 hover:bg-blue-50/30 transition-all cursor-pointer group bg-slate-50/50"
+              <div
+                className="border-2 border-dashed border-slate-200 rounded-3xl p-6 sm:p-10 md:p-16 text-center hover:border-blue-400 hover:bg-blue-50/30 transition-all cursor-pointer group bg-slate-50/50"
                 onClick={() => document.getElementById("file-upload").click()}
               >
-                <input 
+                <input
                   id="file-upload"
-                  type="file" 
-                  className="hidden" 
+                  type="file"
+                  className="hidden"
                   onChange={onFileChange}
                   accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
                 />
                 <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-md border border-slate-100">
-                  <Upload className="text-slate-400 group-hover:text-blue-500" size={32} />
+                  <Upload
+                    className="text-slate-400 group-hover:text-blue-500"
+                    size={32}
+                  />
                 </div>
-                <h3 className="text-xl font-bold text-slate-700 mb-2">Click to upload or drag & drop</h3>
+                <h3 className="text-xl font-bold text-slate-700 mb-2">
+                  Click to upload or drag & drop
+                </h3>
                 <p className="text-slate-500 font-medium">
                   PDF, JPG, PNG or DOCX (Max 5MB)
                 </p>
               </div>
             ) : (
-              <div className="border border-blue-100 bg-blue-50/30 rounded-3xl p-8 shadow-sm">
+              <div className="border border-blue-100 bg-blue-50/30 rounded-3xl p-4 sm:p-8 shadow-sm">
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center gap-5">
                     <div className="p-4 bg-blue-100 rounded-2xl text-blue-600 shadow-sm">
                       <FileText size={32} />
                     </div>
                     <div>
-                      <h4 className="text-lg font-bold text-slate-800 truncate max-w-[350px]">{file.name}</h4>
-                      <p className="text-slate-500 font-medium">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                      <h4 className="text-lg font-bold text-slate-800 truncate max-w-[140px] sm:max-w-[350px]">
+                        {file.name}
+                      </h4>
+                      <p className="text-slate-500 font-medium">
+                        {(file.size / 1024 / 1024).toFixed(2)} MB
+                      </p>
                     </div>
                   </div>
                   {!isUploading && (
-                    <button 
+                    <button
                       onClick={removeFile}
                       className="p-3 hover:bg-red-50 text-slate-400 hover:text-red-500 rounded-xl transition-colors"
                     >
@@ -199,9 +226,14 @@ const FileUploadForm = ({
                 )}
 
                 <div className="p-4 bg-blue-50/50 rounded-2xl border border-blue-100/50 flex items-center gap-3 mb-8">
-                  <Loader2 className={`text-blue-600 ${isUploading ? 'animate-spin' : 'hidden'}`} size={20} />
+                  <Loader2
+                    className={`text-blue-600 ${isUploading ? "animate-spin" : "hidden"}`}
+                    size={20}
+                  />
                   <p className="text-sm text-blue-800 font-medium">
-                    {isUploading ? "Uploading to secure server..." : "Ready to submit document"}
+                    {isUploading
+                      ? "Uploading to secure server..."
+                      : "Ready to submit document"}
                   </p>
                 </div>
               </div>
@@ -210,29 +242,35 @@ const FileUploadForm = ({
             <div className="mt-12 flex items-start gap-4 p-6 bg-slate-50 rounded-2xl border border-slate-100">
               <AlertCircle size={24} className="text-slate-400 mt-0.5" />
               <div className="text-sm text-slate-500 leading-relaxed font-medium">
-                <p className="font-bold text-slate-700 mb-1 uppercase tracking-wider text-xs">Important Instructions:</p>
-                Please ensure the document is clear and all details are legible. 
-                Once uploaded, it will be reviewed by our admissions team. 
-                You can replace the document at any time before final submission.
+                <p className="font-bold text-slate-700 mb-1 uppercase tracking-wider text-xs">
+                  Important Instructions:
+                </p>
+                Please ensure the document is clear and all details are legible.
+                Once uploaded, it will be reviewed by our admissions team. You
+                can replace the document at any time before final submission.
               </div>
             </div>
           </div>
 
           {/* Footer with Navigation Button */}
-          <div className="p-8 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
-            <div className="flex gap-4">
+          <div className="p-4 md:p-8 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
               <button
                 type="button"
-                className="px-8 py-3 btn-premium text-white font-sans font-bold tracking-wide transform transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full sm:w-auto px-6 py-3 btn-premium text-white font-sans font-bold tracking-wide transform transition-all hover:scale-[1.02] active:scale-[0.98]"
                 onClick={() => window.history.back()}
               >
                 Back
               </button>
               <button
                 type="button"
-                className="px-8 py-3 btn-premium-red text-white font-sans font-bold tracking-wide transform transition-all hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full sm:w-auto px-6 py-3 btn-premium-red text-white font-sans font-bold tracking-wide transform transition-all hover:scale-[1.02] active:scale-[0.98]"
                 onClick={() => {
-                  if (window.confirm("Are you sure you want to exit the application process? Any unsaved changes may be lost.")) {
+                  if (
+                    window.confirm(
+                      "Are you sure you want to exit the application process? Any unsaved changes may be lost.",
+                    )
+                  ) {
                     window.location.href = "/my-application";
                   }
                 }}
@@ -240,7 +278,7 @@ const FileUploadForm = ({
                 Exit Application
               </button>
             </div>
-            <SaveNextButton 
+            <SaveNextButton
               onClick={handleUpload}
               isSubmitting={isUploading}
               isReadOnly={isReadOnly}

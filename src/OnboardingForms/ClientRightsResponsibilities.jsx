@@ -4,7 +4,15 @@ import SaveNextButton from "../components/common/SaveNextButton";
 import logo from "../assets/logo.png";
 import { toast } from "sonner";
 
-const ClientRightsResponsibilities = ({ onComplete, savedData, progressCurrent = 0, progressTotal = 1, onFormChange, isReadOnly = false, onNext }) => {
+const ClientRightsResponsibilities = ({
+  onComplete,
+  savedData,
+  progressCurrent = 0,
+  progressTotal = 1,
+  onFormChange,
+  isReadOnly = false,
+  onNext,
+}) => {
   const [formData, setFormData] = useState({
     clientSignature: "",
     clientSignatureDate: "",
@@ -36,7 +44,7 @@ const ClientRightsResponsibilities = ({ onComplete, savedData, progressCurrent =
   // Pre-fill from saved data if available
   useEffect(() => {
     if (savedData) {
-      setFormData(prev => ({ ...prev, ...savedData }));
+      setFormData((prev) => ({ ...prev, ...savedData }));
     }
   }, [savedData]);
   // Draft save: notify parent when formData changes after user interaction
@@ -54,9 +62,12 @@ const ClientRightsResponsibilities = ({ onComplete, savedData, progressCurrent =
   const validateForm = () => {
     const newErrors = {};
     if (!formData.clientSignature?.trim()) newErrors.clientSignature = true;
-    if (!formData.clientSignatureDate?.trim()) newErrors.clientSignatureDate = true;
-    if (!formData.administratorSignature?.trim()) newErrors.administratorSignature = true;
-    if (!formData.administratorSignatureDate?.trim()) newErrors.administratorSignatureDate = true;
+    if (!formData.clientSignatureDate?.trim())
+      newErrors.clientSignatureDate = true;
+    if (!formData.administratorSignature?.trim())
+      newErrors.administratorSignature = true;
+    if (!formData.administratorSignatureDate?.trim())
+      newErrors.administratorSignatureDate = true;
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -72,7 +83,10 @@ const ClientRightsResponsibilities = ({ onComplete, savedData, progressCurrent =
       setTimeout(() => {
         const firstErrorField = document.querySelector(".border-red-500");
         if (firstErrorField) {
-          firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          firstErrorField.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
           firstErrorField.focus();
         }
       }, 100);
@@ -97,16 +111,19 @@ const ClientRightsResponsibilities = ({ onComplete, savedData, progressCurrent =
     outline: "none",
     background: errors[field] ? "#fee2e2" : "transparent",
     borderTop: errors[field] ? "2px solid #ef4444" : "1px solid black",
-    transition: "all 0.2s"
+    transition: "all 0.2s",
   });
 
-  const RequiredStar = () => <span className="text-red-500 ml-1 font-bold">*</span>;
+  const RequiredStar = () => (
+    <span className="text-red-500 ml-1 font-bold">*</span>
+  );
 
   return (
-    <div className="flex w-full items-start bg-white text-black font-serif">
-      <div className="sticky top-0 self-start hidden md:flex flex-col items-center py-8 shrink-0 bg-white/50 backdrop-blur-sm z-10 h-screen">
-        <ProgressBar currentStep={progressCurrent} totalSteps={progressTotal || 1} />
-      </div>
+    <div className="flex flex-col-reverse lg:flex-row w-full items-start bg-white text-black font-serif">
+      <ProgressBar
+          currentStep={progressCurrent}
+          totalSteps={progressTotal || 1}
+        />
 
       <div className="flex-1 flex flex-col items-center mt-4 mb-8">
         {/* Paper Container */}
@@ -141,10 +158,12 @@ const ClientRightsResponsibilities = ({ onComplete, savedData, progressCurrent =
                 Get information on your treatment choices in a way that you can
                 understand.
               </li>
-              <li>Have a service plan which you help to write and get a copy.</li>
               <li>
-                Take part in decisions about your health care, including the right
-                to refuse treatment, except as provided by law.
+                Have a service plan which you help to write and get a copy.
+              </li>
+              <li>
+                Take part in decisions about your health care, including the
+                right to refuse treatment, except as provided by law.
               </li>
               <li>
                 Have a medical professional explain the benefits, risks and side
@@ -155,29 +174,31 @@ const ClientRightsResponsibilities = ({ onComplete, savedData, progressCurrent =
                 subject to available funding.
               </li>
               <li>
-                Review or ask for a copy of your medical records and ask that they
-                be amended (changed) or corrected.
+                Review or ask for a copy of your medical records and ask that
+                they be amended (changed) or corrected.
               </li>
               <li>
-                Have your record and the information you give in therapy sessions
-                kept confidential (private). Exceptions in the Health Insurance
-                Portability and Accountability Act (HIPAA) Privacy Notice and
-                state and federal laws include:
+                Have your record and the information you give in therapy
+                sessions kept confidential (private). Exceptions in the Health
+                Insurance Portability and Accountability Act (HIPAA) Privacy
+                Notice and state and federal laws include:
                 <ul className="list-[lower-alpha] pl-4 md:pl-8 mt-1">
                   <li>You are a danger to yourself or others.</li>
-                  <li>You are gravely disabled (unable to care for yourself).</li>
+                  <li>
+                    You are gravely disabled (unable to care for yourself).
+                  </li>
                   <li>In cases of child abuse or suspected child abuse.</li>
                 </ul>
               </li>
               <li>
-                Give an opinion about providers to the state or federal government
-                or to the media without it causing any adverse (bad) effects on
-                how we provide services.
+                Give an opinion about providers to the state or federal
+                government or to the media without it causing any adverse (bad)
+                effects on how we provide services.
               </li>
               <li>
-                Be free from any restraint or seclusion (isolation). These cannot
-                be used to force you to do something, to discipline you, to
-                retaliate (react) against you, or for the convenience of the
+                Be free from any restraint or seclusion (isolation). These
+                cannot be used to force you to do something, to discipline you,
+                to retaliate (react) against you, or for the convenience of the
                 provider.
               </li>
               <li>
@@ -188,21 +209,22 @@ const ClientRightsResponsibilities = ({ onComplete, savedData, progressCurrent =
                 File a grievance (complaint) about any part of your services.
               </li>
               <li>
-                Be free to exercise (use) all rights, its providers, or the state
-                cannot treat you differently because you exercise your rights.
+                Be free to exercise (use) all rights, its providers, or the
+                state cannot treat you differently because you exercise your
+                rights.
               </li>
               <li>
-                Know that sexual intimacy in a professional relationship is never
-                appropriate within client and Direct Support Staff. You should
-                report it to the state.
+                Know that sexual intimacy in a professional relationship is
+                never appropriate within client and Direct Support Staff. You
+                should report it to the state.
               </li>
               <li>
                 Right to be informed about the plan for services and to be
                 involved in the development of the plan
               </li>
               <li>
-                Right to be informed promptly about any changes in services before
-                the change occurs.
+                Right to be informed promptly about any changes in services
+                before the change occurs.
               </li>
               <li>Right to accept or refuse services</li>
               <li>Right to be informed of the charges for services provided</li>
@@ -222,8 +244,8 @@ const ClientRightsResponsibilities = ({ onComplete, savedData, progressCurrent =
                 inspection.
               </li>
               <li>
-                Responsibility of the client and/or representative party to inform
-                the provider of any changes in the client's condition
+                Responsibility of the client and/or representative party to
+                inform the provider of any changes in the client's condition
               </li>
             </ol>
           </div>
@@ -258,8 +280,8 @@ const ClientRightsResponsibilities = ({ onComplete, savedData, progressCurrent =
                 federal regulations.
               </li>
               <li>
-                Appeal the denial or reduction (lowering) in the type or level of
-                service that you request or that is provided to you.
+                Appeal the denial or reduction (lowering) in the type or level
+                of service that you request or that is provided to you.
               </li>
             </ol>
           </div>
@@ -276,8 +298,8 @@ const ClientRightsResponsibilities = ({ onComplete, savedData, progressCurrent =
                 the plan.
               </li>
               <li>
-                Give your treatment team all the information they need so that all
-                of you can make the best decisions about your care.
+                Give your treatment team all the information they need so that
+                all of you can make the best decisions about your care.
               </li>
               <li>Arrive on time for appointments.</li>
               <li>
@@ -285,7 +307,8 @@ const ClientRightsResponsibilities = ({ onComplete, savedData, progressCurrent =
                 another appointment.
               </li>
               <li>
-                Treat staff and other consumers with the same courtesy you expect.
+                Treat staff and other consumers with the same courtesy you
+                expect.
               </li>
             </ol>
           </div>
@@ -293,15 +316,15 @@ const ClientRightsResponsibilities = ({ onComplete, savedData, progressCurrent =
           {/* Acknowledgment Paragraph */}
           <div className="mb-8 text-justify">
             <p>
-              I have read the Rights and Responsibilities for participation in the
-              Pacific Health Systems Services Program listed above. My signature
-              on this form indicates that I have been informed of these Rights and
-              Responsibilities and agree to abide by them as a Client / Client
-              Representative in the Program. I have received copies of the
-              agency’s grievance procedures, any release of information forms, and
-              this document. I understand that failure to respect the rights and
-              responsibilities above may result in my being sanctioned or
-              discharged from Pacific Health Systems
+              I have read the Rights and Responsibilities for participation in
+              the Pacific Health Systems Services Program listed above. My
+              signature on this form indicates that I have been informed of
+              these Rights and Responsibilities and agree to abide by them as a
+              Client / Client Representative in the Program. I have received
+              copies of the agency’s grievance procedures, any release of
+              information forms, and this document. I understand that failure to
+              respect the rights and responsibilities above may result in my
+              being sanctioned or discharged from Pacific Health Systems
             </p>
           </div>
 
@@ -315,7 +338,8 @@ const ClientRightsResponsibilities = ({ onComplete, savedData, progressCurrent =
                   value={formData.clientSignature}
                   onChange={(e) => {
                     handleChange(e);
-                    if(errors.clientSignature) setErrors(prev => ({...prev, clientSignature: null}));
+                    if (errors.clientSignature)
+                      setErrors((prev) => ({ ...prev, clientSignature: null }));
                   }}
                   onKeyDown={handleEnter}
                   style={getStyle("clientSignature")}
@@ -332,13 +356,19 @@ const ClientRightsResponsibilities = ({ onComplete, savedData, progressCurrent =
                   value={formData.clientSignatureDate}
                   onChange={(e) => {
                     handleChange(e);
-                    if(errors.clientSignatureDate) setErrors(prev => ({...prev, clientSignatureDate: null}));
+                    if (errors.clientSignatureDate)
+                      setErrors((prev) => ({
+                        ...prev,
+                        clientSignatureDate: null,
+                      }));
                   }}
                   onKeyDown={handleEnter}
                   style={getStyle("clientSignatureDate")}
                   className={`w-full mt-8 ${errors.clientSignatureDate ? "border-red-500" : ""}`}
                 />
-                <div className="font-bold">Date <RequiredStar /></div>
+                <div className="font-bold">
+                  Date <RequiredStar />
+                </div>
               </div>
               <div>
                 <input
@@ -347,13 +377,19 @@ const ClientRightsResponsibilities = ({ onComplete, savedData, progressCurrent =
                   value={formData.administratorSignature}
                   onChange={(e) => {
                     handleChange(e);
-                    if(errors.administratorSignature) setErrors(prev => ({...prev, administratorSignature: null}));
+                    if (errors.administratorSignature)
+                      setErrors((prev) => ({
+                        ...prev,
+                        administratorSignature: null,
+                      }));
                   }}
                   onKeyDown={handleEnter}
                   style={getStyle("administratorSignature")}
                   className={`w-full mt-8 ${errors.administratorSignature ? "border-red-500" : ""}`}
                 />
-                <div className="font-bold">Signature of Administrator <RequiredStar /></div>
+                <div className="font-bold">
+                  Signature of Administrator <RequiredStar />
+                </div>
               </div>
               <div>
                 <input
@@ -362,34 +398,44 @@ const ClientRightsResponsibilities = ({ onComplete, savedData, progressCurrent =
                   value={formData.administratorSignatureDate}
                   onChange={(e) => {
                     handleChange(e);
-                    if(errors.administratorSignatureDate) setErrors(prev => ({...prev, administratorSignatureDate: null}));
+                    if (errors.administratorSignatureDate)
+                      setErrors((prev) => ({
+                        ...prev,
+                        administratorSignatureDate: null,
+                      }));
                   }}
                   onKeyDown={handleEnter}
                   style={getStyle("administratorSignatureDate")}
                   className={`w-full mt-8 ${errors.administratorSignatureDate ? "border-red-500" : ""}`}
                 />
-                <div className="font-bold">Date <RequiredStar /></div>
+                <div className="font-bold">
+                  Date <RequiredStar />
+                </div>
               </div>
             </div>
             {/* Action Buttons */}
-            <div className="w-full flex justify-between items-center mt-12 pb-8">
-              <button
-                type="button"
-                className="px-8 py-3 btn-premium text-white font-sans font-bold tracking-wide transform transition-transform"
-                onClick={() => window.history.back()}
-              >
-                Back
-              </button>
-              <button
-                type="button"
-                className="px-8 py-3 btn-premium-red text-white font-sans font-bold tracking-wide transform transition-transform"
-                onClick={() => { window.location.href = "/my-application"; }}
-              >
-                Exit Application
-              </button>
-              <SaveNextButton 
-                isSubmitting={isSubmitting} 
-                type="submit" 
+            <div className="w-full flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 mt-12 pb-8">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                <button
+                  type="button"
+                  className="w-full sm:w-auto px-6 py-3 btn-premium text-white font-sans font-bold tracking-wide transform transition-transform"
+                  onClick={() => window.history.back()}
+                >
+                  Back
+                </button>
+                <button
+                  type="button"
+                  className="w-full sm:w-auto px-6 py-3 btn-premium-red text-white font-sans font-bold tracking-wide transform transition-transform"
+                  onClick={() => {
+                    window.location.href = "/my-application";
+                  }}
+                >
+                  Exit Application
+                </button>
+              </div>
+              <SaveNextButton
+                isSubmitting={isSubmitting}
+                type="submit"
                 isReadOnly={isReadOnly}
                 onNext={onNext}
               />
@@ -414,3 +460,4 @@ const ClientRightsResponsibilities = ({ onComplete, savedData, progressCurrent =
 };
 
 export default ClientRightsResponsibilities;
+

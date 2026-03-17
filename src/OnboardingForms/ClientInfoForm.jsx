@@ -94,13 +94,18 @@ const Form01ClientInfo = ({
       { key: "phone", label: "Phone" },
       { key: "sex", label: "Sex" },
       { key: "dob", label: "Date of Birth" },
-      { key: "ssn", label: "SSN#" },
+      { key: "ssn", label: "SSN Last 4" },
       { key: "medicaid", label: "Medicaid #" },
     ];
 
     requiredFields.forEach((field) => {
       if (!formData[field.key] || formData[field.key].trim() === "") {
         newErrors[field.key] = `${field.label} is required`;
+      } else if (field.key === "ssn") {
+        const ssnVal = formData[field.key].replace(/\D/g, "");
+        if (!/^\d{4}$/.test(ssnVal)) {
+          newErrors[field.key] = "SSN last 4 must be exactly 4 digits";
+        }
       } else if (field.key === "medicaid") {
         const medicaidVal = formData[field.key].trim();
         const medicaidRegex = /^(111|222)\d{9}$/;
@@ -176,6 +181,8 @@ const Form01ClientInfo = ({
     if (!validateForm()) {
       if (errors.medicaid && formData.medicaid.trim() !== "") {
         toast.error("Medicaid # must be 12 digits and start with 111 or 222");
+      } else if (errors.ssn && formData.ssn.trim() !== "") {
+        toast.error("SSN last 4 must be exactly 4 digits");
       } else {
         toast.error("Please fill in all required fields.");
       }
@@ -220,7 +227,7 @@ const Form01ClientInfo = ({
   );
 
   return (
-    <div className="flex w-full items-start">
+    <div className="flex flex-col-reverse lg:flex-row w-full items-start">
       {/* Sidebar Progress Bar */}
       <ProgressBar
         currentStep={progressCurrent}
@@ -228,7 +235,7 @@ const Form01ClientInfo = ({
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 min-w-0 flex flex-col md:items-center overflow-x-hidden">
+      <div className="flex-1 min-w-0 flex flex-col md:items-center overflow-x-auto">
         <div className="w-full text-black font-serif flex flex-col md:items-center mb-8">
           {/* Paper Container */}
           <form
@@ -460,7 +467,7 @@ const Form01ClientInfo = ({
                       Sex: <RequiredStar />
                     </td>
                     <td style={td} colSpan="3">
-                      <input
+                      <select
                         style={getInputStyle("sex")}
                         className={
                           errors.sex ? "border-red-500 shadow-outline-red" : ""
@@ -471,7 +478,12 @@ const Form01ClientInfo = ({
                           if (errors.sex)
                             setErrors((prev) => ({ ...prev, sex: null }));
                         }}
-                      />
+                      >
+                        <option value="">Select...</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                      </select>
                     </td>
                     <td style={td}>Language:</td>
                     <td style={td} colSpan="3">
@@ -487,7 +499,7 @@ const Form01ClientInfo = ({
 
                   <tr>
                     <td style={td}>
-                      SSN#: <RequiredStar />
+                      SSN Last 4: <RequiredStar />
                     </td>
                     <td style={td} colSpan="3">
                       <input
@@ -495,9 +507,15 @@ const Form01ClientInfo = ({
                         className={
                           errors.ssn ? "border-red-500 shadow-outline-red" : ""
                         }
+                        inputMode="numeric"
+                        maxLength={4}
+                        placeholder="Last 4 digits"
                         value={formData.ssn}
                         onChange={(e) => {
-                          handleChange("ssn", e.target.value);
+                          handleChange(
+                            "ssn",
+                            e.target.value.replace(/\D/g, "").slice(0, 4),
+                          );
                           if (errors.ssn)
                             setErrors((prev) => ({ ...prev, ssn: null }));
                         }}
@@ -821,7 +839,9 @@ const Form01ClientInfo = ({
                 <button
                   type="button"
                   className="w-full sm:w-auto px-6 sm:px-8 py-3 btn-premium-red text-white font-sans font-bold tracking-wide transform transition-all hover:scale-[1.02] active:scale-[0.98] text-sm sm:text-base"
-                  onClick={() => { window.location.href = "/my-application"; }}
+                  onClick={() => {
+                    window.location.href = "/my-application";
+                  }}
                 >
                   Exit Application
                 </button>

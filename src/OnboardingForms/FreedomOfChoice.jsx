@@ -3,7 +3,15 @@ import ProgressBar from "../components/ProgressBar";
 import SaveNextButton from "../components/common/SaveNextButton";
 import { toast } from "sonner";
 
-const FreedomOfChoice = ({ onComplete, savedData, progressCurrent = 0, progressTotal = 1, onFormChange, isReadOnly = false, onNext }) => {
+const FreedomOfChoice = ({
+  onComplete,
+  savedData,
+  progressCurrent = 0,
+  progressTotal = 1,
+  onFormChange,
+  isReadOnly = false,
+  onNext,
+}) => {
   const [formData, setFormData] = useState({
     planningAdminName: "",
     planningAdminDate: "",
@@ -26,7 +34,7 @@ const FreedomOfChoice = ({ onComplete, savedData, progressCurrent = 0, progressT
   // Pre-fill from saved data if available
   useEffect(() => {
     if (savedData) {
-      setFormData(prev => ({ ...prev, ...savedData }));
+      setFormData((prev) => ({ ...prev, ...savedData }));
     }
   }, [savedData]);
   // Draft save: notify parent when formData changes after user interaction
@@ -67,7 +75,10 @@ const FreedomOfChoice = ({ onComplete, savedData, progressCurrent = 0, progressT
       setTimeout(() => {
         const firstErrorField = document.querySelector(".border-red-500");
         if (firstErrorField) {
-          firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          firstErrorField.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
           if (firstErrorField.tagName === "INPUT") firstErrorField.focus();
         }
       }, 100);
@@ -92,17 +103,19 @@ const FreedomOfChoice = ({ onComplete, savedData, progressCurrent = 0, progressT
     outline: "none",
     background: errors[field] ? "#fee2e2" : "transparent",
     borderBottom: errors[field] ? "2px solid #ef4444" : "1px solid black",
-    transition: "all 0.2s"
+    transition: "all 0.2s",
   });
 
-  const RequiredStar = () => <span className="text-red-500 ml-1 font-bold">*</span>;
+  const RequiredStar = () => (
+    <span className="text-red-500 ml-1 font-bold">*</span>
+  );
 
   return (
-
-    <div className="flex w-full items-start bg-white text-black font-serif">
-      <div className="sticky top-0 self-start hidden md:flex flex-col items-center py-8 shrink-0 bg-white/50 backdrop-blur-sm z-10 h-screen">
-        <ProgressBar currentStep={progressCurrent} totalSteps={progressTotal || 1} />
-      </div>
+    <div className="flex flex-col-reverse lg:flex-row w-full items-start bg-white text-black font-serif">
+      <ProgressBar
+          currentStep={progressCurrent}
+          totalSteps={progressTotal || 1}
+        />
 
       <div className="flex-1 flex flex-col items-center mt-4 mb-8">
         {/* Paper Container */}
@@ -131,21 +144,22 @@ const FreedomOfChoice = ({ onComplete, savedData, progressCurrent = 0, progressT
                 </li>
               </ol>
               <p className="text-justify mb-4">
-                This process assures that recipients and their representatives can
-                make an informed choice concerning service options. The presumption
-                of the law is that a person may consent for him/herself. This
-                presumption should be abandoned only when it is evident that the
-                individual is not capable of doing so. The very nature of a
-                diagnosed condition of an intellectual/developmental disability
-                confirms that the individual who is diagnosed with an
-                intellectual/developmental disability lacks capacity. The
-                recognized reality and trend in the law is that individuals with
-                intellectual/developmental disabilities are often neither wholly
-                competent nor wholly incompetent. The New Options Waiver Program
-                has chosen to involve and recognize the rights of all recipients
-                while at the same time protecting the rights of recipients
-                through the request of concurrent consent by recipients'
-                authorized representatives.
+                This process assures that recipients and their representatives
+                can make an informed choice concerning service options. The
+                presumption of the law is that a person may consent for
+                him/herself. This presumption should be abandoned only when it
+                is evident that the individual is not capable of doing so. The
+                very nature of a diagnosed condition of an
+                intellectual/developmental disability confirms that the
+                individual who is diagnosed with an intellectual/developmental
+                disability lacks capacity. The recognized reality and trend in
+                the law is that individuals with intellectual/developmental
+                disabilities are often neither wholly competent nor wholly
+                incompetent. The New Options Waiver Program has chosen to
+                involve and recognize the rights of all recipients while at the
+                same time protecting the rights of recipients through the
+                request of concurrent consent by recipients' authorized
+                representatives.
               </p>
               <p className="text-justify">
                 Whoever is selected as authorized representative must meet the
@@ -196,8 +210,8 @@ const FreedomOfChoice = ({ onComplete, savedData, progressCurrent = 0, progressT
                         <span>A)</span>
                         <span>
                           Evidence of participant/representative's understanding
-                          of information should be evidenced in the discussion of
-                          the same.
+                          of information should be evidenced in the discussion
+                          of the same.
                         </span>
                       </div>
                     </div>
@@ -208,21 +222,21 @@ const FreedomOfChoice = ({ onComplete, savedData, progressCurrent = 0, progressT
                   <div>
                     Once information has been provided and appears to be
                     understood, the Planning List Administrator/Support
-                    Coordinator (or designee) should verify that this information
-                    has been provided appropriately and is understood. Once
-                    verified, the form should be signed at the designated
-                    sign-off under verification statement.
+                    Coordinator (or designee) should verify that this
+                    information has been provided appropriately and is
+                    understood. Once verified, the form should be signed at the
+                    designated sign-off under verification statement.
                   </div>
                 </div>
                 <div className="flex gap-2">
                   <span className="font-bold whitespace-nowrap">Step (3)</span>
                   <div>
-                    Informed participant/representative chooses a service option.
-                    The informed participant/representative should sign under the
-                    appropriate statement that reflects their choice. In cases
-                    where the individual participant is a minor, and/or unable
-                    due to physical and/or mental causes to sign his/her name,
-                    and/or unable to legibly write his/her name, the
+                    Informed participant/representative chooses a service
+                    option. The informed participant/representative should sign
+                    under the appropriate statement that reflects their choice.
+                    In cases where the individual participant is a minor, and/or
+                    unable due to physical and/or mental causes to sign his/her
+                    name, and/or unable to legibly write his/her name, the
                     participant's name should be printed, above his/her
                     signature or mark, if any, and be initialed by the
                     participant's authorized representative.
@@ -266,8 +280,8 @@ const FreedomOfChoice = ({ onComplete, savedData, progressCurrent = 0, progressT
             </p>
 
             <p className="mb-4 text-justify">
-              Once a recipient is determined to be likely to require the level of
-              care provided in a SNF, ICF or ICF/ID the recipient and his/her
+              Once a recipient is determined to be likely to require the level
+              of care provided in a SNF, ICF or ICF/ID the recipient and his/her
               authorized representative will be informed of any feasible
               alternative available under the waiver and given the choice of
               either institutional or home and community-based services. This
@@ -275,18 +289,18 @@ const FreedomOfChoice = ({ onComplete, savedData, progressCurrent = 0, progressT
             </p>
 
             <p className="mb-4 text-justify">
-              Recipients may request through the regional office that a different
-              support coordinator be assigned. Recipients have the choice of
-              qualified providers in all areas of care and may request a change
-              in providers through the region.
+              Recipients may request through the regional office that a
+              different support coordinator be assigned. Recipients have the
+              choice of qualified providers in all areas of care and may request
+              a change in providers through the region.
             </p>
 
             <p className="mb-6 text-justify">
               The substance of the information provided will make one reasonably
               familiar with service options, provider options, their
-              alternatives, and possible benefits and hazards, and the disclosure
-              of said information is designed to be fully understood and appears
-              to be fully understood.
+              alternatives, and possible benefits and hazards, and the
+              disclosure of said information is designed to be fully understood
+              and appears to be fully understood.
             </p>
 
             {/* Verification Section */}
@@ -307,14 +321,19 @@ const FreedomOfChoice = ({ onComplete, savedData, progressCurrent = 0, progressT
                       value={formData.planningAdminName}
                       onChange={(e) => {
                         handleChange(e);
-                        if(errors.planningAdminName) setErrors(prev => ({...prev, planningAdminName: null}));
+                        if (errors.planningAdminName)
+                          setErrors((prev) => ({
+                            ...prev,
+                            planningAdminName: null,
+                          }));
                       }}
                       style={getStyle("planningAdminName")}
                       className={`w-full border-b border-black outline-none min-w-0 ${errors.planningAdminName ? "border-red-500" : ""}`}
                       readOnly={isReadOnly}
                     />
                     <div className="text-[8px] md:text-[10px] mt-1">
-                      Planning List Administrator/Support Coordinator <RequiredStar />
+                      Planning List Administrator/Support Coordinator{" "}
+                      <RequiredStar />
                     </div>
                   </div>
                   <div className="w-1/3">
@@ -324,7 +343,11 @@ const FreedomOfChoice = ({ onComplete, savedData, progressCurrent = 0, progressT
                       type="date"
                       onChange={(e) => {
                         handleChange(e);
-                        if(errors.planningAdminDate) setErrors(prev => ({...prev, planningAdminDate: null}));
+                        if (errors.planningAdminDate)
+                          setErrors((prev) => ({
+                            ...prev,
+                            planningAdminDate: null,
+                          }));
                       }}
                       style={getStyle("planningAdminDate")}
                       className={`w-full border-b border-black outline-none text-center ${errors.planningAdminDate ? "border-red-500" : ""}`}
@@ -356,13 +379,19 @@ const FreedomOfChoice = ({ onComplete, savedData, progressCurrent = 0, progressT
                       value={formData.recipientName}
                       onChange={(e) => {
                         handleChange(e);
-                        if(errors.recipientName) setErrors(prev => ({...prev, recipientName: null}));
+                        if (errors.recipientName)
+                          setErrors((prev) => ({
+                            ...prev,
+                            recipientName: null,
+                          }));
                       }}
                       style={getStyle("recipientName")}
                       className={`w-full border-b border-black outline-none min-w-0 ${errors.recipientName ? "border-red-500" : ""}`}
                       readOnly={isReadOnly}
                     />
-                    <div className="text-[8px] md:text-[10px] mt-1">Recipient/Participant <RequiredStar /></div>
+                    <div className="text-[8px] md:text-[10px] mt-1">
+                      Recipient/Participant <RequiredStar />
+                    </div>
                   </div>
                   <div className="w-1/3">
                     <input
@@ -371,7 +400,11 @@ const FreedomOfChoice = ({ onComplete, savedData, progressCurrent = 0, progressT
                       type="date"
                       onChange={(e) => {
                         handleChange(e);
-                        if(errors.recipientDate) setErrors(prev => ({...prev, recipientDate: null}));
+                        if (errors.recipientDate)
+                          setErrors((prev) => ({
+                            ...prev,
+                            recipientDate: null,
+                          }));
                       }}
                       style={getStyle("recipientDate")}
                       className={`w-full border-b border-black outline-none text-center ${errors.recipientDate ? "border-red-500" : ""}`}
@@ -391,13 +424,19 @@ const FreedomOfChoice = ({ onComplete, savedData, progressCurrent = 0, progressT
                       value={formData.authorizedRepName}
                       onChange={(e) => {
                         handleChange(e);
-                        if(errors.authorizedRepName) setErrors(prev => ({...prev, authorizedRepName: null}));
+                        if (errors.authorizedRepName)
+                          setErrors((prev) => ({
+                            ...prev,
+                            authorizedRepName: null,
+                          }));
                       }}
                       style={getStyle("authorizedRepName")}
                       className={`w-full border-b border-black outline-none min-w-0 ${errors.authorizedRepName ? "border-red-500" : ""}`}
                       readOnly={isReadOnly}
                     />
-                    <div className="text-[8px] md:text-[10px] mt-1">Authorized Representative <RequiredStar /></div>
+                    <div className="text-[8px] md:text-[10px] mt-1">
+                      Authorized Representative <RequiredStar />
+                    </div>
                   </div>
                   <div className="w-1/3">
                     <input
@@ -406,7 +445,11 @@ const FreedomOfChoice = ({ onComplete, savedData, progressCurrent = 0, progressT
                       type="date"
                       onChange={(e) => {
                         handleChange(e);
-                        if(errors.authorizedRepDate) setErrors(prev => ({...prev, authorizedRepDate: null}));
+                        if (errors.authorizedRepDate)
+                          setErrors((prev) => ({
+                            ...prev,
+                            authorizedRepDate: null,
+                          }));
                       }}
                       style={getStyle("authorizedRepDate")}
                       className={`w-full border-b border-black outline-none text-center ${errors.authorizedRepDate ? "border-red-500" : ""}`}
@@ -422,59 +465,67 @@ const FreedomOfChoice = ({ onComplete, savedData, progressCurrent = 0, progressT
                 <div className="flex justify-between items-end gap-4">
                   <div className="flex-1">
                     <input
-                    name="witnessName"
-                    value={formData.witnessName}
-                    onChange={(e) => {
-                      handleChange(e);
-                      if(errors.witnessName) setErrors(prev => ({...prev, witnessName: null}));
-                    }}
-                    style={getStyle("witnessName")}
-                    className={`w-full border-b border-black outline-none min-w-0 ${errors.witnessName ? "border-red-500" : ""}`}
-                    readOnly={isReadOnly}
-                  />
-                  <div className="text-[8px] md:text-[10px] mt-1">Witness <RequiredStar /></div>
+                      name="witnessName"
+                      value={formData.witnessName}
+                      onChange={(e) => {
+                        handleChange(e);
+                        if (errors.witnessName)
+                          setErrors((prev) => ({ ...prev, witnessName: null }));
+                      }}
+                      style={getStyle("witnessName")}
+                      className={`w-full border-b border-black outline-none min-w-0 ${errors.witnessName ? "border-red-500" : ""}`}
+                      readOnly={isReadOnly}
+                    />
+                    <div className="text-[8px] md:text-[10px] mt-1">
+                      Witness <RequiredStar />
+                    </div>
                   </div>
                   <div className="w-1/3">
                     <input
-                    name="witnessDate"
-                    value={formData.witnessDate}
-                    type="date"
-                    onChange={(e) => {
-                      handleChange(e);
-                      if(errors.witnessDate) setErrors(prev => ({...prev, witnessDate: null}));
-                    }}
-                    style={getStyle("witnessDate")}
-                    className={`w-full border-b border-black outline-none text-center ${errors.witnessDate ? "border-red-500" : ""}`}
-                    placeholder="MM/DD/YYYY"
-                    readOnly={isReadOnly}
-                  />
-                  <div className="text-[8px] md:text-[10px] mt-1 text-center">
-                    Date <RequiredStar />
-                  </div>
+                      name="witnessDate"
+                      value={formData.witnessDate}
+                      type="date"
+                      onChange={(e) => {
+                        handleChange(e);
+                        if (errors.witnessDate)
+                          setErrors((prev) => ({ ...prev, witnessDate: null }));
+                      }}
+                      style={getStyle("witnessDate")}
+                      className={`w-full border-b border-black outline-none text-center ${errors.witnessDate ? "border-red-500" : ""}`}
+                      placeholder="MM/DD/YYYY"
+                      readOnly={isReadOnly}
+                    />
+                    <div className="text-[8px] md:text-[10px] mt-1 text-center">
+                      Date <RequiredStar />
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Action Buttons */}
-            <div className="w-full flex justify-between items-center mt-12">
-              <button
-                type="button"
-                className="px-8 py-3 btn-premium text-white font-sans font-bold tracking-wide transform transition-transform"
-                onClick={() => window.history.back()}
-              >
-                Back
-              </button>
-              <button
-                type="button"
-                className="px-8 py-3 btn-premium-red text-white font-sans font-bold tracking-wide transform transition-transform"
-                onClick={() => { window.location.href = "/my-application"; }}
-              >
-                Exit Application
-              </button>
-              <SaveNextButton 
-                isSubmitting={isSubmitting} 
-                type="submit" 
+            <div className="w-full flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 mt-12 pb-8">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                <button
+                  type="button"
+                  className="w-full sm:w-auto px-6 py-3 btn-premium text-white font-sans font-bold tracking-wide transform transition-transform"
+                  onClick={() => window.history.back()}
+                >
+                  Back
+                </button>
+                <button
+                  type="button"
+                  className="w-full sm:w-auto px-6 py-3 btn-premium-red text-white font-sans font-bold tracking-wide transform transition-transform"
+                  onClick={() => {
+                    window.location.href = "/my-application";
+                  }}
+                >
+                  Exit Application
+                </button>
+              </div>
+              <SaveNextButton
+                isSubmitting={isSubmitting}
+                type="submit"
                 isReadOnly={isReadOnly}
                 onNext={onNext}
               />
@@ -483,7 +534,8 @@ const FreedomOfChoice = ({ onComplete, savedData, progressCurrent = 0, progressT
         </div>
       </div>
     </div>
-);
+  );
 };
 
 export default FreedomOfChoice;
+

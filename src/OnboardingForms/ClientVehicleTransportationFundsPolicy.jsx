@@ -4,7 +4,15 @@ import SaveNextButton from "../components/common/SaveNextButton";
 import logo from "../assets/logo.png";
 import { toast } from "sonner";
 
-const ClientVehicleTransportationFundsPolicy = ({ onComplete, savedData, progressCurrent = 0, progressTotal = 1, onFormChange, isReadOnly = false, onNext }) => {
+const ClientVehicleTransportationFundsPolicy = ({
+  onComplete,
+  savedData,
+  progressCurrent = 0,
+  progressTotal = 1,
+  onFormChange,
+  isReadOnly = false,
+  onNext,
+}) => {
   const [formData, setFormData] = useState({
     clientRepSignature: "",
     clientRepDate: "",
@@ -23,7 +31,7 @@ const ClientVehicleTransportationFundsPolicy = ({ onComplete, savedData, progres
   // Pre-fill from saved data if available
   useEffect(() => {
     if (savedData) {
-      setFormData(prev => ({ ...prev, ...savedData }));
+      setFormData((prev) => ({ ...prev, ...savedData }));
     }
   }, [savedData]);
   // Draft save: notify parent when formData changes after user interaction
@@ -40,9 +48,11 @@ const ClientVehicleTransportationFundsPolicy = ({ onComplete, savedData, progres
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.clientRepSignature?.trim()) newErrors.clientRepSignature = true;
+    if (!formData.clientRepSignature?.trim())
+      newErrors.clientRepSignature = true;
     if (!formData.clientRepDate?.trim()) newErrors.clientRepDate = true;
-    if (!formData.admissionRepSignature?.trim()) newErrors.admissionRepSignature = true;
+    if (!formData.admissionRepSignature?.trim())
+      newErrors.admissionRepSignature = true;
     if (!formData.admissionRepDate?.trim()) newErrors.admissionRepDate = true;
 
     setErrors(newErrors);
@@ -59,7 +69,10 @@ const ClientVehicleTransportationFundsPolicy = ({ onComplete, savedData, progres
       setTimeout(() => {
         const firstErrorField = document.querySelector(".border-red-500");
         if (firstErrorField) {
-          firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          firstErrorField.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
           firstErrorField.focus();
         }
       }, 100);
@@ -84,16 +97,19 @@ const ClientVehicleTransportationFundsPolicy = ({ onComplete, savedData, progres
     outline: "none",
     background: errors[field] ? "#fee2e2" : "transparent",
     borderBottom: errors[field] ? "2px solid #ef4444" : "1px solid black",
-    transition: "all 0.2s"
+    transition: "all 0.2s",
   });
 
-  const RequiredStar = () => <span className="text-red-500 ml-1 font-bold">*</span>;
+  const RequiredStar = () => (
+    <span className="text-red-500 ml-1 font-bold">*</span>
+  );
 
   return (
-    <div className="flex w-full items-start bg-white text-black font-serif">
-      <div className="sticky top-0 self-start hidden md:flex flex-col items-center py-8 shrink-0 bg-white/50 backdrop-blur-sm z-10 h-screen">
-        <ProgressBar currentStep={progressCurrent} totalSteps={progressTotal || 1} />
-      </div>
+    <div className="flex flex-col-reverse lg:flex-row w-full items-start bg-white text-black font-serif">
+      <ProgressBar
+          currentStep={progressCurrent}
+          totalSteps={progressTotal || 1}
+        />
 
       <div className="flex-1 flex flex-col items-center mt-4 mb-8">
         {/* Paper Container */}
@@ -197,8 +213,8 @@ const ClientVehicleTransportationFundsPolicy = ({ onComplete, savedData, progres
                 </li>
               </ul>
               <p className="text-justify">
-                Violations may result in disciplinary action, up to and including
-                termination and personal liability.
+                Violations may result in disciplinary action, up to and
+                including termination and personal liability.
               </p>
             </div>
 
@@ -216,7 +232,9 @@ const ClientVehicleTransportationFundsPolicy = ({ onComplete, savedData, progres
               </p>
               <ul className="list-disc pl-8 mb-2">
                 <li>Holding client money</li>
-                <li>Making purchases on behalf of clients using client funds</li>
+                <li>
+                  Making purchases on behalf of clients using client funds
+                </li>
                 <li>Managing financial transactions for clients</li>
               </ul>
               <p className="text-justify">
@@ -226,7 +244,9 @@ const ClientVehicleTransportationFundsPolicy = ({ onComplete, savedData, progres
             </div>
 
             <div className="mt-4">
-              <h3 className="font-bold underline mb-1">Client Acknowledgment</h3>
+              <h3 className="font-bold underline mb-1">
+                Client Acknowledgment
+              </h3>
               <p className="text-justify mb-1">
                 I acknowledge that I have received, read, and understand the
                 Pacific Health Systems LLC Client Vehicle, Transportation &
@@ -249,7 +269,11 @@ const ClientVehicleTransportationFundsPolicy = ({ onComplete, savedData, progres
                     value={formData.clientRepSignature}
                     onChange={(e) => {
                       handleChange(e);
-                      if(errors.clientRepSignature) setErrors(prev => ({...prev, clientRepSignature: null}));
+                      if (errors.clientRepSignature)
+                        setErrors((prev) => ({
+                          ...prev,
+                          clientRepSignature: null,
+                        }));
                     }}
                     style={getStyle("clientRepSignature")}
                     className={`w-full ${errors.clientRepSignature ? "border-red-500" : ""}`}
@@ -258,30 +282,37 @@ const ClientVehicleTransportationFundsPolicy = ({ onComplete, savedData, progres
                     Client Representative Signature <RequiredStar />
                   </div>
                 </div>
-                 <div className="w-24">
+                <div className="w-24">
                   <input
                     type="date"
                     name="clientRepDate"
                     value={formData.clientRepDate}
                     onChange={(e) => {
                       handleChange(e);
-                      if(errors.clientRepDate) setErrors(prev => ({...prev, clientRepDate: null}));
+                      if (errors.clientRepDate)
+                        setErrors((prev) => ({ ...prev, clientRepDate: null }));
                     }}
                     style={getStyle("clientRepDate")}
                     className={`w-full ${errors.clientRepDate ? "border-red-500" : ""}`}
                   />
-                  <div className="text-xs font-bold italic mt-1">Date <RequiredStar /></div>
+                  <div className="text-xs font-bold italic mt-1">
+                    Date <RequiredStar />
+                  </div>
                 </div>
               </div>
               <div className="flex gap-4 w-full md:w-[48%]">
-                 <div className="flex-grow">
+                <div className="flex-grow">
                   <input
                     type="text"
                     name="admissionRepSignature"
                     value={formData.admissionRepSignature}
                     onChange={(e) => {
                       handleChange(e);
-                      if(errors.admissionRepSignature) setErrors(prev => ({...prev, admissionRepSignature: null}));
+                      if (errors.admissionRepSignature)
+                        setErrors((prev) => ({
+                          ...prev,
+                          admissionRepSignature: null,
+                        }));
                     }}
                     style={getStyle("admissionRepSignature")}
                     className={`w-full ${errors.admissionRepSignature ? "border-red-500" : ""}`}
@@ -290,19 +321,25 @@ const ClientVehicleTransportationFundsPolicy = ({ onComplete, savedData, progres
                     Admission Representative Signature <RequiredStar />
                   </div>
                 </div>
-                 <div className="w-24">
+                <div className="w-24">
                   <input
                     type="date"
                     name="admissionRepDate"
                     value={formData.admissionRepDate}
                     onChange={(e) => {
                       handleChange(e);
-                      if(errors.admissionRepDate) setErrors(prev => ({...prev, admissionRepDate: null}));
+                      if (errors.admissionRepDate)
+                        setErrors((prev) => ({
+                          ...prev,
+                          admissionRepDate: null,
+                        }));
                     }}
                     style={getStyle("admissionRepDate")}
                     className={`w-full ${errors.admissionRepDate ? "border-red-500" : ""}`}
                   />
-                  <div className="text-xs font-bold italic mt-1">Date <RequiredStar /></div>
+                  <div className="text-xs font-bold italic mt-1">
+                    Date <RequiredStar />
+                  </div>
                 </div>
               </div>
             </div>
@@ -313,24 +350,28 @@ const ClientVehicleTransportationFundsPolicy = ({ onComplete, savedData, progres
             </div>
 
             {/* Action Buttons */}
-            <div className="w-full flex justify-between items-center mt-12">
-              <button
-                type="button"
-                className="px-8 py-3 btn-premium text-white font-sans font-bold tracking-wide transform transition-transform"
-                onClick={() => window.history.back()}
-              >
-                Back
-              </button>
-              <button
-                type="button"
-                className="px-8 py-3 btn-premium-red text-white font-sans font-bold tracking-wide transform transition-transform"
-                onClick={() => { window.location.href = "/my-application"; }}
-              >
-                Exit Application
-              </button>
-              <SaveNextButton 
-                isSubmitting={isSubmitting} 
-                type="submit" 
+            <div className="w-full flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 mt-12 pb-8">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                <button
+                  type="button"
+                  className="w-full sm:w-auto px-6 py-3 btn-premium text-white font-sans font-bold tracking-wide transform transition-transform"
+                  onClick={() => window.history.back()}
+                >
+                  Back
+                </button>
+                <button
+                  type="button"
+                  className="w-full sm:w-auto px-6 py-3 btn-premium-red text-white font-sans font-bold tracking-wide transform transition-transform"
+                  onClick={() => {
+                    window.location.href = "/my-application";
+                  }}
+                >
+                  Exit Application
+                </button>
+              </div>
+              <SaveNextButton
+                isSubmitting={isSubmitting}
+                type="submit"
                 isReadOnly={isReadOnly}
                 onNext={onNext}
               />
@@ -343,3 +384,4 @@ const ClientVehicleTransportationFundsPolicy = ({ onComplete, savedData, progres
 };
 
 export default ClientVehicleTransportationFundsPolicy;
+

@@ -30,6 +30,162 @@ import * as OnboardingForms from "../../OnboardingForms";
 import { toast } from "sonner";
 import useDraftSave from "../../hooks/useDraftSave";
 
+const normalizeText = (value) =>
+  String(value || "")
+    .trim()
+    .replace(/\s+/g, " ")
+    .toLowerCase();
+
+const normalizeName = (parts) =>
+  normalizeText(Array.isArray(parts) ? parts.filter(Boolean).join(" ") : parts);
+
+const normalizeDigits = (value) => String(value || "").replace(/\D/g, "");
+
+const normalizeDate = (value) => {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+
+  const isoMatch = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (isoMatch) {
+    return `${isoMatch[1]}-${isoMatch[2]}-${isoMatch[3]}`;
+  }
+
+  const slashMatch = raw.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})$/);
+  if (slashMatch) {
+    const month = slashMatch[1].padStart(2, "0");
+    const day = slashMatch[2].padStart(2, "0");
+    const year =
+      slashMatch[3].length === 2 ? `20${slashMatch[3]}` : slashMatch[3];
+    return `${year}-${month}-${day}`;
+  }
+
+  return raw;
+};
+
+const extractDateFromText = (value) => {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+
+  const isoMatch = raw.match(/\b\d{4}-\d{2}-\d{2}\b/);
+  if (isoMatch) {
+    return normalizeDate(isoMatch[0]);
+  }
+
+  const slashMatch = raw.match(/\b\d{1,2}[/-]\d{1,2}[/-]\d{2,4}\b/);
+  if (slashMatch) {
+    return normalizeDate(slashMatch[0]);
+  }
+
+  return "";
+};
+
+const extractLastFourDigits = (value) => {
+  const digits = normalizeDigits(value);
+  return digits.length >= 4 ? digits.slice(-4) : "";
+};
+
+const namesMatch = (left, right) => {
+  if (!left || !right) return true;
+  return left === right || left.includes(right) || right.includes(left);
+};
+
+const extractPatientIdentifiers = (formName, data) => {
+  if (!data || typeof data !== "object") {
+    return {};
+  }
+
+  switch (formName) {
+    case "Client Information Form":
+      return {
+        name: normalizeName([data.firstName, data.middleName, data.lastName]),
+        dob: normalizeDate(data.dob),
+        ssn: extractLastFourDigits(data.ssn),
+      };
+    case "Service Agreement Form":
+    case "Service Agreement":
+      return {
+        name: normalizeName([
+          data.clientFirstName,
+          data.clientMiddleName,
+          data.clientLastName,
+        ]),
+      };
+    case "Advance Directives":
+      return {
+        name: normalizeName(data.individualName),
+        dob: normalizeDate(data.dob),
+      };
+    case "AUTHORIZATION FOR RELEASE OF INFORMATION – STANDARD REQUEST":
+      return {
+        name: normalizeName(data.clientName),
+        dob: extractDateFromText(data.clientDobSsn),
+        ssn: extractLastFourDigits(data.clientDobSsn),
+      };
+    case "My Human Rights":
+      return {
+        name: normalizeName(data.clientName),
+        dob: normalizeDate(data.dob),
+      };
+    case "Medication List":
+      return {
+        name: normalizeName(data.clientInfo?.name),
+        dob: normalizeDate(data.clientInfo?.dob),
+      };
+    case "Initial Comprehensive Assessment":
+    case "Comprehensive Initial Nursing Assessment":
+      return {
+        name: normalizeName(data.clientName),
+        dob: normalizeDate(data.dob),
+      };
+    default:
+      return {
+        name: normalizeName(
+          data.clientName || data.individualName || data.name || "",
+        ),
+        dob: normalizeDate(data.dob),
+        ssn: extractLastFourDigits(data.ssn),
+      };
+  }
+};
+
+const buildConsistencyError = (currentForm, currentIdentifiers, otherForm) => {
+  const otherIdentifiers = extractPatientIdentifiers(
+    otherForm.name,
+    otherForm.data,
+  );
+  const mismatches = [];
+
+  if (
+    currentIdentifiers.name &&
+    otherIdentifiers.name &&
+    !namesMatch(currentIdentifiers.name, otherIdentifiers.name)
+  ) {
+    mismatches.push("Name");
+  }
+
+  if (
+    currentIdentifiers.dob &&
+    otherIdentifiers.dob &&
+    currentIdentifiers.dob !== otherIdentifiers.dob
+  ) {
+    mismatches.push("Date of Birth");
+  }
+
+  if (
+    currentIdentifiers.ssn &&
+    otherIdentifiers.ssn &&
+    currentIdentifiers.ssn !== otherIdentifiers.ssn
+  ) {
+    mismatches.push("SSN Last 4");
+  }
+
+  if (mismatches.length === 0) {
+    return null;
+  }
+
+  return `Patient information mismatch with "${otherForm.name}". ${mismatches.join(", ")} ${mismatches.length === 1 ? "does" : "do"} not match. Please correct the information before continuing from "${currentForm.name}".`;
+};
+
 const MyApplication = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -405,11 +561,12 @@ const MyApplication = () => {
                   activeEnrollment?.status === "submitted" ||
                   !activeEnrollment
                 }
-                className={`px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1.5 sm:gap-2 ${progressStats.percent === 100 &&
+                className={`px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold transition-all shadow-sm flex items-center justify-center gap-1.5 sm:gap-2 ${
+                  progressStats.percent === 100 &&
                   activeEnrollment?.status === "pending"
-                  ? "bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-200 shadow-lg"
-                  : "bg-slate-100 text-slate-400 cursor-not-allowed"
-                  }`}
+                    ? "bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-200 shadow-lg"
+                    : "bg-slate-100 text-slate-400 cursor-not-allowed"
+                }`}
               >
                 {submitMutation.isPending ? (
                   <Loader2 className="animate-spin" size={14} />
@@ -559,14 +716,15 @@ const MyApplication = () => {
                           </td>
                           <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-5 hidden sm:table-cell">
                             <div
-                              className={`text-[10px] sm:text-xs p-2 sm:p-3 rounded-lg sm:rounded-xl border italic max-w-sm ${status === "Approved"
-                                ? "bg-emerald-50/30 border-emerald-100 text-emerald-700 font-medium"
-                                : status === "Rejected"
-                                  ? "bg-rose-50/30 border-rose-100 text-rose-700 font-medium"
-                                  : status === "Pending"
-                                    ? "bg-amber-50/30 border-amber-100 text-amber-900 overflow-hidden"
-                                    : "bg-slate-50/30 border-slate-100 text-slate-500"
-                                }`}
+                              className={`text-[10px] sm:text-xs p-2 sm:p-3 rounded-lg sm:rounded-xl border italic max-w-sm ${
+                                status === "Approved"
+                                  ? "bg-emerald-50/30 border-emerald-100 text-emerald-700 font-medium"
+                                  : status === "Rejected"
+                                    ? "bg-rose-50/30 border-rose-100 text-rose-700 font-medium"
+                                    : status === "Pending"
+                                      ? "bg-amber-50/30 border-amber-100 text-amber-900 overflow-hidden"
+                                      : "bg-slate-50/30 border-slate-100 text-slate-500"
+                              }`}
                             >
                               "{note}"
                             </div>
@@ -579,14 +737,15 @@ const MyApplication = () => {
                           <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-5 text-right">
                             <button
                               onClick={() => navigate(`?formId=${form.id}`)}
-                              className={`px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-2.5 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold transition-all shadow-sm whitespace-nowrap ${isCompleted
-                                ? "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
-                                : isDraft
-                                  ? "bg-yellow-500 text-white hover:bg-yellow-600 shadow-lg shadow-yellow-100"
-                                  : isInProgress
-                                    ? "bg-amber-500 text-white hover:bg-amber-600 shadow-lg shadow-amber-100"
-                                    : "bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-100"
-                                }`}
+                              className={`px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-2.5 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold transition-all shadow-sm whitespace-nowrap ${
+                                isCompleted
+                                  ? "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
+                                  : isDraft
+                                    ? "bg-yellow-500 text-white hover:bg-yellow-600 shadow-lg shadow-yellow-100"
+                                    : isInProgress
+                                      ? "bg-amber-500 text-white hover:bg-amber-600 shadow-lg shadow-amber-100"
+                                      : "bg-blue-600 text-white hover:bg-blue-700 shadow-lg shadow-blue-100"
+                              }`}
                             >
                               <span className="hidden sm:inline">
                                 {status === "Completed" || status === "Approved"
@@ -605,7 +764,7 @@ const MyApplication = () => {
                                   : status === "Rejected"
                                     ? "Fix"
                                     : status === "Draft Saved" ||
-                                      status === "In Progress"
+                                        status === "In Progress"
                                       ? "Continue"
                                       : "Open"}
                               </span>
@@ -687,14 +846,16 @@ const MyApplication = () => {
     const handleComplete = useCallback(
       async (submittedFormData) => {
         if (readOnly) return; // Prevent submission in read-only mode
-        markSubmitted();
         try {
           await onComplete(submittedFormData);
+          markSubmitted();
           // After successful save/update, navigate to next form
           handleNext();
         } catch (error) {
           console.error("Error submitting form:", error);
-          toast.error("Failed to save form. Please try again.");
+          if (!error?.handled) {
+            toast.error("Failed to save form. Please try again.");
+          }
         }
       },
       [onComplete, markSubmitted, readOnly, handleNext],
@@ -779,7 +940,13 @@ const MyApplication = () => {
           `}</style>
         )}
         <fieldset
-          style={{ border: "none", padding: 0, margin: 0, width: "100%" }}
+          style={{
+            border: "none",
+            padding: 0,
+            margin: 0,
+            width: "100%",
+            minWidth: 0,
+          }}
         >
           <Component
             enrollmentId={enrollmentId}
@@ -916,6 +1083,46 @@ const MyApplication = () => {
           readOnly={isReadOnly}
           nextFormId={nextFormId}
           onComplete={async (submittedFormData) => {
+            const currentForm = {
+              id: parseInt(formId),
+              name: selectedForm.name,
+            };
+            const currentIdentifiers = extractPatientIdentifiers(
+              currentForm.name,
+              submittedFormData,
+            );
+
+            const conflictingForm = (activeEnrollment?.forms || []).find(
+              (f) => {
+                const comparisonData = f.draftData || f.data;
+
+                if (f.formId === currentForm.id || !comparisonData) {
+                  return false;
+                }
+
+                return !!buildConsistencyError(
+                  currentForm,
+                  currentIdentifiers,
+                  {
+                    ...f,
+                    data: comparisonData,
+                  },
+                );
+              },
+            );
+
+            if (conflictingForm) {
+              const message = buildConsistencyError(
+                currentForm,
+                currentIdentifiers,
+                conflictingForm,
+              );
+              toast.error(message, { duration: 6000 });
+              const consistencyError = new Error(message);
+              consistencyError.handled = true;
+              throw consistencyError;
+            }
+
             await statusMutation.mutateAsync({
               formId: parseInt(formId),
               status: "completed",
@@ -1100,7 +1307,9 @@ const MyApplication = () => {
           </div>
 
           {/* Form Content - This is where your separate form components will be rendered */}
-          <div className="p-2 sm:p-4 md:p-8">{renderFormComponent()}</div>
+          <div className="p-2 sm:p-4 md:p-8 w-full">
+            {renderFormComponent()}
+          </div>
         </div>
       )}
     </div>

@@ -2,7 +2,15 @@ import React, { useState, useEffect, useRef } from "react";
 import SaveNextButton from "../components/common/SaveNextButton";
 import { toast } from "sonner";
 
-const HomeSupervisoryVisitForm = ({ onComplete, savedData, progressCurrent = 0, progressTotal = 1, onFormChange, isReadOnly = false, onNext }) => {
+const HomeSupervisoryVisitForm = ({
+  onComplete,
+  savedData,
+  progressCurrent = 0,
+  progressTotal = 1,
+  onFormChange,
+  isReadOnly = false,
+  onNext,
+}) => {
   const [formData, setFormData] = useState({
     clientName: "",
     date: "",
@@ -85,7 +93,7 @@ const HomeSupervisoryVisitForm = ({ onComplete, savedData, progressCurrent = 0, 
   // Pre-fill from saved data if available
   useEffect(() => {
     if (savedData) {
-      setFormData(prev => ({ ...prev, ...savedData }));
+      setFormData((prev) => ({ ...prev, ...savedData }));
     }
   }, [savedData]);
   // Draft save: notify parent when formData changes after user interaction
@@ -121,7 +129,10 @@ const HomeSupervisoryVisitForm = ({ onComplete, savedData, progressCurrent = 0, 
       setTimeout(() => {
         const firstErrorField = document.querySelector(".border-red-500");
         if (firstErrorField) {
-          firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          firstErrorField.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
           firstErrorField.focus();
         }
       }, 100);
@@ -146,10 +157,12 @@ const HomeSupervisoryVisitForm = ({ onComplete, savedData, progressCurrent = 0, 
     outline: "none",
     background: errors[field] ? "#fee2e2" : "transparent",
     borderBottom: errors[field] ? "2px solid #ef4444" : "1px solid black",
-    transition: "all 0.2s"
+    transition: "all 0.2s",
   });
 
-  const RequiredStar = () => <span className="text-red-500 ml-1 font-bold">*</span>;
+  const RequiredStar = () => (
+    <span className="text-red-500 ml-1 font-bold">*</span>
+  );
   const handleArrayInput = (path, index) => (e) => {
     if (isReadOnly) return;
     setFormData((prev) => {
@@ -177,33 +190,41 @@ const HomeSupervisoryVisitForm = ({ onComplete, savedData, progressCurrent = 0, 
   return (
     <div className="w-full flex justify-center bg-gray-100 min-h-screen p-8 text-black font-sans">
       {/* Paper Container */}
-      <form onSubmit={handleSubmit} className="bg-white w-[210mm] min-h-[297mm] shadow-lg p-[20mm] relative flex flex-col text-[10px] leading-tight border border-gray-300">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white w-[210mm] min-h-[297mm] shadow-lg p-[20mm] relative flex flex-col text-[10px] leading-tight border border-gray-300"
+      >
         <h1 className="text-xl md:text-2xl font-bold text-center mb-8">
           Home Supervisory Visit
         </h1>
 
         {/* Header */}
         <div className="flex items-end mb-8">
-          <span className="font-bold mr-2 whitespace-nowrap">Client Name: <RequiredStar /></span>
+          <span className="font-bold mr-2 whitespace-nowrap">
+            Client Name: <RequiredStar />
+          </span>
           <input
             type="text"
             value={formData.clientName}
             onChange={(e) => {
               handleInput(["clientName"])(e);
-              if(errors.clientName) setErrors(prev => ({...prev, clientName: null}));
+              if (errors.clientName)
+                setErrors((prev) => ({ ...prev, clientName: null }));
             }}
             onKeyDown={handleEnter}
             style={getStyle("clientName")}
             className={`flex-grow ${errors.clientName ? "border-red-500" : ""}`}
             readOnly={isReadOnly}
           />
-          <span className="font-bold ml-4 mr-2 whitespace-nowrap">Date: <RequiredStar /></span>
+          <span className="font-bold ml-4 mr-2 whitespace-nowrap">
+            Date: <RequiredStar />
+          </span>
           <input
             type="date"
             value={formData.date}
             onChange={(e) => {
               handleInput(["date"])(e);
-              if(errors.date) setErrors(prev => ({...prev, date: null}));
+              if (errors.date) setErrors((prev) => ({ ...prev, date: null }));
             }}
             onKeyDown={handleEnter}
             style={getStyle("date")}
@@ -407,7 +428,8 @@ const HomeSupervisoryVisitForm = ({ onComplete, savedData, progressCurrent = 0, 
               value={formData.footer.assessorName}
               onChange={(e) => {
                 handleInput(["footer", "assessorName"])(e);
-                if(errors.assessorName) setErrors(prev => ({...prev, assessorName: null}));
+                if (errors.assessorName)
+                  setErrors((prev) => ({ ...prev, assessorName: null }));
               }}
               onKeyDown={handleEnter}
               style={getStyle("assessorName")}
@@ -847,7 +869,8 @@ const HomeSupervisoryVisitForm = ({ onComplete, savedData, progressCurrent = 0, 
             value={formData.footer.assessorName}
             onChange={(e) => {
               handleInput(["footer", "assessorName"])(e);
-              if(errors.assessorName) setErrors(prev => ({...prev, assessorName: null}));
+              if (errors.assessorName)
+                setErrors((prev) => ({ ...prev, assessorName: null }));
             }}
             onKeyDown={handleEnter}
             style={getStyle("assessorName")}
@@ -862,7 +885,8 @@ const HomeSupervisoryVisitForm = ({ onComplete, savedData, progressCurrent = 0, 
             value={formData.footer.date}
             onChange={(e) => {
               handleInput(["footer", "date"])(e);
-              if(errors.assessorDate) setErrors(prev => ({...prev, assessorDate: null}));
+              if (errors.assessorDate)
+                setErrors((prev) => ({ ...prev, assessorDate: null }));
             }}
             onKeyDown={handleEnter}
             style={getStyle("assessorDate")}
@@ -872,24 +896,28 @@ const HomeSupervisoryVisitForm = ({ onComplete, savedData, progressCurrent = 0, 
         </div>
 
         {/* Action Buttons */}
-        <div className="w-full flex justify-between items-center mt-auto pt-8 border-t border-gray-200">
-          <button
-            type="button"
-            className="px-6 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
-            onClick={() => window.history.back()}
-          >
-            Back
-          </button>
-          <button
-            type="button"
-            className="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
-            onClick={() => { window.location.href = "/my-application"; }}
-          >
-            Exit Application
-          </button>
-          <SaveNextButton 
-            isSubmitting={isSubmitting} 
-            type="submit" 
+        <div className="w-full flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 mt-auto pt-8 border-t border-gray-200">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+            <button
+              type="button"
+              className="w-full sm:w-auto px-6 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
+              onClick={() => window.history.back()}
+            >
+              Back
+            </button>
+            <button
+              type="button"
+              className="w-full sm:w-auto px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+              onClick={() => {
+                window.location.href = "/my-application";
+              }}
+            >
+              Exit Application
+            </button>
+          </div>
+          <SaveNextButton
+            isSubmitting={isSubmitting}
+            type="submit"
             isReadOnly={isReadOnly}
             onNext={onNext}
           />

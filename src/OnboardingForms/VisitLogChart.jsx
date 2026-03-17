@@ -4,14 +4,14 @@ import SaveNextButton from "../components/common/SaveNextButton";
 
 import ProgressBar from "../components/ProgressBar";
 
-const VisitLogChart = ({ 
-  onComplete, 
-  savedData, 
-  progressCurrent = 0, 
-  progressTotal = 1, 
+const VisitLogChart = ({
+  onComplete,
+  savedData,
+  progressCurrent = 0,
+  progressTotal = 1,
   onFormChange,
   isReadOnly = false,
-  onNext
+  onNext,
 }) => {
   // Create an array for the rows to render
   const rows = Array.from({ length: 25 });
@@ -50,10 +50,10 @@ const VisitLogChart = ({
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
     if (isReadOnly) return;
-    
-    // Visit Log doesn't typically have strict required fields for every row, 
+
+    // Visit Log doesn't typically have strict required fields for every row,
     // but we can ensure standard behavior.
-    
+
     setIsSubmitting(true);
     try {
       if (onComplete) {
@@ -69,10 +69,11 @@ const VisitLogChart = ({
   };
 
   return (
-    <div className="flex w-full items-start bg-white text-black font-serif">
-      <div className="sticky top-0 self-start hidden md:flex flex-col items-center py-8 shrink-0 bg-white/50 backdrop-blur-sm z-10 h-screen">
-        <ProgressBar currentStep={progressCurrent} totalSteps={progressTotal || 1} />
-      </div>
+    <div className="flex flex-col-reverse lg:flex-row w-full items-start bg-white text-black font-serif">
+      <ProgressBar
+          currentStep={progressCurrent}
+          totalSteps={progressTotal || 1}
+        />
 
       <div className="flex-1 flex flex-col items-center mt-4 mb-8">
         {/* Paper Container */}
@@ -134,7 +135,9 @@ const VisitLogChart = ({
                   className="col-span-4 p-1 focus:bg-blue-50 outline-none h-full w-full"
                   type="text"
                   value={formData[index]?.purpose || ""}
-                  onChange={(e) => handleChange(index, "purpose", e.target.value)}
+                  onChange={(e) =>
+                    handleChange(index, "purpose", e.target.value)
+                  }
                   readOnly={isReadOnly}
                 />
               </div>
@@ -142,24 +145,28 @@ const VisitLogChart = ({
           </div>
 
           {/* Action Buttons */}
-          <div className="w-full flex justify-between items-center mt-12">
-            <button
-              type="button"
-              className="px-8 py-3 btn-premium text-white font-sans font-bold tracking-wide transform transition-transform"
-              onClick={() => window.history.back()}
-            >
-              Back
-            </button>
-            <button
-              type="button"
-              className="px-8 py-3 btn-premium-red text-white font-sans font-bold tracking-wide transform transition-transform"
-              onClick={() => { window.location.href = "/my-application"; }}
-            >
-              Exit Application
-            </button>
-            <SaveNextButton 
-              isSubmitting={isSubmitting} 
-              type="submit" 
+          <div className="w-full flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 mt-12 pb-8">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+              <button
+                type="button"
+                className="w-full sm:w-auto px-6 py-3 btn-premium text-white font-sans font-bold tracking-wide transform transition-transform"
+                onClick={() => window.history.back()}
+              >
+                Back
+              </button>
+              <button
+                type="button"
+                className="w-full sm:w-auto px-6 py-3 btn-premium-red text-white font-sans font-bold tracking-wide transform transition-transform"
+                onClick={() => {
+                  window.location.href = "/my-application";
+                }}
+              >
+                Exit Application
+              </button>
+            </div>
+            <SaveNextButton
+              isSubmitting={isSubmitting}
+              type="submit"
               isReadOnly={isReadOnly}
               onNext={onNext}
             />
@@ -171,3 +178,4 @@ const VisitLogChart = ({
 };
 
 export default VisitLogChart;
+

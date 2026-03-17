@@ -4,7 +4,15 @@ import SaveNextButton from "../components/common/SaveNextButton";
 import logo from "../assets/logo.png";
 import { toast } from "sonner";
 
-const AbuseNeglect = ({ onComplete, savedData, progressCurrent = 0, progressTotal = 1, onFormChange, isReadOnly = false, onNext }) => {
+const AbuseNeglect = ({
+  onComplete,
+  savedData,
+  progressCurrent = 0,
+  progressTotal = 1,
+  onFormChange,
+  isReadOnly = false,
+  onNext,
+}) => {
   const [formData, setFormData] = useState({
     name: "",
     signature: "",
@@ -18,7 +26,7 @@ const AbuseNeglect = ({ onComplete, savedData, progressCurrent = 0, progressTota
   // Pre-fill from saved data if available
   useEffect(() => {
     if (savedData) {
-      setFormData(prev => ({ ...prev, ...savedData }));
+      setFormData((prev) => ({ ...prev, ...savedData }));
     }
   }, [savedData]);
   // Draft save: notify parent when formData changes after user interaction
@@ -53,7 +61,10 @@ const AbuseNeglect = ({ onComplete, savedData, progressCurrent = 0, progressTota
       setTimeout(() => {
         const firstErrorField = document.querySelector(".border-red-500");
         if (firstErrorField) {
-          firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          firstErrorField.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
           if (firstErrorField.tagName === "INPUT") firstErrorField.focus();
         }
       }, 100);
@@ -78,16 +89,19 @@ const AbuseNeglect = ({ onComplete, savedData, progressCurrent = 0, progressTota
     outline: "none",
     background: errors[field] ? "#fee2e2" : "transparent",
     borderBottom: errors[field] ? "2px solid #ef4444" : "1px solid black",
-    transition: "all 0.2s"
+    transition: "all 0.2s",
   });
 
-  const RequiredStar = () => <span className="text-red-500 ml-1 font-bold">*</span>;
+  const RequiredStar = () => (
+    <span className="text-red-500 ml-1 font-bold">*</span>
+  );
 
   return (
-    <div className="flex w-full items-start bg-white text-black font-serif">
-      <div className="sticky top-0 self-start hidden md:flex flex-col items-center py-8 shrink-0 bg-white/50 backdrop-blur-sm z-10 h-screen">
-        <ProgressBar currentStep={progressCurrent} totalSteps={progressTotal || 1} />
-      </div>
+    <div className="flex flex-col-reverse lg:flex-row w-full items-start bg-white text-black font-serif">
+      <ProgressBar
+          currentStep={progressCurrent}
+          totalSteps={progressTotal || 1}
+        />
 
       <div className="flex-1 flex flex-col items-center mt-4 mb-8">
         {/* Paper Container */}
@@ -105,14 +119,17 @@ const AbuseNeglect = ({ onComplete, savedData, progressCurrent = 0, progressTota
               </div>
 
               <div className="flex gap-4 items-end mb-8">
-                <span className="font-bold whitespace-nowrap">Name: <RequiredStar /> </span>
+                <span className="font-bold whitespace-nowrap">
+                  Name: <RequiredStar />{" "}
+                </span>
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={(e) => {
                     handleChange("name", e.target.value);
-                    if(errors.name) setErrors(prev => ({...prev, name: null}));
+                    if (errors.name)
+                      setErrors((prev) => ({ ...prev, name: null }));
                   }}
                   style={getStyle("name")}
                   className={`flex-grow border-b border-black outline-none px-2 ${errors.name ? "border-red-500" : ""}`}
@@ -163,10 +180,10 @@ const AbuseNeglect = ({ onComplete, savedData, progressCurrent = 0, progressTota
                       <span className="w-4 shrink-0">b)</span>
                       <span>
                         <span className="font-bold">Verbal abuse:</span> any
-                        derogatory, threatening, derisive, or demeaning language,
-                        whether oral or with gestures, directed toward an
-                        individual by caregiver; any profane language directed
-                        toward an individual by caregiver.
+                        derogatory, threatening, derisive, or demeaning
+                        language, whether oral or with gestures, directed toward
+                        an individual by caregiver; any profane language
+                        directed toward an individual by caregiver.
                       </span>
                     </li>
                     <li className="flex gap-4">
@@ -176,27 +193,27 @@ const AbuseNeglect = ({ onComplete, savedData, progressCurrent = 0, progressTota
                         refusal to attend to the necessary care and necessary
                         treatment of an individual by caregiver; action or
                         inaction by caregiver that denies individuals the
-                        prescribed care and treatment to which they are entitled;
-                        actions by caregiver contrary to the prescribed treatment
-                        or program; unauthorized removal or unauthorized denial
-                        of an individual's personal possessions (e.g.,
-                        cigarettes, radio, phonograph, toiletries, etc.);
-                        unauthorized removal or unauthorized denial of an
-                        individual's scheduled meals or snacks; failure to
-                        implement individual treatment programs as designed by
-                        the interdisciplinary treatment team; unauthorized use of
-                        seclusion and/or restraint; failure to secure proper or
-                        sufficient clothing and to see that individual is
-                        properly clothed; preventing an individual during normal
-                        waking hours from communicating by letter, telephone, or
-                        personal visit with the individual's lawyer, physician,
-                        advocate, or guardian; preventing an individual from
-                        having visits from relatives unless such visits are
-                        unauthorized; failure to intervene or protect the
-                        individual from abuse/mistreatment by another individual
-                        or staff member; removal or denial of an individual's
-                        normal comfort needs (e.g., bed, hot water, lights, heat,
-                        clothing).
+                        prescribed care and treatment to which they are
+                        entitled; actions by caregiver contrary to the
+                        prescribed treatment or program; unauthorized removal or
+                        unauthorized denial of an individual's personal
+                        possessions (e.g., cigarettes, radio, phonograph,
+                        toiletries, etc.); unauthorized removal or unauthorized
+                        denial of an individual's scheduled meals or snacks;
+                        failure to implement individual treatment programs as
+                        designed by the interdisciplinary treatment team;
+                        unauthorized use of seclusion and/or restraint; failure
+                        to secure proper or sufficient clothing and to see that
+                        individual is properly clothed; preventing an individual
+                        during normal waking hours from communicating by letter,
+                        telephone, or personal visit with the individual's
+                        lawyer, physician, advocate, or guardian; preventing an
+                        individual from having visits from relatives unless such
+                        visits are unauthorized; failure to intervene or protect
+                        the individual from abuse/mistreatment by another
+                        individual or staff member; removal or denial of an
+                        individual's normal comfort needs (e.g., bed, hot water,
+                        lights, heat, clothing).
                       </span>
                     </li>
                     <li className="flex gap-4">
@@ -265,10 +282,10 @@ const AbuseNeglect = ({ onComplete, savedData, progressCurrent = 0, progressTota
                   </p>
                   <ol className="list-[roman] ml-12 space-y-4 mt-4">
                     <li>
-                      The Georgia Department of Behavioral Health & Developmental
-                      Disabilities Office of Incident Management immediately and
-                      follow the steps for DBHDD Critical Incident & Death Policy
-                      04-106.
+                      The Georgia Department of Behavioral Health &
+                      Developmental Disabilities Office of Incident Management
+                      immediately and follow the steps for DBHDD Critical
+                      Incident & Death Policy 04-106.
                     </li>
                     <li>
                       The Director or designee must fill out the Critical
@@ -300,8 +317,8 @@ const AbuseNeglect = ({ onComplete, savedData, progressCurrent = 0, progressTota
 
                 <div className="mt-12">
                   <p>
-                    I fully understand Pacific Health Systems policy and procedures
-                    for Abuse, Neglect, and Exploitation.
+                    I fully understand Pacific Health Systems policy and
+                    procedures for Abuse, Neglect, and Exploitation.
                   </p>
                 </div>
 
@@ -313,9 +330,10 @@ const AbuseNeglect = ({ onComplete, savedData, progressCurrent = 0, progressTota
                       className={`w-full border-b border-black outline-none mb-1 px-2 ${errors.signature ? "border-red-500" : ""}`}
                       value={formData.signature}
                       style={getStyle("signature")}
-                      onChange={(e) =>{
+                      onChange={(e) => {
                         handleChange("signature", e.target.value);
-                        if(errors.signature) setErrors(prev => ({...prev, signature: null}));
+                        if (errors.signature)
+                          setErrors((prev) => ({ ...prev, signature: null }));
                       }}
                     />
                     <div className="text-left font-bold text-[8px] md:text-[10px]">
@@ -330,7 +348,8 @@ const AbuseNeglect = ({ onComplete, savedData, progressCurrent = 0, progressTota
                       style={getStyle("date")}
                       onChange={(e) => {
                         handleChange("date", e.target.value);
-                        if(errors.date) setErrors(prev => ({...prev, date: null}));
+                        if (errors.date)
+                          setErrors((prev) => ({ ...prev, date: null }));
                       }}
                     />
                     <div className="text-center font-bold text-[8px] md:text-[10px]">
@@ -346,24 +365,28 @@ const AbuseNeglect = ({ onComplete, savedData, progressCurrent = 0, progressTota
               </div>
 
               {/* Action Buttons */}
-              <div className="w-full flex justify-between items-center mt-12">
-                <button
-                  type="button"
-                  className="px-8 py-3 btn-premium text-white font-sans font-bold tracking-wide transform transition-transform"
-                  onClick={() => window.history.back()}
-                >
-                  Back
-                </button>
-                <button
-                  type="button"
-                  className="px-8 py-3 btn-premium-red text-white font-sans font-bold tracking-wide transform transition-transform"
-                  onClick={() => { window.location.href = "/my-application"; }}
-                >
-                  Exit Application
-                </button>
-                <SaveNextButton 
-                  isSubmitting={isSubmitting} 
-                  type="submit" 
+              <div className="w-full flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 mt-12 pb-8">
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                  <button
+                    type="button"
+                    className="w-full sm:w-auto px-6 py-3 btn-premium text-white font-sans font-bold tracking-wide transform transition-transform"
+                    onClick={() => window.history.back()}
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="button"
+                    className="w-full sm:w-auto px-6 py-3 btn-premium-red text-white font-sans font-bold tracking-wide transform transition-transform"
+                    onClick={() => {
+                      window.location.href = "/my-application";
+                    }}
+                  >
+                    Exit Application
+                  </button>
+                </div>
+                <SaveNextButton
+                  isSubmitting={isSubmitting}
+                  type="submit"
                   isReadOnly={isReadOnly}
                   onNext={onNext}
                 />
@@ -377,3 +400,4 @@ const AbuseNeglect = ({ onComplete, savedData, progressCurrent = 0, progressTota
 };
 
 export default AbuseNeglect;
+

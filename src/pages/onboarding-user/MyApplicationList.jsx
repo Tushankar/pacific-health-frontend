@@ -51,7 +51,11 @@ const MyApplicationsList = () => {
         if (el) {
           el.scrollIntoView({ behavior: "smooth", block: "center" });
           el.classList.add("ring-2", "ring-indigo-400", "ring-offset-2");
-          setTimeout(() => el.classList.remove("ring-2", "ring-indigo-400", "ring-offset-2"), 2500);
+          setTimeout(
+            () =>
+              el.classList.remove("ring-2", "ring-indigo-400", "ring-offset-2"),
+            2500,
+          );
         }
       }, 300);
       return () => clearTimeout(timer);
@@ -70,7 +74,7 @@ const MyApplicationsList = () => {
 
     // Group by program
     const programEnrollments = {};
-    enrollmentsData.enrollments.forEach(app => {
+    enrollmentsData.enrollments.forEach((app) => {
       const program = app.program;
       if (!programEnrollments[program]) {
         programEnrollments[program] = [];
@@ -80,8 +84,10 @@ const MyApplicationsList = () => {
 
     // Sort by Date ASC and assign numbers
     const lookup = {};
-    Object.keys(programEnrollments).forEach(program => {
-      programEnrollments[program].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    Object.keys(programEnrollments).forEach((program) => {
+      programEnrollments[program].sort(
+        (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
+      );
       programEnrollments[program].forEach((app, index) => {
         lookup[app._id] = index + 1;
       });
@@ -99,7 +105,7 @@ const MyApplicationsList = () => {
   const applications = useMemo(() => {
     if (!enrollmentsData?.enrollments) return [];
 
-    return enrollmentsData.enrollments.map(app => {
+    return enrollmentsData.enrollments.map((app) => {
       // Determine styles based on status
       let styles = {
         bg: "bg-slate-600",
@@ -155,15 +161,22 @@ const MyApplicationsList = () => {
       return {
         id: app._id,
         programType: app.program,
-        title: app.program === "NOW-COMP" ? "NOW & COMP Waiver Admission" : "Other Programs",
+        title:
+          app.program === "NOW-COMP"
+            ? "NOW & COMP Waiver Admission"
+            : "Other Programs",
         status: app.status.charAt(0).toUpperCase() + app.status.slice(1),
-        submittedDate: app.submittedAt ? new Date(app.submittedAt).toLocaleDateString() : "Not Submitted",
-        approvedDate: app.reviewedAt ? new Date(app.reviewedAt).toLocaleDateString() : "-",
+        submittedDate: app.submittedAt
+          ? new Date(app.submittedAt).toLocaleDateString()
+          : "Not Submitted",
+        approvedDate: app.reviewedAt
+          ? new Date(app.reviewedAt).toLocaleDateString()
+          : "-",
         adminNotes: app.adminNote || "No specific feedback provided.",
         forms: app.forms, // Pass forms for detail view
         icon: app.program === "NOW-COMP" ? ClipboardList : Briefcase,
         submissionLabel: label,
-        styles
+        styles,
       };
     });
   }, [enrollmentsData, submissionCounts]);
@@ -179,7 +192,9 @@ const MyApplicationsList = () => {
       total: applications.length,
       approved: applications.filter((a) => a.status === "Approved").length,
       rejected: applications.filter((a) => a.status === "Rejected").length,
-      pending: applications.filter((a) => ["Pending", "Submitted"].includes(a.status)).length,
+      pending: applications.filter((a) =>
+        ["Pending", "Submitted"].includes(a.status),
+      ).length,
       nowComp: applications.filter((a) => a.programType === "NOW-COMP").length,
       other: applications.filter((a) => a.programType === "OTHER").length,
     };
@@ -191,7 +206,7 @@ const MyApplicationsList = () => {
 
     // Group forms by chapter
     const chaptersMap = {};
-    selectedApplication.forms.forEach(f => {
+    selectedApplication.forms.forEach((f) => {
       if (!chaptersMap[f.chapter]) {
         chaptersMap[f.chapter] = { chapter: f.chapter, forms: [] };
       }
@@ -201,7 +216,7 @@ const MyApplicationsList = () => {
         type: f.type,
         desc: f.type + " document",
         status: f.status.charAt(0).toUpperCase() + f.status.slice(1),
-        adminNote: f.adminNote
+        adminNote: f.adminNote,
       });
     });
 
@@ -209,7 +224,7 @@ const MyApplicationsList = () => {
   }, [selectedApplication]);
 
   return (
-    <div className="min-h-screen bg-[#F1F5F9] font-poppins text-slate-900 pb-20 pt-8">
+    <div className="min-h-screen bg-[#F1F5F9] font-poppins text-slate-900 pb-20 pt-8 overflow-x-hidden">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
         {/* DASHBOARD STATS SECTION */}
         {!selectedAppId && (
@@ -509,7 +524,11 @@ const MyApplicationsList = () => {
                               <StatusBadge status={form.status} />
                             </div>
                             <button
-                              onClick={() => navigate(`/my-application-view?enrollmentId=${selectedAppId}&formId=${form.id}&from=my-applications&scrollTo=form-row-${form.id}&appId=${selectedAppId}`)}
+                              onClick={() =>
+                                navigate(
+                                  `/my-application-view?enrollmentId=${selectedAppId}&formId=${form.id}&from=my-applications&scrollTo=form-row-${form.id}&appId=${selectedAppId}`,
+                                )
+                              }
                               className="flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 text-indigo-600 font-bold text-xs hover:bg-indigo-600 hover:text-white transition-all"
                             >
                               Open <ChevronRight size={14} />
@@ -548,8 +567,9 @@ const TypeBadge = ({ type }) => {
 
   return (
     <div
-      className={`flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold border uppercase tracking-wider ${styles[type] || styles["Track"]
-        }`}
+      className={`flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold border uppercase tracking-wider ${
+        styles[type] || styles["Track"]
+      }`}
     >
       {icons[type]} {type}
     </div>
@@ -561,6 +581,7 @@ const StatusBadge = ({ status }) => {
     Completed: "bg-emerald-50 text-emerald-700 border-emerald-200",
     Approved: "bg-emerald-50 text-emerald-700 border-emerald-200",
     Verified: "bg-emerald-50 text-emerald-700 border-emerald-200",
+    Submitted: "bg-amber-50 text-amber-700 border-amber-200",
     Rejected: "bg-rose-50 text-rose-700 border-rose-200",
     "In Progress": "bg-indigo-50 text-indigo-700 border-indigo-200",
     Pending: "bg-slate-50 text-slate-500 border-slate-200",
@@ -570,8 +591,9 @@ const StatusBadge = ({ status }) => {
 
   return (
     <span
-      className={`text-[11px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg border shadow-sm ${styles[status] || "bg-slate-50 border-slate-200"
-        }`}
+      className={`text-[11px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg border shadow-sm ${
+        styles[status] || "bg-slate-50 text-slate-700 border-slate-200"
+      }`}
     >
       {status}
     </span>
