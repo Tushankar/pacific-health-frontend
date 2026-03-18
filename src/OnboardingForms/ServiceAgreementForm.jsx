@@ -258,14 +258,14 @@ const ServiceAgreementForm = ({
                             }));
                         }}
                         style={getStyle("clientFirstName")}
-                        className={`flex-1 ${errors.clientFirstName ? "border-red-500" : ""}`}
+                        className={`flex-1 min-w-0 w-full ${errors.clientFirstName ? "border-red-500" : ""}`}
                       />
                       <input
                         name="clientMiddleName"
                         placeholder="Middle"
                         value={formData.clientMiddleName}
                         onChange={handleChange}
-                        className="flex-1 border-b border-black outline-none px-1 text-left md:text-center mt-2 md:mt-0"
+                        className="flex-1 min-w-0 w-full border-b border-black outline-none px-1 text-left md:text-center mt-2 md:mt-0"
                       />
                       <input
                         name="clientLastName"
@@ -280,7 +280,7 @@ const ServiceAgreementForm = ({
                             }));
                         }}
                         style={getStyle("clientLastName")}
-                        className={`flex-1 ${errors.clientLastName ? "border-red-500" : ""} mt-2 md:mt-0`}
+                        className={`flex-1 min-w-0 w-full ${errors.clientLastName ? "border-red-500" : ""} mt-2 md:mt-0`}
                       />
                     </div>
                     <div className="hidden md:flex justify-between text-[10px] text-gray-600 mt-1">
@@ -926,7 +926,7 @@ const ServiceAgreementForm = ({
                 </p>
 
                 <div className="flex flex-col md:flex-row md:items-end mb-6 gap-4 md:gap-0">
-                  <div className="flex items-end flex-1">
+                  <div className="flex items-end flex-1 min-w-0">
                     <span className="font-bold whitespace-nowrap mr-2">
                       Client/Representative Signature: <RequiredStar />{" "}
                     </span>
@@ -942,7 +942,7 @@ const ServiceAgreementForm = ({
                           }));
                       }}
                       style={getStyle("signatureClient")}
-                      className={`flex-1 ${errors.signatureClient ? "border-red-500 shadow-sm" : ""}`}
+                      className={`flex-1 min-w-0 w-full ${errors.signatureClient ? "border-red-500 shadow-sm" : ""}`}
                     />
                   </div>
                   <div className="flex items-end md:ml-4">
@@ -965,7 +965,7 @@ const ServiceAgreementForm = ({
                 </div>
 
                 <div className="flex flex-col md:flex-row md:items-end mb-8 gap-4 md:gap-0">
-                  <div className="flex items-end flex-1">
+                  <div className="flex items-end flex-1 min-w-0">
                     <span className="font-bold whitespace-nowrap mr-2">
                       Agency Representative: <RequiredStar />{" "}
                     </span>
@@ -981,7 +981,7 @@ const ServiceAgreementForm = ({
                           }));
                       }}
                       style={getStyle("signatureAgency")}
-                      className={`flex-1 ${errors.signatureAgency ? "border-red-500 shadow-sm" : ""}`}
+                      className={`flex-1 min-w-0 w-full ${errors.signatureAgency ? "border-red-500 shadow-sm" : ""}`}
                     />
                   </div>
                   <div className="flex items-end md:ml-4">

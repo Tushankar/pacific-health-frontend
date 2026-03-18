@@ -227,21 +227,25 @@ const ServiceAgreementAddendum = ({
           <div className="w-full border border-black mb-8">
             {/* Table Header */}
             <div className="grid grid-cols-4 border-b border-black font-bold text-[8px] md:text-sm leading-tight">
-              <div className="border-r border-black p-1 h-full flex items-center justify-center text-center break-words">
-                Specific Change to be Made{" "}
-                <span className="text-red-500 ml-1">*</span>
+              <div className="border-r border-black p-1 h-full flex items-center justify-center text-center break-words min-w-0">
+                <span>
+                  Specific Change to be Made <span className="text-red-500">*</span>
+                </span>
               </div>
-              <div className="border-r border-black p-1 h-full flex items-center justify-center text-center break-words">
-                Reason for Change/Type of Service{" "}
-                <span className="text-red-500 ml-1">*</span>
+              <div className="border-r border-black p-1 h-full flex items-center justify-center text-center break-words min-w-0">
+                <span>
+                  Reason for Change/Type of Service <span className="text-red-500">*</span>
+                </span>
               </div>
-              <div className="border-r border-black p-1 h-full flex items-center justify-center text-center break-words">
-                Date Change to Begin{" "}
-                <span className="text-red-500 ml-1">*</span>
+              <div className="border-r border-black p-1 h-full flex items-center justify-center text-center break-words min-w-0">
+                <span>
+                  Date Change to Begin <span className="text-red-500">*</span>
+                </span>
               </div>
-              <div className="p-1 h-full flex items-center justify-center text-center break-words">
-                Client Acknowledgement{" "}
-                <span className="text-red-500 ml-1">*</span>
+              <div className="p-1 h-full flex items-center justify-center text-center break-words min-w-0">
+                <span>
+                  Client Acknowledgement <span className="text-red-500">*</span>
+                </span>
               </div>
             </div>
 
@@ -252,10 +256,10 @@ const ServiceAgreementAddendum = ({
                 className="grid grid-cols-4 border-b border-black last:border-b-0 min-h-[50px] md:min-h-[100px]"
               >
                 <div
-                  className={`border-r border-black p-1 ${errors[`change-${index}`] ? "bg-red-50" : ""}`}
+                  className={`border-r border-black p-1 min-w-0 ${errors[`change-${index}`] ? "bg-red-50" : ""}`}
                 >
                   <textarea
-                    className={`w-full h-full bg-transparent outline-none resize-none min-w-0 text-[9px] md:text-sm ${errors[`change-${index}`] ? "border-red-500" : ""}`}
+                    className={`w-full h-full bg-transparent outline-none resize-none min-w-0 text-[10px] md:text-sm ${errors[`change-${index}`] ? "border-red-500" : ""}`}
                     value={formData[index].change}
                     onChange={(e) => {
                       handleChange(index, "change", e.target.value);
@@ -273,10 +277,10 @@ const ServiceAgreementAddendum = ({
                   />
                 </div>
                 <div
-                  className={`border-r border-black p-1 ${errors[`reason-${index}`] ? "bg-red-50" : ""}`}
+                  className={`border-r border-black p-1 min-w-0 ${errors[`reason-${index}`] ? "bg-red-50" : ""}`}
                 >
                   <textarea
-                    className={`w-full h-full bg-transparent outline-none resize-none min-w-0 text-[9px] md:text-sm ${errors[`reason-${index}`] ? "border-red-500" : ""}`}
+                    className={`w-full h-full bg-transparent outline-none resize-none min-w-0 text-[10px] md:text-sm ${errors[`reason-${index}`] ? "border-red-500" : ""}`}
                     value={formData[index].reason}
                     onChange={(e) => {
                       handleChange(index, "reason", e.target.value);
@@ -294,7 +298,7 @@ const ServiceAgreementAddendum = ({
                   />
                 </div>
                 <div
-                  className={`border-r border-black p-1 ${errors[`date-${index}`] ? "bg-red-50" : ""}`}
+                  className={`border-r border-black p-1 min-w-0 ${errors[`date-${index}`] ? "bg-red-50" : ""}`}
                 >
                   <input
                     type="date"
@@ -316,10 +320,10 @@ const ServiceAgreementAddendum = ({
                   />
                 </div>
                 <div
-                  className={`p-1 ${errors[`acknowledgement-${index}`] ? "bg-red-50" : ""}`}
+                  className={`p-1 min-w-0 ${errors[`acknowledgement-${index}`] ? "bg-red-50" : ""}`}
                 >
                   <textarea
-                    className={`w-full h-full bg-transparent outline-none resize-none min-w-0 text-[9px] md:text-sm ${errors[`acknowledgement-${index}`] ? "border-red-500" : ""}`}
+                    className={`w-full h-full bg-transparent outline-none resize-none min-w-0 text-[10px] md:text-sm ${errors[`acknowledgement-${index}`] ? "border-red-500" : ""}`}
                     value={formData[index].acknowledgement}
                     onChange={(e) => {
                       handleChange(index, "acknowledgement", e.target.value);
