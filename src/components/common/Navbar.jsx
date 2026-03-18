@@ -108,7 +108,7 @@ const Navbar = ({ toggleMobileMenu, toggleNotifications }) => {
 
         {/* Mobile Hamburger Button */}
         <button
-          className="lg:hidden bg-[#1F3A93] h-8 w-8 lg:h-10 lg:w-10 rounded-lg flex justify-center items-center hover:bg-[#153073] transition-colors flex-shrink-0"
+          className="2xl:hidden bg-[#1F3A93] h-8 w-8 lg:h-10 lg:w-10 rounded-lg flex justify-center items-center hover:bg-[#153073] transition-colors flex-shrink-0"
           onClick={toggleMobileMenu}
         >
           <Menu className="w-5 h-5 text-white" />

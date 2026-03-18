@@ -417,7 +417,7 @@ const Sidebar = ({
       {/* Mobile Overlay */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 2xl:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
@@ -427,10 +427,10 @@ const Sidebar = ({
         initial={false}
         animate={{
           width: isDesktopCollapsed ? "80px" : "288px",
-          x: isMobileMenuOpen ? 0 : window.innerWidth < 1024 ? "-100%" : 0,
+          x: isMobileMenuOpen ? 0 : window.innerWidth < 1536 ? "-100%" : 0,
         }}
         transition={{ ease: "easeInOut", duration: 0.4 }}
-        className={`fixed lg:static inset-y-0 left-0 h-full flex flex-col bg-white z-[100] transform shadow-2xl lg:shadow-none`}
+        className={`fixed 2xl:static inset-y-0 left-0 h-full flex flex-col bg-white z-[100] transform shadow-2xl 2xl:shadow-none`}
       >
         <div
           className={`flex ${
@@ -466,7 +466,7 @@ const Sidebar = ({
           {/* Mobile Close Button */}
           <button
             onClick={closeMobileMenu}
-            className="lg:hidden p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors absolute right-4 top-1/2 -translate-y-1/2"
+            className="2xl:hidden p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-full transition-colors absolute right-4 top-1/2 -translate-y-1/2"
             aria-label="Close menu"
           >
             <X size={24} />

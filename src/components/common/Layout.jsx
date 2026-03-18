@@ -27,9 +27,9 @@ export const Layout = ({ children }) => {
   return (
     <MobileMenuContext.Provider value={{ toggleMobileMenu, isMobileMenuOpen }}>
       <div className="h-screen w-full flex justify-center items-center overflow-hidden relative">
-        {/* Desktop Sidebar - Dynamic width based on collapsed state */}
+        {/* Desktop Sidebar - Dynamic width based on collapsed state (only on 2xl and above) */}
         <div
-          className={`hidden lg:block ${isDesktopCollapsed ? "w-20" : "w-72"} h-full flex-shrink-0 transition-all duration-300 ease-in-out relative`}
+          className={`hidden 2xl:block ${isDesktopCollapsed ? "w-20" : "w-72"} h-full flex-shrink-0 transition-all duration-300 ease-in-out relative`}
         >
           <Sidebar
             isMobileMenuOpen={isMobileMenuOpen}
@@ -39,8 +39,8 @@ export const Layout = ({ children }) => {
           />
         </div>
 
-        {/* Mobile Sidebar */}
-        <div className="lg:hidden">
+        {/* Mobile Sidebar - Shows on iPad and smaller screens */}
+        <div className="2xl:hidden">
           <Sidebar
             isMobileMenuOpen={isMobileMenuOpen}
             setIsMobileMenuOpen={setIsMobileMenuOpen}

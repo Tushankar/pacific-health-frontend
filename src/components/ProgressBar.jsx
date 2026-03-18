@@ -27,8 +27,8 @@ const ProgressBar = ({ currentStep, totalSteps }) => {
 
   return (
     <>
-      {/* Desktop: vertical sidebar (lg and above) */}
-      <div className="hidden lg:flex sticky top-0 self-start h-screen w-24 shrink-0 mr-4 border-r border-gray-100 bg-white/70 backdrop-blur-sm z-20 flex-col items-center py-8">
+      {/* Desktop: vertical sidebar (2xl and above - only on very large screens) */}
+      <div className="hidden 2xl:flex sticky top-0 self-start h-screen w-24 shrink-0 mr-4 border-r border-gray-100 bg-white/70 backdrop-blur-sm z-20 flex-col items-center py-8">
         <div className="h-[60vh] w-3 bg-gray-200 rounded-full relative overflow-hidden">
           <div
             style={gradientStyle}
@@ -47,8 +47,8 @@ const ProgressBar = ({ currentStep, totalSteps }) => {
         </div>
       </div>
 
-      {/* Mobile / Tablet: horizontal bar below form (below lg) */}
-      <div className="flex lg:hidden w-full px-4 py-3 flex-col gap-1.5 border-t border-gray-200">
+      {/* Mobile / Tablet / iPad Pro: horizontal bar below form (below 2xl) */}
+      <div className="flex 2xl:hidden w-full px-4 py-3 flex-col gap-1.5 border-t border-gray-200">
         <div className="flex items-center justify-between">
           <p className="text-xs text-gray-500 uppercase tracking-wider font-semibold">
             Application Progress

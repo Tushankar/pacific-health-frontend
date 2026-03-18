@@ -227,7 +227,7 @@ const Form01ClientInfo = ({
   );
 
   return (
-    <div className="flex flex-col-reverse lg:flex-row w-full items-start">
+    <div className="flex flex-col-reverse 2xl:flex-row w-full items-start">
       {/* Sidebar Progress Bar */}
       <ProgressBar
         currentStep={progressCurrent}

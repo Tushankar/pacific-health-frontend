@@ -99,7 +99,7 @@ const FileUploadForm = ({
   };
 
   return (
-    <div className="flex flex-col-reverse lg:flex-row w-full items-start bg-slate-50 min-h-screen font-serif overflow-x-hidden">
+    <div className="flex flex-col-reverse 2xl:flex-row w-full items-start bg-slate-50 min-h-screen font-serif overflow-x-hidden">
       {/* Sidebar Progress */}
       <ProgressBar
         currentStep={progressCurrent}

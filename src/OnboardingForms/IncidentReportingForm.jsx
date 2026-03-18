@@ -167,7 +167,7 @@ const IncidentReportingForm = ({
   };
 
   return (
-    <div className="flex flex-col-reverse lg:flex-row w-full items-start bg-white text-black font-serif">
+    <div className="flex flex-col-reverse 2xl:flex-row w-full items-start bg-white text-black font-serif">
       <ProgressBar
           currentStep={progressCurrent}
           totalSteps={progressTotal || 1}
