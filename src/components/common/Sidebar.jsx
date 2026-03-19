@@ -458,7 +458,7 @@ const Sidebar = ({
           {/* Desktop Toggle Button */}
           <button
             onClick={() => setIsDesktopCollapsed(!isDesktopCollapsed)}
-            className={`hidden md:flex p-2 rounded hover:bg-gray-100 text-gray-700 ${isDesktopCollapsed ? "" : "mr-2"}`}
+            className={`hidden 2xl:flex p-2 rounded hover:bg-gray-100 text-gray-700 ${isDesktopCollapsed ? "" : "mr-2"}`}
           >
             <HamburgerIcon isCollapsed={isDesktopCollapsed} />
           </button>
