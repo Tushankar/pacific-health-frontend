@@ -351,7 +351,6 @@ const FreedomOfChoice = ({
                       }}
                       style={getStyle("planningAdminDate")}
                       className={`w-full border-b border-black outline-none text-center ${errors.planningAdminDate ? "border-red-500" : ""}`}
-                      placeholder="MM/DD/YYYY"
                       readOnly={isReadOnly}
                     />
                     <div className="text-[8px] md:text-[10px] mt-1 text-center">
@@ -408,7 +407,6 @@ const FreedomOfChoice = ({
                       }}
                       style={getStyle("recipientDate")}
                       className={`w-full border-b border-black outline-none text-center ${errors.recipientDate ? "border-red-500" : ""}`}
-                      placeholder="MM/DD/YYYY"
                       readOnly={isReadOnly}
                     />
                     <div className="text-[8px] md:text-[10px] mt-1 text-center">
@@ -453,7 +451,6 @@ const FreedomOfChoice = ({
                       }}
                       style={getStyle("authorizedRepDate")}
                       className={`w-full border-b border-black outline-none text-center ${errors.authorizedRepDate ? "border-red-500" : ""}`}
-                      placeholder="MM/DD/YYYY"
                       readOnly={isReadOnly}
                     />
                     <div className="text-[8px] md:text-[10px] mt-1 text-center">
@@ -492,7 +489,6 @@ const FreedomOfChoice = ({
                       }}
                       style={getStyle("witnessDate")}
                       className={`w-full border-b border-black outline-none text-center ${errors.witnessDate ? "border-red-500" : ""}`}
-                      placeholder="MM/DD/YYYY"
                       readOnly={isReadOnly}
                     />
                     <div className="text-[8px] md:text-[10px] mt-1 text-center">

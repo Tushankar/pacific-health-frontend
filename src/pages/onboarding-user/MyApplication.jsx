@@ -1092,31 +1092,25 @@ const MyApplication = () => {
               submittedFormData,
             );
 
-            const conflictingForm = (activeEnrollment?.forms || []).find(
-              (f) => {
+            const conflictingFormInfo = (activeEnrollment?.forms || []).reduce(
+              (acc, f) => {
+                if (acc) return acc;
                 const comparisonData = f.draftData || f.data;
-
                 if (f.formId === currentForm.id || !comparisonData) {
-                  return false;
+                  return null;
                 }
-
-                return !!buildConsistencyError(
+                const message = buildConsistencyError(
                   currentForm,
                   currentIdentifiers,
-                  {
-                    ...f,
-                    data: comparisonData,
-                  },
+                  { ...f, data: comparisonData },
                 );
+                return message ? { form: f, message } : null;
               },
+              null,
             );
 
-            if (conflictingForm) {
-              const message = buildConsistencyError(
-                currentForm,
-                currentIdentifiers,
-                conflictingForm,
-              );
+            if (conflictingFormInfo) {
+              const { message } = conflictingFormInfo;
               toast.error(message, { duration: 6000 });
               const consistencyError = new Error(message);
               consistencyError.handled = true;

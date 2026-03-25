@@ -111,8 +111,8 @@ const VisitLogChart = ({
                 className="grid grid-cols-12 border-b border-black text-sm h-8"
               >
                 <input
-                  className="col-span-2 border-r border-black p-1 focus:bg-blue-50 outline-none h-full w-full"
-                  type="text"
+                  className="col-span-2 border-r border-black p-1 focus:bg-blue-50 outline-none h-full w-full bg-white"
+                  type="date"
                   value={formData[index]?.date || ""}
                   onChange={(e) => handleChange(index, "date", e.target.value)}
                   readOnly={isReadOnly}

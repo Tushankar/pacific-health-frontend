@@ -418,7 +418,6 @@ const AdvanceDirectives = ({
                     }}
                     style={getStyle("dateIndividual")}
                     className={`w-full border-b border-black outline-none mb-1 text-center ${errors.dateIndividual ? "border-red-500" : ""}`}
-                    placeholder="MM/DD/YYYY"
                   />
                   <div className="text-[8px] md:text-[10px] font-bold text-center">
                     Date <RequiredStar />
@@ -428,9 +427,9 @@ const AdvanceDirectives = ({
                   <input
                     name="dateWitness"
                     value={formData.dateWitness}
+                    type="date"
                     onChange={handleChange}
                     className="w-full border-b border-black outline-none mb-1 text-center"
-                    placeholder="MM/DD/YYYY"
                   />
                   <div className="text-[8px] md:text-[10px] font-bold text-center">
                     Date

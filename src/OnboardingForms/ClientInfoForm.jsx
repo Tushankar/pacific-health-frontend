@@ -525,6 +525,7 @@ const Form01ClientInfo = ({
                     <td style={td} colSpan="3">
                       <input
                         style={input}
+                        type="date"
                         value={formData.admissionDate}
                         onChange={(e) =>
                           handleChange("admissionDate", e.target.value)
@@ -540,6 +541,7 @@ const Form01ClientInfo = ({
                     <td style={td} colSpan="3">
                       <input
                         style={getInputStyle("dob")}
+                        type="date"
                         className={
                           errors.dob ? "border-red-500 shadow-outline-red" : ""
                         }

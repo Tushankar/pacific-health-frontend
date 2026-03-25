@@ -104,8 +104,10 @@ const CodeOfEthicsPolicy = ({
   const getStyle = (field) => ({
     outline: "none",
     background: errors[field] ? "#fee2e2" : "transparent",
-    borderTop: errors[field] ? "2px solid #ef4444" : "1px solid black",
+    border: "none",
+    borderBottom: errors[field] ? "2px solid #ef4444" : "1px solid black",
     transition: "all 0.2s",
+    padding: "4px 0",
   });
 
   const RequiredStar = () => (
@@ -254,7 +256,7 @@ const CodeOfEthicsPolicy = ({
           <form onSubmit={handleSubmit}>
             {/* Signatures */}
             <div className="grid grid-cols-2 gap-4 md:gap-16 mt-12 mb-12">
-              <div>
+              <div className="flex flex-col w-full">
                 <input
                   type="text"
                   name="clientSignature"
@@ -268,11 +270,11 @@ const CodeOfEthicsPolicy = ({
                   style={getStyle("clientSignature")}
                   className={`w-full ${errors.clientSignature ? "border-red-500" : ""}`}
                 />
-                <div className="font-bold">
+                <div className="font-bold text-[8px] md:text-[10px] whitespace-nowrap mt-1">
                   Signature of Client/ Client Representative <RequiredStar />
                 </div>
               </div>
-              <div>
+              <div className="flex flex-col w-full">
                 <input
                   type="date"
                   name="date"
@@ -286,7 +288,7 @@ const CodeOfEthicsPolicy = ({
                   style={getStyle("date")}
                   className={`w-full ${errors.date ? "border-red-500" : ""}`}
                 />
-                <div className="font-bold">
+                <div className="font-bold text-[8px] md:text-[10px] whitespace-nowrap mt-1">
                   Date <RequiredStar />
                 </div>
               </div>

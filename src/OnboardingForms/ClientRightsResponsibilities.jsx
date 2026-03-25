@@ -110,8 +110,10 @@ const ClientRightsResponsibilities = ({
   const getStyle = (field) => ({
     outline: "none",
     background: errors[field] ? "#fee2e2" : "transparent",
-    borderTop: errors[field] ? "2px solid #ef4444" : "1px solid black",
+    border: "none",
+    borderBottom: errors[field] ? "2px solid #ef4444" : "1px solid black",
     transition: "all 0.2s",
+    padding: "4px 0",
   });
 
   const RequiredStar = () => (
@@ -331,7 +333,7 @@ const ClientRightsResponsibilities = ({
           <form onSubmit={handleSubmit}>
             {/* Signatures */}
             <div className="grid grid-cols-2 gap-4 md:gap-16 mt-12 mb-12">
-              <div>
+              <div className="flex flex-col w-full">
                 <input
                   type="text"
                   name="clientSignature"
@@ -343,13 +345,13 @@ const ClientRightsResponsibilities = ({
                   }}
                   onKeyDown={handleEnter}
                   style={getStyle("clientSignature")}
-                  className={`w-full mt-8 ${errors.clientSignature ? "border-red-500" : ""}`}
+                  className={`w-full ${errors.clientSignature ? "border-red-500" : ""}`}
                 />
-                <div className="font-bold">
+                <div className="font-bold text-[8px] md:text-[10px] whitespace-nowrap mt-1">
                   Signature of Client/ Client Representative <RequiredStar />
                 </div>
               </div>
-              <div>
+              <div className="flex flex-col w-full">
                 <input
                   type="date"
                   name="clientSignatureDate"
@@ -364,13 +366,13 @@ const ClientRightsResponsibilities = ({
                   }}
                   onKeyDown={handleEnter}
                   style={getStyle("clientSignatureDate")}
-                  className={`w-full mt-8 ${errors.clientSignatureDate ? "border-red-500" : ""}`}
+                  className={`w-full ${errors.clientSignatureDate ? "border-red-500" : ""}`}
                 />
-                <div className="font-bold">
+                <div className="font-bold text-[8px] md:text-[10px] whitespace-nowrap mt-1">
                   Date <RequiredStar />
                 </div>
               </div>
-              <div>
+              <div className="flex flex-col w-full">
                 <input
                   type="text"
                   name="administratorSignature"
@@ -385,13 +387,13 @@ const ClientRightsResponsibilities = ({
                   }}
                   onKeyDown={handleEnter}
                   style={getStyle("administratorSignature")}
-                  className={`w-full mt-8 ${errors.administratorSignature ? "border-red-500" : ""}`}
+                  className={`w-full ${errors.administratorSignature ? "border-red-500" : ""}`}
                 />
-                <div className="font-bold">
+                <div className="font-bold text-[8px] md:text-[10px] whitespace-nowrap mt-1">
                   Signature of Administrator <RequiredStar />
                 </div>
               </div>
-              <div>
+              <div className="flex flex-col w-full">
                 <input
                   type="date"
                   name="administratorSignatureDate"
@@ -406,9 +408,9 @@ const ClientRightsResponsibilities = ({
                   }}
                   onKeyDown={handleEnter}
                   style={getStyle("administratorSignatureDate")}
-                  className={`w-full mt-8 ${errors.administratorSignatureDate ? "border-red-500" : ""}`}
+                  className={`w-full ${errors.administratorSignatureDate ? "border-red-500" : ""}`}
                 />
-                <div className="font-bold">
+                <div className="font-bold text-[8px] md:text-[10px] whitespace-nowrap mt-1">
                   Date <RequiredStar />
                 </div>
               </div>
