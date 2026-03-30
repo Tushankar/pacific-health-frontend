@@ -24,7 +24,9 @@ import {
   Loader2,
   X,
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { io } from "socket.io-client";
+import { getChatUsers } from "../../api/chat.api";
 import { getMyEnrollment } from "../../api/enrollment.api";
 import { toast } from "sonner";
 
@@ -85,6 +87,56 @@ const Sidebar = ({
   });
 
   const activeEnrollment = enrollmentData?.enrollment;
+
+  // Get unread counts
+  const { data: contacts = [] } = useQuery({
+    queryKey: ["chatUsers"],
+    queryFn: getChatUsers,
+    refetchInterval: 60000, // Fallback poll every 1 min
+  });
+
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    const socket = io("https://pacific.kyptronix.us", {
+      auth: { token },
+      transports: ["websocket", "polling"],
+    });
+
+    socket.on("receive_message", (newMessage) => {
+      // Update unread count in cache
+      queryClient.setQueryData(["chatUsers"], (oldContacts = []) => {
+        return (Array.isArray(oldContacts) ? oldContacts : []).map((c) => {
+          if (c._id === newMessage.sender._id) {
+            return {
+              ...c,
+              unreadCount: (c.unreadCount || 0) + 1,
+            };
+          }
+          return c;
+        });
+      });
+    });
+
+    socket.on("messages_read", (data) => {
+      queryClient.setQueryData(["chatUsers"], (oldContacts = []) => {
+        return (Array.isArray(oldContacts) ? oldContacts : []).map((c) =>
+          c._id === data.readerId ? { ...c, unreadCount: 0 } : c,
+        );
+      });
+    });
+
+    return () => socket.disconnect();
+  }, [queryClient]);
+
+  const totalUnreadCount = useMemo(() => {
+    return Array.isArray(contacts)
+      ? contacts.reduce((sum, c) => sum + (c.unreadCount || 0), 0)
+      : 0;
+  }, [contacts]);
 
   // Sync program selection
   useEffect(() => {
@@ -588,6 +640,25 @@ const Sidebar = ({
                         >
                           {item.name}
                         </motion.h4>
+                        <AnimatePresence>
+                          {item.name === "Communication" &&
+                            totalUnreadCount > 0 && (
+                              <motion.div
+                                initial={{ scale: 0, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0, opacity: 0 }}
+                                className={`absolute ${
+                                  isDesktopCollapsed
+                                    ? "top-2 right-2"
+                                    : "right-4"
+                                } flex items-center justify-center`}
+                              >
+                                <div className="bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] px-1 flex items-center justify-center shadow-sm border border-white/20">
+                                  {totalUnreadCount > 99 ? "99+" : totalUnreadCount}
+                                </div>
+                              </motion.div>
+                            )}
+                        </AnimatePresence>
                       </Link>
                     )}
                     {(isActiveRoute(item.path) ||
