@@ -79,6 +79,7 @@ const Sidebar = ({
   const [selectedProgram, setSelectedProgram] = useState(() => {
     return localStorage.getItem("selectedProgram") || "NOW-COMP";
   });
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   // Fetch enrollment data
   const { data: enrollmentData } = useQuery({
@@ -202,9 +203,14 @@ const Sidebar = ({
     return "text-white group-hover:text-white";
   };
 
-  const handleLogout = () => {
+  const confirmLogout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("token");
     window.location.href = "/auth/login";
+  };
+
+  const handleLogout = () => {
+    setShowLogoutModal(true);
   };
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -827,8 +833,14 @@ const Sidebar = ({
               onMouseEnter={() => setHoveredItem("logout")}
               onMouseLeave={() => setHoveredItem(null)}
             >
-              <div className="flex justify-start items-center gap-5 px-3 py-2 rounded-lg w-full bg-[#DD3F3F] hover:bg-red-500">
-                <LogOut className="w-6 h-6 text-white" />
+              <div
+                className={`flex items-center rounded-lg bg-[#DD3F3F] hover:bg-red-500 transition-all duration-200 ${
+                  isDesktopCollapsed
+                    ? "justify-center w-12 h-12"
+                    : "justify-start gap-5 px-3 py-2 w-full"
+                }`}
+              >
+                <LogOut className="w-6 h-6 text-white flex-shrink-0" />
                 <motion.h4
                   initial={false}
                   animate={{
@@ -836,7 +848,7 @@ const Sidebar = ({
                     width: isDesktopCollapsed ? 0 : "auto",
                   }}
                   transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className={`text-sm md:text-base text-white font-semibold whitespace-nowrap tracking-wide`}
+                  className={`text-sm md:text-base text-white font-semibold whitespace-nowrap tracking-wide overflow-hidden`}
                   style={{ fontFamily: "Inter, system-ui, sans-serif" }}
                 >
                   Log out
@@ -846,6 +858,45 @@ const Sidebar = ({
           </div>
         </div>
       </motion.div>
+      <AnimatePresence>
+        {showLogoutModal && (
+          <div className="fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-white rounded-[24px] w-full max-w-sm overflow-hidden shadow-2xl border border-slate-200"
+            >
+              <div className="p-6 text-center">
+                <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <LogOut className="w-8 h-8 text-red-500" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-800 mb-2">
+                  Confirm Logout
+                </h3>
+                <p className="text-slate-500 mb-8 text-sm">
+                  Are you sure you want to log out? You will need to sign in again to access your account.
+                </p>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setShowLogoutModal(false)}
+                    className="flex-1 py-3 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition-all text-sm"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={confirmLogout}
+                    className="flex-1 py-3 bg-red-500 text-white rounded-xl font-bold hover:bg-red-600 transition-all shadow-lg shadow-red-200 text-sm"
+                  >
+                    Log out
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </>
   );
 };
