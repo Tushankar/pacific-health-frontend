@@ -18,6 +18,7 @@ import AdminApplicationDetail from "./pages/admin/AdminApplicationDetail";
 import AdminFormView from "./pages/admin/AdminFormView";
 import AdminProgramOverview from "./pages/admin/AdminProgramOverview";
 import AdminAfterHire from "./pages/admin/AdminAfterHire";
+import UserManagement from "./pages/admin/UserManagement";
 
 function App() {
   return (
@@ -76,6 +77,14 @@ function App() {
             element={
               <Layout>
                 <AdminAfterHire />
+              </Layout>
+            }
+          />
+          <Route
+            path="/admin/users"
+            element={
+              <Layout>
+                <UserManagement />
               </Layout>
             }
           />

@@ -95,7 +95,7 @@ const Communication = () => {
   // Socket setup
   useEffect(() => {
     if (token) {
-      const socket = io("http://localhost:5996", {
+      const socket = io("https://pacific.kyptronix.us", {
         auth: { token },
         transports: ["websocket", "polling"],
       });
@@ -395,7 +395,7 @@ const Communication = () => {
                       >
                         {contact.profilePicture ? (
                           <img
-                            src={`http://localhost:5996${contact.profilePicture}`}
+                            src={`https://pacific.kyptronix.us${contact.profilePicture}`}
                             alt={contact.fullName}
                             className="w-full h-full object-cover"
                           />
@@ -478,7 +478,7 @@ const Communication = () => {
                       <div className="w-[42px] h-[42px] rounded-full overflow-hidden shadow-sm border border-slate-100">
                         {selectedContact.profilePicture ? (
                           <img
-                            src={`http://localhost:5996${selectedContact.profilePicture}`}
+                            src={`https://pacific.kyptronix.us${selectedContact.profilePicture}`}
                             alt={selectedContact.fullName}
                             className="w-full h-full object-cover"
                           />

@@ -42,3 +42,35 @@ export const uploadProfilePicture = async (formData) => {
   });
   return response.data;
 };
+
+/**
+ * Get all users (admin only)
+ */
+export const getAllUsers = async (params = {}) => {
+  const response = await axiosInstance.get("/user", { params });
+  return response.data;
+};
+
+/**
+ * Toggle user status (admin only)
+ */
+export const toggleUserStatus = async (userId) => {
+  const response = await axiosInstance.patch(`/user/${userId}/toggle-status`);
+  return response.data;
+};
+
+/**
+ * Create user by admin (admin only)
+ */
+export const createUserByAdmin = async (userData) => {
+  const response = await axiosInstance.post("/user", userData);
+  return response.data;
+};
+
+/**
+ * Delete user (admin only)
+ */
+export const deleteUser = async (userId) => {
+  const response = await axiosInstance.delete(`/user/${userId}`);
+  return response.data;
+};

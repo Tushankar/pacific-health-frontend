@@ -665,7 +665,7 @@ const Profile = () => {
                   <div className="w-[104px] h-[104px] bg-white rounded-full p-1 shadow-lg flex items-center justify-center mb-4 overflow-hidden ring-4 ring-white">
                     {profileData.profilePicture ? (
                       <img
-                        src={`http://localhost:5996${profileData.profilePicture}`}
+                        src={`https://pacific.kyptronix.us${profileData.profilePicture}`}
                         alt="Avatar"
                         className="w-full h-full object-cover rounded-full"
                       />

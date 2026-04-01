@@ -11,6 +11,7 @@ import {
   ChevronRight,
   FileText,
   UserPlus,
+  Users,
   Upload,
   PenTool,
   ClipboardList,
@@ -102,7 +103,7 @@ const Sidebar = ({
     const token = localStorage.getItem("token");
     if (!token) return;
 
-    const socket = io("http://localhost:5996", {
+    const socket = io("https://pacific.kyptronix.us", {
       auth: { token },
       transports: ["websocket", "polling"],
     });
@@ -222,6 +223,11 @@ const Sidebar = ({
           name: "Submission Queue",
           path: "/admin/dashboard",
           icon: ClipboardList,
+        },
+        {
+          name: "User Management",
+          path: "/admin/users",
+          icon: Users,
         },
         {
           name: "Program Overview",
