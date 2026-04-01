@@ -438,7 +438,7 @@ function FormRenderer({ formId, formName, data, program, isAdminView }) {
           </p>
           {data?.fileUrl && (
             <a
-              href={`https://pacific.kyptronix.us${data.fileUrl}`}
+              href={`http://localhost:5996${data.fileUrl}`}
               target="_blank"
               rel="noreferrer"
               className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg flex items-center gap-2 text-sm font-bold"

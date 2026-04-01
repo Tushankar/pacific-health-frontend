@@ -102,7 +102,7 @@ const Sidebar = ({
     const token = localStorage.getItem("token");
     if (!token) return;
 
-    const socket = io("https://pacific.kyptronix.us", {
+    const socket = io("http://localhost:5996", {
       auth: { token },
       transports: ["websocket", "polling"],
     });
