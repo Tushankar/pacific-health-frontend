@@ -205,9 +205,7 @@ const MyApplication = () => {
     }
   };
 
-  const [selectedProgram, setSelectedProgram] = useState(() => {
-    return localStorage.getItem("selectedProgram") || "NOW-COMP";
-  });
+  const [selectedProgram, setSelectedProgram] = useState("NOW-COMP");
 
   const queryClient = useQueryClient();
 
@@ -219,14 +217,14 @@ const MyApplication = () => {
     enabled: !!enrollmentId || !enrollmentId, // Always enabled, logic handles it
   });
 
-  const activeEnrollment = enrollmentData?.enrollment || enrollmentData; // Handle both response structures if different
+  const activeEnrollment = enrollmentData?.enrollment;
 
   // Sync program selection
   useEffect(() => {
     if (activeEnrollment) {
       setSelectedProgram(activeEnrollment.program);
     }
-  }, [activeEnrollment]);
+  }, [activeEnrollment?.program]);
 
   // Safeguard: If no active enrollment (and not loading), redirect to dashboard
   useEffect(() => {
@@ -345,7 +343,7 @@ const MyApplication = () => {
       // All forms are unlocked after approval
       visibleForms = activeEnrollment?.forms || [];
     } else {
-      const maxPhase1Id = selectedProgram === "NOW-COMP" ? 20 : 8;
+      const maxPhase1Id = selectedProgram === "NOW-COMP" ? 20 : (selectedProgram === "HRMS-ONBOARDING" ? 106 : 8);
       visibleForms = (activeEnrollment?.forms || []).filter(
         (f) => f.formId <= maxPhase1Id,
       );
@@ -736,7 +734,11 @@ const MyApplication = () => {
                           </td>
                           <td className="px-3 sm:px-4 md:px-6 py-3 sm:py-4 md:py-5 text-right">
                             <button
-                              onClick={() => navigate(`?formId=${form.id}`)}
+                              onClick={() => {
+                                const params = new URLSearchParams(searchParams);
+                                params.set("formId", form.id);
+                                navigate(`?${params.toString()}`);
+                              }}
                               className={`px-3 sm:px-4 md:px-5 py-1.5 sm:py-2 md:py-2.5 rounded-lg sm:rounded-xl text-[10px] sm:text-xs font-bold transition-all shadow-sm whitespace-nowrap ${
                                 isCompleted
                                   ? "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
@@ -797,6 +799,7 @@ const MyApplication = () => {
     onComplete,
     readOnly,
     nextFormId,
+    activeEnrollment,
   }) => {
     const formStateRef = useRef(null);
     const hasUserInteracted = useRef(false);
@@ -839,7 +842,10 @@ const MyApplication = () => {
       } else {
         // If no next form (end of flow), redirect to my-application or show success
         toast.success("All forms for this phase are completed!");
-        navigate("/my-application");
+        const query = new URLSearchParams(searchParams);
+        query.delete("formId");
+        const queryStr = query.toString();
+        navigate(`/my-application${queryStr ? `?${queryStr}` : ""}`);
       }
     }, [nextFormId, navigate, location.pathname, searchParams]);
 
@@ -847,8 +853,8 @@ const MyApplication = () => {
       async (submittedFormData) => {
         if (readOnly) return; // Prevent submission in read-only mode
         try {
-          await onComplete(submittedFormData);
           markSubmitted();
+          await onComplete(submittedFormData);
           // After successful save/update, navigate to next form
           handleNext();
         } catch (error) {
@@ -959,6 +965,7 @@ const MyApplication = () => {
             onFormChange={handleFormChange}
             onNext={handleNext}
             isReadOnly={readOnly}
+            activeEnrollment={activeEnrollment}
           />
         </fieldset>
       </div>
@@ -971,6 +978,43 @@ const MyApplication = () => {
 
     // Mapping of form names to components - Complete linkage between Dashboard and Form Components
     const formComponents = {
+      // HRMS Employee Onboarding
+      "Applicant Information": OnboardingForms.PersonalInformation,
+      "Education": OnboardingForms.Education,
+      "References": OnboardingForms.References,
+      "Previous Employment": OnboardingForms.WorkExperience,
+      "Military Service": OnboardingForms.ProfessionalExperience,
+      "Disclaimer and Signature": OnboardingForms.LegalDisclosures,
+      "Job Description": OnboardingForms.JobDescription,
+      "Code of Ethics Form": OnboardingForms.CodeOfEthicsForm,
+      "Service Delivery Form": OnboardingForms.ServiceDeliveryForm,
+      "Non-Compete Agreement": OnboardingForms.NonCompeteAgreementForm,
+      "Emergency Contact Form": OnboardingForms.EmergencyContactForm,
+      "Professional Certificate(s)": OnboardingForms.ProfessionalCertificatesForm,
+      "CPR/First Aid Certificate": OnboardingForms.CPRFirstAidForm,
+      "Government ID": OnboardingForms.DrivingLicenseForm,
+      "Background Check Form": OnboardingForms.BackgroundCheckForm,
+      "Staff Misconduct Form": OnboardingForms.StaffMisconductForm,
+      "TB Symptom Screen Form": OnboardingForms.TBSymptomScreenForm,
+      "Employment Type Selection": OnboardingForms.EmploymentTypeForm,
+      "W-4 Form": OnboardingForms.W4Form,
+      "W-4 Tax Form": OnboardingForms.W4Form,
+      "w4Form": OnboardingForms.W4Form,
+      "W-9 Form": OnboardingForms.W9Form,
+      "W-9 Tax Form": OnboardingForms.W9Form,
+      "w9Form": OnboardingForms.W9Form,
+      "Direct Deposit Form": OnboardingForms.DirectDepositForm,
+      "directDeposit": OnboardingForms.DirectDepositForm,
+      "orientationPresentation": OnboardingForms.OrientationPresentation,
+      "Orientation Presentation": OnboardingForms.OrientationPresentation,
+      "Orientation PowerPoint Presentation": OnboardingForms.OrientationPresentation,
+      "Orientation Checklist": OnboardingForms.OrientationChecklist,
+
+
+
+      "TB Symptom Screen": OnboardingForms.TBSymptomScreenForm,
+      "TB or X-Ray Form": OnboardingForms.TBSymptomScreenForm,
+
       // Chapter I - Admission Packet (NOW-COMP)
       "Client Information Form": OnboardingForms.ClientInfoForm,
       "Service Agreement Form": OnboardingForms.ServiceAgreementForm,
@@ -1041,7 +1085,7 @@ const MyApplication = () => {
       let phase1Count = 0;
       let phase1Completed = 0;
       if (activeEnrollment) {
-        const maxPhase1Id = selectedProgram === "NOW-COMP" ? 20 : 8;
+        const maxPhase1Id = selectedProgram === "NOW-COMP" ? 20 : (selectedProgram === "HRMS-ONBOARDING" ? 123 : 8);
         const phase1Forms =
           activeEnrollment?.forms?.filter((f) => f.formId <= maxPhase1Id) || [];
         phase1Count = phase1Forms.length;
@@ -1082,6 +1126,7 @@ const MyApplication = () => {
           progressTotal={phase1Count}
           readOnly={isReadOnly}
           nextFormId={nextFormId}
+          activeEnrollment={activeEnrollment}
           onComplete={async (submittedFormData) => {
             const currentForm = {
               id: parseInt(formId),

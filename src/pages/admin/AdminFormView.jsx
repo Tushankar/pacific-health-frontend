@@ -283,14 +283,23 @@ const AdminFormView = () => {
             cursor: not-allowed !important;
           }
         `}</style>
-        {formData.data ? (
-          <FormRenderer
-            formId={formData.formId}
-            formName={formData.name}
-            data={formData.data}
-            program={enrollment.program}
-            isAdminView={true}
-          />
+        {(formData.status !== "not-started" || formData.data || formData.draftData) ? (
+          <>
+            <div className="mb-6 p-4 bg-blue-50/60 border border-blue-100 rounded-2xl flex items-center gap-3 text-blue-800 text-xs font-semibold max-w-4xl mx-auto backdrop-blur-sm shadow-sm">
+              <Info size={18} className="text-blue-600 shrink-0" />
+              <div>
+                <span className="font-bold">Read-Only Admin Review Mode:</span> You are viewing the applicant's submitted answers. All input fields have been frozen to ensure data security.
+              </div>
+            </div>
+            <FormRenderer
+              formId={formData.formId}
+              formName={formData.name}
+              data={formData.data || formData.draftData || {}}
+              program={enrollment.program}
+              isAdminView={true}
+              isReadOnly={true}
+            />
+          </>
         ) : (
           <div className="flex flex-col items-center justify-center py-20 text-slate-400">
             <Info size={48} className="mb-4 opacity-50" />
@@ -353,9 +362,50 @@ const AdminFormView = () => {
   );
 };
 
+// Helper to resolve server root file URL
+const getFileUrl = (fileData) => {
+  if (!fileData) return null;
+  if (fileData.fileUrl) {
+    if (fileData.fileUrl.startsWith("http")) return fileData.fileUrl;
+    return `https://pacific.kyptronix.us${fileData.fileUrl}`;
+  }
+  if (fileData.path) {
+    const apiBaseUrl = import.meta.env.VITE_API_URL || "https://pacific.kyptronix.us/api";
+    const serverRoot = apiBaseUrl.replace(/\/api\/?$/, "");
+    return `${serverRoot}/${fileData.path}`;
+  }
+  return null;
+};
+
 // Read-only Form Renderer
-function FormRenderer({ formId, formName, data, program, isAdminView }) {
+function FormRenderer({ formId, formName, data, program, isAdminView, isReadOnly }) {
   const formComponents = {
+    // HRMS Employee Onboarding
+    "Applicant Information": OnboardingForms.PersonalInformation,
+    "Education": OnboardingForms.Education,
+    "References": OnboardingForms.References,
+    "Previous Employment": OnboardingForms.WorkExperience,
+    "Military Service": OnboardingForms.ProfessionalExperience,
+    "Disclaimer and Signature": OnboardingForms.LegalDisclosures,
+    "Job Description": OnboardingForms.JobDescription,
+    "Code of Ethics Form": OnboardingForms.CodeOfEthicsForm,
+    "Service Delivery Form": OnboardingForms.ServiceDeliveryForm,
+    "Non-Compete Agreement": OnboardingForms.NonCompeteAgreementForm,
+    "Emergency Contact Form": OnboardingForms.EmergencyContactForm,
+    "Professional Certificate(s)": OnboardingForms.ProfessionalCertificatesForm,
+    "CPR/First Aid Certificate": OnboardingForms.CPRFirstAidForm,
+    "Government ID": OnboardingForms.DrivingLicenseForm,
+    "Background Check Form": OnboardingForms.BackgroundCheckForm,
+    "Staff Misconduct Form": OnboardingForms.StaffMisconductForm,
+    "TB Symptom Screen Form": OnboardingForms.TBSymptomScreenForm,
+    "TB or X-Ray Form": OnboardingForms.TBSymptomScreenForm,
+    "Employment Type Selection": OnboardingForms.EmploymentTypeForm,
+    "W-4 Tax Form": OnboardingForms.W4Form,
+    "W-9 Tax Form": OnboardingForms.W9Form,
+    "Direct Deposit Form": OnboardingForms.DirectDepositForm,
+    "Orientation PowerPoint Presentation": OnboardingForms.OrientationPresentation,
+    "Orientation Checklist": OnboardingForms.OrientationChecklist,
+
     // Chapter I - Admission Packet (NOW-COMP)
     "Client Information Form": OnboardingForms.ClientInfoForm,
     "Service Agreement Form": OnboardingForms.ServiceAgreementForm,
@@ -419,32 +469,47 @@ function FormRenderer({ formId, formName, data, program, isAdminView }) {
   const Component = formComponents[formName];
 
   if (!Component) {
-    if (
-      program &&
-      (formName.includes("Upload") ||
-        formName.includes("Orders") ||
-        formName.includes("Annuals") ||
-        formName.includes("BSP") ||
-        formName.includes("Directives") ||
-        formName.includes("Freedom"))
-    ) {
+    const fileUrl = getFileUrl(data);
+    const isUploadForm =
+      (program &&
+        (formName.includes("Upload") ||
+          formName.includes("Orders") ||
+          formName.includes("Annuals") ||
+          formName.includes("BSP") ||
+          formName.includes("Directives") ||
+          formName.includes("Freedom") ||
+          formName.includes("Certificate") ||
+          formName.includes("ID") ||
+          formName.includes("Government") ||
+          formName.includes("TB") ||
+          formName.includes("Document") ||
+          formName.includes("Agreement") ||
+          formName.includes("Tax"))) ||
+      !!fileUrl;
+
+    if (isUploadForm) {
       return (
-        <div className="flex flex-col items-center justify-center py-10 text-slate-400">
-          <FileText size={48} className="mb-4 opacity-50" />
-          <p className="text-center">
-            This is a document upload form.
-            <br />
-            Please check the specific file link if available.
+        <div className="flex flex-col items-center justify-center py-20 text-slate-500 bg-slate-50/50 rounded-3xl border-2 border-dashed border-slate-200 p-8 max-w-2xl mx-auto my-8 shadow-sm">
+          <div className="p-4 bg-blue-50 text-blue-600 rounded-2xl mb-4 border border-blue-100">
+            <FileText size={40} />
+          </div>
+          <h3 className="text-lg font-bold text-slate-800 mb-2">Document Submission Form</h3>
+          <p className="text-center text-sm text-slate-500 max-w-md mb-6 leading-relaxed">
+            This step requires a document submission. Click below to view or verify the user-submitted file.
           </p>
-          {data?.fileUrl && (
+          {fileUrl ? (
             <a
-              href={`https://pacific.kyptronix.us${data.fileUrl}`}
+              href={fileUrl}
               target="_blank"
               rel="noreferrer"
-              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg flex items-center gap-2 text-sm font-bold"
+              className="px-6 py-3 bg-gradient-to-r from-blue-700 to-indigo-600 text-white rounded-xl flex items-center gap-2 text-sm font-bold shadow-lg shadow-blue-100 hover:shadow-indigo-200 hover:scale-[1.02] active:scale-95 transition-all"
             >
               <ExternalLink size={16} /> View Uploaded Document
             </a>
+          ) : (
+            <div className="flex items-center gap-2 text-amber-600 text-xs font-semibold bg-amber-50 px-4 py-2.5 border border-amber-100 rounded-xl">
+              <Info size={16} /> No file has been uploaded for this form yet.
+            </div>
           )}
         </div>
       );
@@ -466,6 +531,7 @@ function FormRenderer({ formId, formName, data, program, isAdminView }) {
       progressCurrent={1}
       progressTotal={1}
       isAdminView={isAdminView}
+      isReadOnly={isReadOnly}
     />
   );
 }

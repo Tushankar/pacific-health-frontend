@@ -1,4 +1,4 @@
-﻿import React, { useMemo } from "react";
+import React, { useMemo } from "react";
 import {
     FileText,
     CheckCircle,
@@ -223,7 +223,7 @@ const ApplicantCard = ({ app, navigate, submissionCount, getOrdinal }) => (
                             <div className="flex items-center gap-2 flex-wrap">
                                 <p className="font-bold text-slate-900 leading-tight whitespace-nowrap">{app.user?.fullName || "Unknown User"}</p>
                                 <span className="text-[10px] font-black uppercase tracking-wider bg-gradient-to-r from-rose-500 to-blue-600 bg-clip-text text-transparent whitespace-normal border-l border-slate-200 pl-2 leading-tight">
-                                    {getOrdinal(submissionCount)} {app.program === "NOW-COMP" ? "NOW-COMP Program" : "Other Program"} Submission
+                                    {getOrdinal(submissionCount)} {app.program === "NOW-COMP" ? "NOW-COMP Program" : app.program === "HRMS-ONBOARDING" ? "HRMS Onboarding" : "Other Program"} Submission
                                 </span>
                             </div>
                         </div>
@@ -235,7 +235,7 @@ const ApplicantCard = ({ app, navigate, submissionCount, getOrdinal }) => (
 
                 <div className="mb-6">
                     <h3 className="text-xl font-bold text-indigo-600 font-sans transition-colors">
-                        {app.program === "NOW-COMP" ? "NOW & COMP Waiver" : "Other Programs"}
+                        {app.program === "NOW-COMP" ? "NOW & COMP Waiver" : app.program === "HRMS-ONBOARDING" ? "HRMS Onboarding" : "Other Programs"}
                     </h3>
                     <div className="mt-4 flex items-center gap-1.5 font-mono text-[10px] text-slate-400 uppercase tracking-widest font-bold">
                         <Clock size={12} />

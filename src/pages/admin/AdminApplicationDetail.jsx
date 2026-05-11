@@ -92,7 +92,14 @@ const AdminApplicationDetail = () => {
     const v = n % 100;
     const ordinal = n + (s[(v - 20) % 10] || s[v] || s[0]);
 
-    return `${ordinal} ${enrollment.program === "NOW-COMP" ? "NOW-COMP Program" : "Other Program"} Submission`;
+    let programName = "Other Program";
+    if (enrollment.program === "NOW-COMP") {
+      programName = "NOW-COMP Program";
+    } else if (enrollment.program === "HRMS-ONBOARDING") {
+      programName = "HRMS Onboarding";
+    }
+
+    return `${ordinal} ${programName} Submission`;
   }, [enrollment, userEnrollmentsData]);
 
   // Review Enrollment Mutation
@@ -234,6 +241,42 @@ const AdminApplicationDetail = () => {
           ],
         },
       ];
+    } else if (program === "HRMS-ONBOARDING") {
+      return [
+        {
+          chapter: "Part 1: Employment Application",
+          forms: [
+            { id: 101, name: "Applicant Information", type: "Data Entry" },
+            { id: 102, name: "Education", type: "Data Entry" },
+            { id: 103, name: "References", type: "Data Entry" },
+            { id: 104, name: "Previous Employment", type: "Data Entry" },
+            { id: 105, name: "Military Service", type: "Data Entry" },
+            { id: 106, name: "Disclaimer and Signature", type: "Signable" },
+          ],
+        },
+        {
+          chapter: "Part 2: Documents to Submit",
+          forms: [
+            { id: 107, name: "Job Description", type: "Signable" },
+            { id: 108, name: "Code of Ethics Form", type: "Signable" },
+            { id: 109, name: "Service Delivery Form", type: "Signable" },
+            { id: 110, name: "Non-Compete Agreement", type: "Signable" },
+            { id: 111, name: "Emergency Contact Form", type: "Data Entry" },
+            { id: 112, name: "Professional Certificate(s)", type: "Fillable" },
+            { id: 113, name: "CPR/First Aid Certificate", type: "Fillable" },
+            { id: 114, name: "Government ID", type: "Fillable" },
+            { id: 115, name: "Background Check Form", type: "Signable" },
+            { id: 116, name: "Staff Misconduct Form", type: "Signable" },
+            { id: 117, name: "TB or X-Ray Form", type: "Fillable" },
+            { id: 118, name: "Employment Type Selection", type: "Data Entry" },
+            { id: 119, name: "W-4 Tax Form", type: "Fillable" },
+            { id: 120, name: "W-9 Tax Form", type: "Fillable" },
+            { id: 121, name: "Direct Deposit Form", type: "Fillable" },
+            { id: 122, name: "Orientation PowerPoint Presentation", type: "Fillable" },
+            { id: 123, name: "Orientation Checklist", type: "Fillable" },
+          ],
+        },
+      ];
     } else {
       return [
         {
@@ -302,7 +345,12 @@ const AdminApplicationDetail = () => {
   // Check if all forms are reviewed (either approved or rejected)
   const allFormsReviewed = useMemo(() => {
     if (!enrollment?.forms) return false;
-    const maxPhase1Id = enrollment.program === "NOW-COMP" ? 20 : 8;
+    const maxPhase1Id =
+      enrollment.program === "NOW-COMP"
+        ? 20
+        : enrollment.program === "HRMS-ONBOARDING"
+          ? 150
+          : 8;
     const relevantForms = enrollment.forms.filter(
       (f) => f.formId <= maxPhase1Id,
     );
@@ -314,7 +362,12 @@ const AdminApplicationDetail = () => {
   // Check if all forms are approved
   const allFormsApproved = useMemo(() => {
     if (!enrollment?.forms) return false;
-    const maxPhase1Id = enrollment.program === "NOW-COMP" ? 20 : 8;
+    const maxPhase1Id =
+      enrollment.program === "NOW-COMP"
+        ? 20
+        : enrollment.program === "HRMS-ONBOARDING"
+          ? 150
+          : 8;
     const relevantForms = enrollment.forms.filter(
       (f) => f.formId <= maxPhase1Id,
     );

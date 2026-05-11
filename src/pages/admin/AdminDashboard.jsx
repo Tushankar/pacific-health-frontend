@@ -201,7 +201,7 @@ const AdminDashboard = () => {
                               )}
                             </div>
                             <p className="text-[10px] font-black uppercase tracking-wider bg-gradient-to-r from-rose-500 to-blue-600 bg-clip-text text-transparent">
-                              {getOrdinal(submissionCounts[app._id])} {app.program === "NOW-COMP" ? "NOW-COMP Program" : "Other Program"} Submission
+                              {getOrdinal(submissionCounts[app._id])} {app.program === "NOW-COMP" ? "NOW-COMP Program" : app.program === "HRMS-ONBOARDING" ? "HRMS Onboarding" : "Other Program"} Submission
                             </p>
                           </div>
                         </div>

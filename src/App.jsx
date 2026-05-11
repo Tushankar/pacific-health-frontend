@@ -19,6 +19,7 @@ import AdminFormView from "./pages/admin/AdminFormView";
 import AdminProgramOverview from "./pages/admin/AdminProgramOverview";
 import AdminAfterHire from "./pages/admin/AdminAfterHire";
 import UserManagement from "./pages/admin/UserManagement";
+import AdminDocuments from "./pages/admin/AdminDocuments";
 
 function App() {
   return (
@@ -45,6 +46,14 @@ function App() {
             element={
               <Layout>
                 <AdminDashboard />
+              </Layout>
+            }
+          />
+          <Route
+            path="/admin/documents"
+            element={
+              <Layout>
+                <AdminDocuments />
               </Layout>
             }
           />

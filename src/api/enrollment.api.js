@@ -33,6 +33,14 @@ export const createEnrollment = async (program) => {
 };
 
 /**
+ * Delete/Reset current active pending enrollment
+ */
+export const deleteMyActiveEnrollment = async () => {
+  const response = await axiosInstance.delete("/enrollment/my/active");
+  return response.data;
+};
+
+/**
  * Update form status within an enrollment
  */
 export const updateFormStatus = async (enrollmentId, formId, status, formData = null) => {

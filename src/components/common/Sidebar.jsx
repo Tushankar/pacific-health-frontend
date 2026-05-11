@@ -143,9 +143,11 @@ const Sidebar = ({
   // Sync program selection
   useEffect(() => {
     if (activeEnrollment) {
-      setSelectedProgram(activeEnrollment.program);
+      setSelectedProgram((prev) =>
+        prev !== activeEnrollment.program ? activeEnrollment.program : prev,
+      );
     }
-  }, [activeEnrollment]);
+  }, [activeEnrollment?.program]);
 
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
@@ -228,6 +230,11 @@ const Sidebar = ({
           name: "User Management",
           path: "/admin/users",
           icon: Users,
+        },
+        {
+          name: "Manage Documents",
+          path: "/admin/documents",
+          icon: FileText,
         },
         {
           name: "Program Overview",
@@ -371,11 +378,14 @@ const Sidebar = ({
       );
 
       if (chapterIndex !== -1) {
-        setIsMyWorkflowsExpanded(true);
-        setExpandedChapters((prev) => ({
-          ...prev,
-          [chapterIndex]: true,
-        }));
+        setIsMyWorkflowsExpanded((prev) => (!prev ? true : prev));
+        setExpandedChapters((prev) => {
+          if (prev[chapterIndex]) return prev;
+          return {
+            ...prev,
+            [chapterIndex]: true,
+          };
+        });
       }
     }
   }, [activeFormId, formsData, location.pathname]);
@@ -775,8 +785,10 @@ const Sidebar = ({
                                               );
                                               return;
                                             }
+                                            const params = new URLSearchParams(searchParams);
+                                            params.set("formId", form.id);
                                             navigate(
-                                              `${item.path}?formId=${form.id}`,
+                                              `${item.path}?${params.toString()}`,
                                             );
                                             closeMobileMenu();
                                           }}

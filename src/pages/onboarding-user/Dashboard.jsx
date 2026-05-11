@@ -27,6 +27,7 @@ import {
   createEnrollment,
   updateFormStatus,
   submitEnrollment,
+  deleteMyActiveEnrollment,
 } from "../../api/enrollment.api";
 import { toast } from "sonner";
 
@@ -44,7 +45,9 @@ const ClientManagementHub = () => {
     queryFn: getMyEnrollment,
   });
 
-  const activeEnrollment = enrollmentData?.enrollment;
+  const backendEnrollment = enrollmentData?.enrollment;
+  const activeEnrollment = backendEnrollment;
+
   const isWorkflowActionComplete = Boolean(activeEnrollment || selectedAction);
 
   // Mutations
@@ -77,13 +80,28 @@ const ClientManagementHub = () => {
     },
   });
 
+  const resetActiveEnrollmentMutation = useMutation({
+    mutationFn: deleteMyActiveEnrollment,
+    onSuccess: () => {
+      toast.success("Onboarding workflow has been reset!");
+      setSelectedProgram("");
+      setSelectedAction("");
+      queryClient.invalidateQueries({ queryKey: ["myEnrollment"] });
+    },
+    onError: (error) => {
+      toast.error(
+        error.response?.data?.message || "Failed to reset active enrollment."
+      );
+    },
+  });
+
   // Effect to sync local program selection with active enrollment
   React.useEffect(() => {
     if (activeEnrollment) {
       setSelectedProgram(activeEnrollment.program);
       setSelectedAction("new-onboarding");
     }
-  }, [activeEnrollment]);
+  }, [activeEnrollment?.program]);
 
   const programOptions = [
     {
@@ -99,6 +117,13 @@ const ClientManagementHub = () => {
       description:
         "Establish care protocols for nursing, personal care (CCSP, GAPP, SOURCE) and companionship.",
       color: "border-indigo-500",
+    },
+    {
+      value: "HRMS-ONBOARDING",
+      label: "HRMS: Employee Onboarding",
+      description:
+        "Initialize staff onboarding, credentialing, tax documents, and staff protocols.",
+      color: "border-amber-500",
     },
   ];
 
@@ -496,6 +521,29 @@ const ClientManagementHub = () => {
     return (
       <div className="min-h-screen bg-[#F8FAFC] font-poppins text-slate-900 antialiased">
         <main className="max-w-[1600px] mx-auto p-4 sm:p-6 md:p-8 lg:p-10">
+          {selectedProgram === "HRMS-ONBOARDING" && (
+            <div className="mb-8 p-6 bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-in fade-in slide-in-from-top-4 duration-500 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-full -mr-10 -mt-10 blur-2xl opacity-40"></div>
+              <div className="relative z-10">
+                <h1 className="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight">HRMS Onboarding Dashboard</h1>
+                <p className="text-slate-500 text-xs sm:text-sm mt-1 max-w-2xl">
+                  You are currently navigating the database-backed HRMS Employee Onboarding workflow. Your progress, drafts, and uploaded documents are stored securely in MongoDB.
+                </p>
+              </div>
+              <button
+                disabled={resetActiveEnrollmentMutation.isPending}
+                onClick={() => {
+                  if (window.confirm("Are you sure you want to reset your onboarding progress? This will delete all saved form data in the database.")) {
+                    resetActiveEnrollmentMutation.mutate();
+                  }
+                }}
+                className="px-4 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-xl font-bold text-xs transition-all self-start sm:self-auto shadow-sm active:scale-95 flex items-center gap-2"
+              >
+                {resetActiveEnrollmentMutation.isPending && <Loader2 className="animate-spin" size={14} />}
+                Reset Onboarding / Change Program
+              </button>
+            </div>
+          )}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 lg:gap-10">
             {/* LEFT CONTENT: CHAPTERS */}
             <div className="col-span-12 lg:col-span-9 space-y-12">
@@ -670,7 +718,7 @@ const ClientManagementHub = () => {
 
                       if (activeEnrollment) {
                         const maxPhase1Id =
-                          selectedProgram === "NOW-COMP" ? 20 : 8;
+                          selectedProgram === "NOW-COMP" ? 20 : (selectedProgram === "HRMS-ONBOARDING" ? 123 : 8);
                         const phase1Forms = activeEnrollment.forms.filter(
                           (f) => f.formId <= maxPhase1Id,
                         );
@@ -696,7 +744,9 @@ const ClientManagementHub = () => {
                               {percentage}%
                             </span>
                             <span className="text-indigo-300 text-xs sm:text-xs md:text-sm font-bold sm:mb-1">
-                              Phase 1 Completion
+                              {selectedProgram === "HRMS-ONBOARDING"
+                                ? "Onboarding Completion"
+                                : "Phase 1 Completion"}
                             </span>
                           </div>
                           <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden mb-4 sm:mb-6 md:mb-8">
@@ -878,8 +928,8 @@ const ClientManagementHub = () => {
             <span className="text-blue-900">Protocol Hub</span>
           </h1>
           <p className="text-slate-500 text-base md:text-lg leading-relaxed">
-            Select a clinical program to initialize the specific admission
-            packet and regulatory documentation workflow.
+            Select a program to initialize the specific admission
+            packet, onboarding, or regulatory documentation workflow.
           </p>
         </div>
 
@@ -923,7 +973,7 @@ const ClientManagementHub = () => {
               isWorkflowActionComplete ? "text-blue-900" : "text-slate-400"
             }`}
           >
-            2. Clinical Program
+            2. Program Selection
           </label>
           <div className="space-y-3 mb-8">
             {programOptions.map((p) => (
@@ -984,10 +1034,10 @@ const ClientManagementHub = () => {
           {!activeEnrollment && selectedProgram && selectedAction && (
             <button
               onClick={() => setShowConfirmModal(true)} // Changed to open modal
-              className="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg flex items-center justify-center gap-2"
+              className="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 transition-all shadow-lg flex items-center justify-center gap-2 animate-in fade-in slide-in-from-bottom-2 duration-300"
             >
               <ClipboardList size={20} />
-              Start Intake Protocol
+              {selectedProgram === "HRMS-ONBOARDING" ? "Start Onboarding Protocol" : "Start Intake Protocol"}
             </button>
           )}
 
