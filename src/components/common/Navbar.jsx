@@ -82,10 +82,10 @@ const Navbar = ({ toggleMobileMenu, toggleNotifications }) => {
         </p>
       </div>
       <div className="flex justify-center items-center gap-2 md:gap-3 lg:gap-5">
-        <div className="hidden sm:flex justify-center items-center h-8 w-auto md:h-10 lg:h-14 flex-shrink-0">
+        <div className="hidden sm:flex justify-center items-center h-12 w-auto md:h-16 lg:h-20 flex-shrink-0">
           <img
-            src="https://www.pacifichealthsystems.net/wp-content/themes/pacifichealth/images/logo.png"
-            alt="Pacific Health Systems Logo"
+            src="/carecomp_pacific.png"
+            alt="Carecomp Pacific Logo"
             className="h-full object-contain"
             onError={(e) => {
               console.log("Logo image failed to load");

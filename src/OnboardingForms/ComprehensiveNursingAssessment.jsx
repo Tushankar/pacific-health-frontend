@@ -331,7 +331,7 @@ export default function ComprehensiveNursingAssessment({
 
       <form
         onSubmit={handleSubmit}
-        className="flex-1 flex flex-col items-center mt-4 mb-8"
+        className="flex-1 w-full flex flex-col items-center mt-4 mb-8"
       >
         <div className="w-[98%] md:w-[85%] lg:w-[75%] p-2 md:p-8 bg-white text-[9px] md:text-sm leading-snug shadow-lg rounded-t-lg">
           <div className="mt-4 flex justify-end no-print">

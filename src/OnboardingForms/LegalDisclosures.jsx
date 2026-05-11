@@ -94,7 +94,7 @@ const LegalDisclosures = ({
 
       <ProgressBar currentStep={progressCurrent} totalSteps={progressTotal || 1} />
 
-      <div className="flex-1 flex flex-col items-center mt-4 mb-8">
+      <div className="flex-1 w-full flex flex-col items-center mt-4 mb-8">
         <div className="w-[98%] md:w-[85%] lg:w-[75%] p-2 md:p-12 bg-white leading-snug shadow-lg rounded-lg border border-gray-200">
           <form onSubmit={handleSubmit}>
             {/* Logo Header */}

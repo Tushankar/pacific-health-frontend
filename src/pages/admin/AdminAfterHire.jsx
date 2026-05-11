@@ -16,32 +16,35 @@ import {
     User,
     ShieldCheck,
     Calendar,
-    Mail
+    Mail,
+    Loader2
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { ShineBorder } from "../../components/ui/ShineBorder";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getAfterHireConfig, updateAfterHireConfig } from "../../api/afterHire.api";
+import { toast } from "sonner";
 
 const AdminAfterHire = () => {
     const navigate = useNavigate();
-    const [selectedProgram, setSelectedProgram] = useState(null);
+    const [selectedProgram, setSelectedProgram] = useState({
+        id: "HRMS-ONBOARDING",
+        title: "HRMS Employee Onboarding",
+        description: "Staff, Personnel & HR Employee Onboarding and Part 3 Training",
+        color: "purple",
+        activeCount: 22
+    });
     const [selectedApplicant, setSelectedApplicant] = useState(null);
 
-    // Mock Programs Data
+    // Programs Data (Only HRMS Employee Onboarding)
     const programs = [
         {
-            id: "NOW-COMP",
-            title: "NOW & COMP WAIVERS",
-            description: "Intellectual and Developmental Disability Waivers",
-            color: "blue",
-            activeCount: 124
-        },
-        {
-            id: "OTHER",
-            title: "Other Programs",
-            description: "Medicaid & Specialized Nursing Services",
-            color: "indigo",
-            activeCount: 86
+            id: "HRMS-ONBOARDING",
+            title: "HRMS Employee Onboarding",
+            description: "Staff, Personnel & HR Employee Onboarding and Part 3 Training",
+            color: "purple",
+            activeCount: 22
         }
     ];
 
@@ -49,8 +52,6 @@ const AdminAfterHire = () => {
     const handleBack = () => {
         if (selectedApplicant) {
             setSelectedApplicant(null);
-        } else if (selectedProgram) {
-            setSelectedProgram(null);
         }
     };
 
@@ -60,7 +61,7 @@ const AdminAfterHire = () => {
 
                 {/* Header */}
                 <div className="mb-10 flex items-center gap-4">
-                    {(selectedProgram || selectedApplicant) && (
+                    {selectedApplicant && (
                         <button
                             onClick={handleBack}
                             className="p-2 bg-white rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-500 transition-colors"
@@ -73,14 +74,18 @@ const AdminAfterHire = () => {
                             {selectedApplicant
                                 ? `Onboarding: ${selectedApplicant.name}`
                                 : selectedProgram
-                                    ? `${selectedProgram.title} - Approved Applicants`
+                                    ? selectedProgram.id === "HRMS-ONBOARDING"
+                                        ? `${selectedProgram.title} - After Hire Configs`
+                                        : `${selectedProgram.title} - Approved Applicants`
                                     : "After Hire Management"}
                         </h1>
                         <p className="text-slate-500 font-medium mt-1">
                             {selectedApplicant
                                 ? "Configure access, forms, and training resources for this new hire."
                                 : selectedProgram
-                                    ? "Select an approved applicant to begin the onboarding setup."
+                                    ? selectedProgram.id === "HRMS-ONBOARDING"
+                                        ? "Configure orientation videos and training questions that approved employees see."
+                                        : "Select an approved applicant to begin the onboarding setup."
                                     : "Select a program to manage new hires and onboarding resources."}
                         </p>
                     </div>
@@ -90,6 +95,8 @@ const AdminAfterHire = () => {
                 <AnimatePresence mode="wait">
                     {!selectedProgram ? (
                         <ProgramSelector key="selector" programs={programs} onSelect={setSelectedProgram} />
+                    ) : selectedProgram.id === "HRMS-ONBOARDING" ? (
+                        <HRMSAfterHireConfigurator key="hrms-afterhire" />
                     ) : !selectedApplicant ? (
                         <ApplicantTable key="table" program={selectedProgram} onSelect={setSelectedApplicant} />
                     ) : (
@@ -104,32 +111,44 @@ const AdminAfterHire = () => {
 
 // --- View 1: Program Selector ---
 const ProgramSelector = ({ programs, onSelect }) => {
+    const borderColors = {
+        blue: ["#3b82f6", "#60a5fa", "#93c5fd"],
+        indigo: ["#6366f1", "#818cf8", "#a5b4fc"],
+        purple: ["#8b5cf6", "#a78bfa", "#c4b5fd"]
+    };
+
+    const bgColors = {
+        blue: "bg-blue-50 text-blue-600",
+        indigo: "bg-indigo-50 text-indigo-600",
+        purple: "bg-purple-50 text-purple-600"
+    };
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-6"
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
         >
             {programs.map((program) => (
                 <ShineBorder
                     key={program.id}
                     borderRadius={24}
                     borderWidth={1}
-                    color={program.color === 'blue' ? ["#3b82f6", "#60a5fa", "#93c5fd"] : ["#6366f1", "#818cf8", "#a5b4fc"]}
+                    color={borderColors[program.color] || borderColors.blue}
                     className="group cursor-pointer !bg-white hover:!bg-white/80 !w-auto !min-h-0 !p-0 shadow-sm hover:shadow-xl transition-all relative"
                 >
                     <div
                         onClick={() => onSelect(program)}
                         className="p-8 w-full h-full relative z-10"
                     >
-                        <div className={`w-14 h-14 rounded-2xl mb-6 flex items-center justify-center ${program.color === 'blue' ? 'bg-blue-50 text-blue-600' : 'bg-indigo-50 text-indigo-600'}`}>
+                        <div className={`w-14 h-14 rounded-2xl mb-6 flex items-center justify-center ${bgColors[program.color] || bgColors.blue}`}>
                             <GraduationCap size={32} />
                         </div>
-                        <h3 className="text-2xl font-bold text-slate-800 mb-2 group-hover:text-blue-700 transition-colors">
+                        <h3 className="text-xl font-bold text-slate-800 mb-2 group-hover:text-blue-700 transition-colors">
                             {program.title}
                         </h3>
-                        <p className="text-slate-500 mb-6 font-medium">
+                        <p className="text-slate-500 mb-6 font-medium text-sm">
                             {program.description}
                         </p>
                         <div className="flex items-center justify-between mt-auto">
@@ -470,5 +489,189 @@ const NavButton = ({ active, onClick, icon: Icon, label, count }) => (
         )}
     </button>
 );
+
+const HRMSAfterHireConfigurator = () => {
+    const queryClient = useQueryClient();
+    const [videoUrl, setVideoUrl] = useState("");
+    const [questions, setQuestions] = useState([]);
+
+    // Fetch config
+    const { data, isLoading } = useQuery({
+        queryKey: ["afterHireConfigAdmin"],
+        queryFn: async () => {
+            const res = await getAfterHireConfig();
+            if (res?.config) {
+                setVideoUrl(res.config.videoUrl || "");
+                setQuestions(res.config.questions || []);
+            }
+            return res;
+        }
+    });
+
+    // Save Mutation
+    const mutation = useMutation({
+        mutationFn: updateAfterHireConfig,
+        onSuccess: () => {
+            toast.success("After-hire configurations saved successfully!");
+            queryClient.invalidateQueries({ queryKey: ["afterHireConfigAdmin"] });
+            queryClient.invalidateQueries({ queryKey: ["afterHireConfig"] });
+        },
+        onError: () => {
+            toast.error("Failed to save configurations. Please try again.");
+        }
+    });
+
+    const handleAddQuestion = () => {
+        setQuestions([...questions, { question: "", answer: "" }]);
+    };
+
+    const handleQuestionChange = (index, field, value) => {
+        const updated = [...questions];
+        updated[index] = { ...updated[index], [field]: value };
+        setQuestions(updated);
+    };
+
+    const handleRemoveQuestion = (index) => {
+        const updated = questions.filter((_, i) => i !== index);
+        setQuestions(updated);
+    };
+
+    const handleSave = () => {
+        // Validation
+        const hasEmpty = questions.some(q => !q.question.trim() || !q.answer.trim());
+        if (hasEmpty) {
+            toast.warning("Please fill in all questions and answers before saving.");
+            return;
+        }
+        mutation.mutate({ videoUrl, questions });
+    };
+
+    if (isLoading) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[400px]">
+                <Loader2 className="animate-spin text-indigo-600 w-10 h-10 mb-4" />
+                <p className="text-slate-500 font-medium">Loading after-hire configurations...</p>
+            </div>
+        );
+    }
+
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="bg-white rounded-[32px] p-8 border border-slate-200 shadow-xl relative overflow-hidden"
+        >
+            <div className="absolute top-0 right-0 w-96 h-96 bg-purple-50/50 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none"></div>
+            
+            <div className="relative z-10 space-y-8">
+                <div>
+                    <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2 mb-2 font-sans">
+                        <Video className="text-purple-600" />
+                        <span>Orientation & Training Video URL</span>
+                    </h2>
+                    <p className="text-xs text-slate-400 font-medium mb-4">
+                        Provide the embed link (e.g., YouTube Embed URL) for the presentation video that employees will watch upon hire.
+                    </p>
+                    <input
+                        type="text"
+                        value={videoUrl}
+                        onChange={(e) => setVideoUrl(e.target.value)}
+                        placeholder="e.g., https://www.youtube.com/embed/dQw4w9WgXcQ"
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-semibold text-slate-700 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all placeholder:text-slate-400"
+                    />
+                </div>
+
+                <hr className="border-slate-100" />
+
+                <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2 font-sans">
+                                <FileQuestion className="text-purple-600" />
+                                <span>Dynamic Onboarding Q&As (Part 3)</span>
+                            </h2>
+                            <p className="text-xs text-slate-400 font-medium mt-1">
+                                Configure essential training or operational questions that approved staff can see and learn from.
+                            </p>
+                        </div>
+                        <button
+                            onClick={handleAddQuestion}
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-purple-50 border border-purple-100 text-purple-700 text-xs font-black uppercase tracking-wider rounded-xl hover:bg-purple-100 transition-colors"
+                        >
+                            <Plus size={14} />
+                            <span>Add Question</span>
+                        </button>
+                    </div>
+
+                    <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+                        {questions.map((q, idx) => (
+                            <div key={idx} className="bg-slate-50 border border-slate-200/60 rounded-2xl p-5 relative group/item">
+                                <button
+                                    onClick={() => handleRemoveQuestion(idx)}
+                                    className="absolute top-4 right-4 p-1.5 bg-white text-slate-400 hover:text-rose-600 rounded-lg border border-slate-100 hover:border-rose-100 shadow-sm transition-colors opacity-0 group-hover/item:opacity-100"
+                                >
+                                    <Trash2 size={14} />
+                                </button>
+                                
+                                <span className="absolute top-4 left-5 text-[10px] font-black text-purple-400 uppercase tracking-widest bg-purple-50/50 border border-purple-100/50 px-2 py-0.5 rounded-md">
+                                    Question {idx + 1}
+                                </span>
+
+                                <div className="space-y-4 mt-6">
+                                    <div>
+                                        <label className="block text-[11px] font-black text-slate-400 uppercase tracking-wider mb-1.5">Question Text</label>
+                                        <input
+                                            type="text"
+                                            value={q.question}
+                                            onChange={(e) => handleQuestionChange(idx, "question", e.target.value)}
+                                            placeholder="Enter onboarding question..."
+                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[11px] font-black text-slate-400 uppercase tracking-wider mb-1.5">Answer Text</label>
+                                        <textarea
+                                            value={q.answer}
+                                            onChange={(e) => handleQuestionChange(idx, "answer", e.target.value)}
+                                            placeholder="Enter question answer..."
+                                            rows={2}
+                                            className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all resize-none"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+
+                        {questions.length === 0 && (
+                            <div className="text-center p-10 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                                <FileQuestion className="mx-auto text-slate-300 w-12 h-12 mb-3" />
+                                <h4 className="text-sm font-bold text-slate-700 font-sans">No Questions Configured</h4>
+                                <p className="text-xs text-slate-400 mt-1">Click the 'Add Question' button above to create onboarding questions.</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                <div className="pt-4 border-t border-slate-100 flex justify-end">
+                    <button
+                        onClick={handleSave}
+                        disabled={mutation.isPending}
+                        className="inline-flex items-center gap-2 px-8 py-3.5 bg-slate-900 text-white hover:bg-purple-700 text-xs font-black uppercase tracking-widest rounded-2xl transition-all shadow-lg shadow-slate-200 disabled:bg-slate-300 disabled:shadow-none"
+                    >
+                        {mutation.isPending ? (
+                            <>
+                                <Loader2 className="animate-spin w-4 h-4" />
+                                <span>Saving Configs...</span>
+                            </>
+                        ) : (
+                            <span>Save Onboarding Config</span>
+                        )}
+                    </button>
+                </div>
+            </div>
+        </motion.div>
+    );
+};
 
 export default AdminAfterHire;

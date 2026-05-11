@@ -22,14 +22,26 @@ import {
   Search,
   Filter,
   FolderOpen,
+  GraduationCap,
+  PlayCircle,
+  FileQuestion,
+  Video,
 } from "lucide-react";
 
 import { useQuery } from "@tanstack/react-query";
 import { getMyEnrollments } from "../../api/enrollment.api";
+import { getAfterHireConfig } from "../../api/afterHire.api";
 
 import { ShineBorder } from "../../components/ui/ShineBorder";
 import { AnimatedGradient } from "../../components/ui/AnimatedGradient";
 import { motion } from "framer-motion";
+
+const formatYoutubeEmbedUrl = (url) => {
+  if (!url) return "";
+  if (url.includes("/embed/")) return url;
+  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtu\.be\/embed\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/);
+  return match && match[1] ? `https://www.youtube.com/embed/${match[1]}` : url;
+};
 
 const MyApplicationsList = () => {
   const navigate = useNavigate();
@@ -156,7 +168,7 @@ const MyApplicationsList = () => {
 
       const count = submissionCounts[app._id] || 1;
       const ordinal = getOrdinal(count);
-      const label = `${ordinal} ${app.program === "NOW-COMP" ? "NOW-COMP Program" : "Other Program"} Submission`;
+      const label = `${ordinal} ${app.program === "NOW-COMP" ? "NOW-COMP Program" : app.program === "HRMS-ONBOARDING" ? "HRMS Onboarding" : "Other Program"} Submission`;
 
       return {
         id: app._id,
@@ -164,7 +176,9 @@ const MyApplicationsList = () => {
         title:
           app.program === "NOW-COMP"
             ? "NOW & COMP Waiver Admission"
-            : "Other Programs",
+            : app.program === "HRMS-ONBOARDING"
+              ? "HRMS Employee Onboarding"
+              : "Other Programs",
         status: app.status.charAt(0).toUpperCase() + app.status.slice(1),
         submittedDate: app.submittedAt
           ? new Date(app.submittedAt).toLocaleDateString()
@@ -186,6 +200,13 @@ const MyApplicationsList = () => {
     [selectedAppId, applications],
   );
 
+  // Fetch After Hire Config if viewing an approved HRMS-ONBOARDING application
+  const { data: afterHireData } = useQuery({
+    queryKey: ["afterHireConfig"],
+    queryFn: getAfterHireConfig,
+    enabled: selectedApplication?.programType === "HRMS-ONBOARDING" && selectedApplication?.status === "Approved",
+  });
+
   // Calculate specific counts
   const stats = useMemo(() => {
     return {
@@ -196,6 +217,7 @@ const MyApplicationsList = () => {
         ["Pending", "Submitted"].includes(a.status),
       ).length,
       nowComp: applications.filter((a) => a.programType === "NOW-COMP").length,
+      hrms: applications.filter((a) => a.programType === "HRMS-ONBOARDING").length,
       other: applications.filter((a) => a.programType === "OTHER").length,
     };
   }, [applications]);
@@ -262,8 +284,8 @@ const MyApplicationsList = () => {
               />
             </div>
 
-            {/* NOW-COMP - Span 2 */}
-            <div className="md:col-span-2 bg-white">
+            {/* NOW-COMP - Span 1 */}
+            <div className="bg-white">
               <BentoCard
                 title="NOW & COMP"
                 value={stats.nowComp}
@@ -273,8 +295,19 @@ const MyApplicationsList = () => {
               />
             </div>
 
-            {/* Other - Span 3 (Full Width) */}
-            <div className="md:col-span-3 bg-white">
+            {/* HRMS Onboarding - Span 1 */}
+            <div className="bg-white">
+              <BentoCard
+                title="HRMS Onboarding"
+                value={stats.hrms}
+                subtitle="Staff & Personnel onboarding"
+                colors={["#4F46E5", "#6366F1", "#A5B4FC"]}
+                delay={0.45}
+              />
+            </div>
+
+            {/* Other - Span 1 */}
+            <div className="bg-white">
               <BentoCard
                 title="Other Programs"
                 value={stats.other}
@@ -462,6 +495,85 @@ const MyApplicationsList = () => {
                 </div>
               </div>
             </div>
+
+            {selectedApplication?.programType === "HRMS-ONBOARDING" &&
+              selectedApplication?.status === "Approved" && (
+                <div className="bg-gradient-to-br from-indigo-950 via-slate-900 to-slate-950 text-white rounded-[32px] p-6 md:p-10 border border-indigo-900 shadow-xl mb-10 relative overflow-hidden">
+                  {/* Decorative background gradients */}
+                  <div className="absolute top-0 right-0 w-[40rem] h-[40rem] bg-indigo-500/10 rounded-full blur-3xl -mr-60 -mt-60 pointer-events-none"></div>
+                  <div className="absolute bottom-0 left-0 w-[25rem] h-[25rem] bg-indigo-600/10 rounded-full blur-2xl -ml-40 -mb-40 pointer-events-none"></div>
+                  
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="p-3 bg-indigo-500/20 text-indigo-300 rounded-2xl border border-indigo-400/20 shadow-md">
+                        <GraduationCap className="w-8 h-8" />
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400">PART 3 - AFTER HIRE</span>
+                        <h2 className="text-2xl md:text-3xl font-black tracking-tight mt-0.5 bg-gradient-to-r from-white via-indigo-100 to-indigo-200 bg-clip-text text-transparent">Employee Onboarding & Training</h2>
+                      </div>
+                    </div>
+                    
+                    <p className="text-indigo-200 text-sm md:text-base font-medium max-w-4xl mb-8 leading-relaxed">
+                      Congratulations on completing your onboarding documentation! Below are your post-hire training resources. Please watch the presentation video and review the frequently asked questions to help you get started successfully at Pacific Health Systems.
+                    </p>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                      {/* Video Player */}
+                      <div className="space-y-4 w-full">
+                        <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                          <PlayCircle className="text-indigo-400" />
+                          <span>Presentation & Orientation Video</span>
+                        </h3>
+                        <div className="aspect-video w-full rounded-2xl overflow-hidden border border-indigo-900/50 shadow-inner bg-black">
+                          {afterHireData?.config?.videoUrl ? (
+                            <iframe
+                              className="w-full h-full"
+                              src={formatYoutubeEmbedUrl(afterHireData.config.videoUrl)}
+                              title="Onboarding Presentation Video"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                            ></iframe>
+                          ) : (
+                            <div className="w-full h-full flex flex-col items-center justify-center text-slate-500 font-medium">
+                              <Video size={40} className="mb-2 text-slate-400 animate-pulse" />
+                              <span>Loading presentation video...</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* FAQs / Questions & Answers */}
+                      <div className="space-y-4 w-full">
+                        <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                          <FileQuestion className="text-indigo-400" />
+                          <span>Essential Questions & Answers</span>
+                        </h3>
+                        
+                        <div className="space-y-3 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar">
+                          {afterHireData?.config?.questions && afterHireData.config.questions.length > 0 ? (
+                            afterHireData.config.questions.map((q, idx) => (
+                              <div key={idx} className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-all">
+                                <h4 className="text-sm font-bold text-white mb-2 flex items-start gap-2">
+                                  <span className="text-indigo-400 font-black">Q.</span>
+                                  <span>{q.question}</span>
+                                </h4>
+                                <p className="text-xs text-indigo-200/90 leading-relaxed font-medium pl-6">
+                                  {q.answer}
+                                </p>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="text-slate-500 italic p-4 text-center bg-white/5 border border-white/10 rounded-2xl">
+                              No questions configured.
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
             {/* Forms Section */}
             <div className="grid grid-cols-1 gap-12">

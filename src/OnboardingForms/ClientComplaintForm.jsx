@@ -96,7 +96,7 @@ const ClientComplaintForm = ({
           totalSteps={progressTotal || 1}
         />
 
-      <div className="flex-1 flex flex-col items-center mt-4 mb-8">
+      <div className="flex-1 w-full flex flex-col items-center mt-4 mb-8">
         {/* Paper Container */}
         <div className="w-[98%] md:w-[85%] lg:w-[75%] p-2 md:p-12 bg-white text-[9px] md:text-base leading-snug shadow-lg rounded-lg">
           <div className="flex flex-col items-center mb-6">

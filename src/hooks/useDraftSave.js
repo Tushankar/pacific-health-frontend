@@ -37,6 +37,9 @@ const useDraftSave = ({
     mutationFn: (data) => saveDraftData(enrollmentId, formId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["myEnrollment"] });
+      if (enrollmentId) {
+        queryClient.invalidateQueries({ queryKey: ["enrollment", enrollmentId] });
+      }
     },
   });
 
@@ -97,6 +100,7 @@ const useDraftSave = ({
           saveDraftData(enrollmentId, formId, currentData)
             .then(() => {
               queryClient.invalidateQueries({ queryKey: ["myEnrollment"] });
+              queryClient.invalidateQueries({ queryKey: ["enrollment", enrollmentId] });
             })
             .catch((err) => {
               console.error("Draft auto-save failed:", err);

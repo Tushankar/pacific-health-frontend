@@ -169,14 +169,14 @@ const AdminDashboard = () => {
               <tbody className="divide-y divide-slate-100 font-poppins text-poppins">
                 {filteredApplicants.map((app) => {
                   // Calculate progress for each applicant
-                  const maxPhase1Id = app.program === "NOW-COMP" ? 20 : 8;
+                  const maxPhase1Id = app.program === "NOW-COMP" ? 20 : (app.program === "HRMS-ONBOARDING" ? 150 : 8);
                   // If approved, show 100%, otherwise calculate based on phase 1
                   let progress = 0;
                   if (app.status === 'approved') {
                     progress = 100;
                   } else {
                     const phase1Forms = app.forms ? app.forms.filter(f => f.formId <= maxPhase1Id) : [];
-                    const completed = phase1Forms.filter(f => f.status === 'completed').length;
+                    const completed = phase1Forms.filter(f => f.status === 'completed' || f.status === 'approved').length;
                     progress = phase1Forms.length > 0 ? Math.round((completed / phase1Forms.length) * 100) : 0;
                   }
 
@@ -248,13 +248,13 @@ const AdminDashboard = () => {
             {/* Mobile Card View */}
             <div className="md:hidden flex flex-col gap-4 p-4">
               {filteredApplicants.map((app) => {
-                const maxPhase1Id = app.program === "NOW-COMP" ? 20 : 8;
+                const maxPhase1Id = app.program === "NOW-COMP" ? 20 : (app.program === "HRMS-ONBOARDING" ? 150 : 8);
                 let progress = 0;
                 if (app.status === 'approved') {
                   progress = 100;
                 } else {
                   const phase1Forms = app.forms ? app.forms.filter(f => f.formId <= maxPhase1Id) : [];
-                  const completed = phase1Forms.filter(f => f.status === 'completed').length;
+                  const completed = phase1Forms.filter(f => f.status === 'completed' || f.status === 'approved').length;
                   progress = phase1Forms.length > 0 ? Math.round((completed / phase1Forms.length) * 100) : 0;
                 }
 

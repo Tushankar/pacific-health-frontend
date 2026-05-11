@@ -130,7 +130,7 @@ const PatientMedicationRecord = ({
           totalSteps={progressTotal || 1}
         />
 
-      <div className="flex-1 flex flex-col items-center mt-4 mb-8">
+      <div className="flex-1 w-full flex flex-col items-center mt-4 mb-8">
         {/* Paper Container */}
         <form
           onSubmit={handleSubmit}

@@ -313,7 +313,35 @@ const AdminApplicationDetail = () => {
   };
 
   const chapters = useMemo(() => {
-    const allChapters = getFormsByProgram(enrollment?.program);
+    let allChapters = getFormsByProgram(enrollment?.program);
+
+    // Filter HRMS forms based on employment type (W-2 vs 1099)
+    if (enrollment?.program === "HRMS-ONBOARDING" && enrollment?.forms) {
+      const employmentForm = enrollment.forms.find((f) => f.formId === 118);
+      let employmentType = null;
+      if (employmentForm) {
+        if (employmentForm.data && employmentForm.data.employmentType) {
+          employmentType = employmentForm.data.employmentType;
+        } else if (employmentForm.draftData && employmentForm.draftData.employmentType) {
+          employmentType = employmentForm.draftData.employmentType;
+        }
+      }
+
+      // Filter forms list
+      allChapters = allChapters.map(chapter => {
+        if (chapter.chapter === "Part 2: Documents to Submit") {
+          return {
+            ...chapter,
+            forms: chapter.forms.filter(form => {
+              if (form.id === 119) return employmentType === "W-2";
+              if (form.id === 120) return employmentType === "1099";
+              return true;
+            })
+          };
+        }
+        return chapter;
+      });
+    }
 
     // If approved, show all chapters
     if (enrollment?.status === "approved") {
@@ -328,7 +356,7 @@ const AdminApplicationDetail = () => {
         !ch.chapter.includes("Chapter VI") &&
         !ch.chapter.includes("Service Documentation"), // For Other programs if needed
     );
-  }, [enrollment?.program, enrollment?.status]);
+  }, [enrollment?.program, enrollment?.status, enrollment?.forms]);
 
   const [reviewModal, setReviewModal] = useState({
     isOpen: false,

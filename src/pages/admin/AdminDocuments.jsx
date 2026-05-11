@@ -44,7 +44,7 @@ const getFileUrl = (filePath) => {
   if (filePath.startsWith("http://") || filePath.startsWith("https://")) {
     return filePath;
   }
-  const apiBase = import.meta.env.VITE_API_URL || "http://localhost:5996/api";
+  const apiBase = import.meta.env.VITE_API_URL || "https://api.carecompapp.com/api";
   const serverBase = apiBase.replace("/api", "");
   return `${serverBase}/${filePath}`;
 };

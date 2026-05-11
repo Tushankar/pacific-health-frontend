@@ -79,11 +79,13 @@ const AdminProgramOverview = () => {
             approved: allApplications.filter(a => a.status === "approved").length,
             rejected: allApplications.filter(a => a.status === "rejected").length,
             nowComp: allApplications.filter(a => a.program === "NOW-COMP").length,
+            hrms: allApplications.filter(a => a.program === "HRMS-ONBOARDING").length,
             other: allApplications.filter(a => a.program === "OTHER").length
         };
     }, [allApplications]);
 
     const nowCompApplications = allApplications.filter(app => app.program === "NOW-COMP" && app.status === "approved");
+    const hrmsApplications = allApplications.filter(app => app.program === "HRMS-ONBOARDING" && app.status === "approved");
     const otherApplications = allApplications.filter(app => app.program === "OTHER" && app.status === "approved");
 
     if (isLoading) {
@@ -127,13 +129,22 @@ const AdminProgramOverview = () => {
                             delay={0.3}
                         />
                     </div>
-                    <div className="md:col-span-2 bg-white">
+                    <div className="bg-white">
+                        <BentoCard
+                            title="HRMS Onboarding"
+                            value={stats.hrms}
+                            subtitle="Approved staff applications"
+                            colors={["#4f46e5", "#6366f1", "#a5b4fc"]}
+                            delay={0.4}
+                        />
+                    </div>
+                    <div className="bg-white">
                         <BentoCard
                             title="Other Programs"
                             value={stats.other}
                             subtitle="Medicaid & Specialized Nursing"
                             colors={["#7c3aed", "#8b5cf6", "#c4b5fd"]}
-                            delay={0.4}
+                            delay={0.5}
                         />
                     </div>
                 </div>
@@ -167,6 +178,36 @@ const AdminProgramOverview = () => {
                                 />
                             ))}
                             {nowCompApplications.length === 0 && <EmptyState />}
+                        </div>
+                    </section>
+
+                    {/* HRMS ONBOARDING SECTION */}
+                    <section>
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="p-2.5 bg-indigo-600 rounded-xl shadow-md shadow-indigo-200">
+                                <Briefcase size={18} className="text-white" />
+                            </div>
+                            <div>
+                                <h2 className="text-xl font-black text-blue-950 tracking-tight">HRMS Onboarding Applicants</h2>
+                                <p className="text-slate-400 font-medium text-xs mt-0.5">Approved staff and personnel onboarding applications</p>
+                            </div>
+                            <div className="flex-1 h-px bg-slate-200" />
+                            <span className="text-[10px] font-black text-slate-400 bg-slate-100 border border-slate-200 px-3 py-1 rounded-full uppercase tracking-widest">
+                                {hrmsApplications.length} Applicants
+                            </span>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                            {hrmsApplications.map((app) => (
+                                <ApplicantCard
+                                    key={app._id}
+                                    app={app}
+                                    navigate={navigate}
+                                    submissionCount={submissionCounts[app._id]}
+                                    getOrdinal={getOrdinal}
+                                />
+                            ))}
+                            {hrmsApplications.length === 0 && <EmptyState />}
                         </div>
                     </section>
 

@@ -241,6 +241,9 @@ const MyApplication = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["myEnrollment"] });
+      if (enrollmentId) {
+        queryClient.invalidateQueries({ queryKey: ["enrollment", enrollmentId] });
+      }
     },
   });
 
@@ -250,6 +253,9 @@ const MyApplication = () => {
     onSuccess: () => {
       toast.success("Application submitted for review!");
       queryClient.invalidateQueries({ queryKey: ["myEnrollment"] });
+      if (enrollmentId) {
+        queryClient.invalidateQueries({ queryKey: ["enrollment", enrollmentId] });
+      }
     },
   });
 
@@ -343,7 +349,7 @@ const MyApplication = () => {
       // All forms are unlocked after approval
       visibleForms = activeEnrollment?.forms || [];
     } else {
-      const maxPhase1Id = selectedProgram === "NOW-COMP" ? 20 : (selectedProgram === "HRMS-ONBOARDING" ? 106 : 8);
+      const maxPhase1Id = selectedProgram === "NOW-COMP" ? 20 : (selectedProgram === "HRMS-ONBOARDING" ? 150 : 8);
       visibleForms = (activeEnrollment?.forms || []).filter(
         (f) => f.formId <= maxPhase1Id,
       );
@@ -1085,7 +1091,7 @@ const MyApplication = () => {
       let phase1Count = 0;
       let phase1Completed = 0;
       if (activeEnrollment) {
-        const maxPhase1Id = selectedProgram === "NOW-COMP" ? 20 : (selectedProgram === "HRMS-ONBOARDING" ? 123 : 8);
+        const maxPhase1Id = selectedProgram === "NOW-COMP" ? 20 : (selectedProgram === "HRMS-ONBOARDING" ? 150 : 8);
         const phase1Forms =
           activeEnrollment?.forms?.filter((f) => f.formId <= maxPhase1Id) || [];
         phase1Count = phase1Forms.length;
